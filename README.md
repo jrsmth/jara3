@@ -18,7 +18,7 @@ a jira-inspired to-do list
 
 
 
-### For when JIRA comes up:
+### For when JIRA comes up: (KANBAN!)
 * set up GitHub repo
 * Eastablish user guide and technical references
 * define the git flow
