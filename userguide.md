@@ -1,2 +1,1 @@
-# jara3
-## User Guide
+# Jara3 User Guide
