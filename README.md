@@ -21,6 +21,7 @@ a jira-inspired to-do list
 ### For when JIRA comes up:
 * set up GitHub repo
 * Eastablish user guide and technical references
+* define the git flow
 * create architectural designs on miro
 * create eureka server
 * create 'xyz main' service with base functionality only (dummy endpoint)

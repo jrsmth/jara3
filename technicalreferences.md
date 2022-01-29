@@ -34,25 +34,21 @@
 * Base Package Naming Convention
     * com.jrsmiffy.jara3
 
-<table>
-<thead>
-  <tr>
-    <th> <h2> Project Metadata </h2> </th>
-    <th> </th>
-  </tr>
-</thead>
-<tbody>
-  <tr>
-    <td> Base Package Naming Convention</td>
-    <td> com.jrsmiffy.jara3 </td>
-  </tr>
-</tbody>
-</table>
+<br>
 
+## Frequently Used Commands
+* 
 
 <br>
 
-##
+## Further Documentation
+* Git Branching Strategy
+    * https://nvie.com/posts/a-successful-git-branching-model/
+
+<br>
+
+ 
+
 
 
  <br> <br> <br>
