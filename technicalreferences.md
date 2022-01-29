@@ -4,7 +4,7 @@
 
 ## Project Tooling
 * Main Development Languages
-    * Java X
+    * [Java X]()
     * JavaScript X
 * Build Tools:
     * Maven X
@@ -27,7 +27,6 @@
 * Testing
     * ...
     * ...
-[Turn each one into a link?]()
 
 <br>
 
