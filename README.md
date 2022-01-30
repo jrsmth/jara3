@@ -23,6 +23,7 @@ a jira-inspired to-do list
 * Eastablish user guide and technical references
 * define the git flow
 * create architectural designs on miro
+* set up GitHub actions (GKE too?)
 * create eureka server
 * create 'xyz main' service with base functionality only (dummy endpoint)
 * create user service with MYSQL

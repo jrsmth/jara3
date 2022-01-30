@@ -4,13 +4,13 @@
 
 ## Project Tooling
 * Main Development Languages
-    * [Java X]()
+    * Java [15](https://www.oracle.com/java/technologies/downloads/#jdk15) - looking to move to 17
     * JavaScript X
 * Build Tools:
     * Maven X
     * NPM X
 * Frameworks:
-    * Spring Boot X
+    * Spring Boot [2.6.3](https://start.spring.io)
     * Node JS X
     * React JS X
 * Kubernetes Version:
@@ -36,8 +36,10 @@
 
 <br>
 
-## Frequently Used Commands
-* 
+## Useful Commands
+* Switch Java versions ([source](https://stackoverflow.com/questions/21964709/how-to-set-or-change-the-default-java-jdk-version-on-macos))
+    * ``` /usr/libexec/java_home -V ```
+    * ``` export JAVA_HOME=`/usr/libexec/java_home -v 17.0.1` ```
 
 <br>
 
@@ -77,9 +79,9 @@
 
 inspired by: https://nvie.com/posts/a-successful-git-branching-model/
 
-<br>
 
 ### This and That
+* this and that
 
 <br>
 
