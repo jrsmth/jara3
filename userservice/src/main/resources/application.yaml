@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: jara3-user-service
+server:
+  port: 8772
+eureka:
+  client:
+    fetchRegistry: true
+    registryFetchIntervalSeconds: 5
+    serviceUrl:
+      defaultZone: ${EUREKA_URI:http://eureka-0.eureka:8761/eureka}
+      register-with-eureka: true
+  instance:
+    preferIpAddress: true

@@ -40,6 +40,8 @@
 * Switch Java versions ([source](https://stackoverflow.com/questions/21964709/how-to-set-or-change-the-default-java-jdk-version-on-macos))
     * ``` /usr/libexec/java_home -V ```
     * ``` export JAVA_HOME=`/usr/libexec/java_home -v 17.0.1` ```
+* Kill a service running on a particular $PORT
+    * ``` lsof -nti:$PORT | xargs kill -9 ```
 
 <br>
 
