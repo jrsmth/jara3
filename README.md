@@ -12,7 +12,7 @@ a jira-inspired to-do list
 <br>
 
 ### Jara3 Architecture
-<img width="1081" alt="Screen Shot 2022-01-31 at 02 15 57" src="https://user-images.githubusercontent.com/34093915/151730326-84869a34-10c8-4f73-9d46-56ccf0cd15ae.png">
+<img width="1200" alt="Jara3 Architecture" src="https://user-images.githubusercontent.com/34093915/151743423-6bae0e65-0d80-4d6d-aab8-c134ce0f2d78.png">
 
 <br>
 <br>
