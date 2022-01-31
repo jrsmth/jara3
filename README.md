@@ -35,9 +35,12 @@ a jira-inspired to-do list
 * set up GitHub actions (GKE too?)
 * ~~create eureka server~~
 * ~~create user service~~
+* ~~create frontend~~
+* register react frontend with eureka - may need to upodate documentation!
 * create 'xyz main' service with base functionality only (dummy endpoint) - establish all microservices
 * complete user service with MYSQL
 * create frontend react with base functionality (unstyled login and redirect)
 * miro further DDD and design API calls flow
+* Grafana and Prometheus support...
 
 MUST DO TDD.

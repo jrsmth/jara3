@@ -5,14 +5,14 @@
 ## Project Tooling
 * Main Development Languages
     * Java [v15](https://www.oracle.com/java/technologies/downloads/#jdk15)
-    * JavaScript X
+    * JavaScript
 * Build Tools:
     * Maven [v3.6.3](https://maven.apache.org/install.html)
     * NPM [v8.4.0](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 * Frameworks:
     * Spring Boot [v2.6.3](https://start.spring.io)
     * Node JS [v14.15.1](https://nodejs.org/en/download/)
-    * React JS X
+        * React JS [v17.0.1](https://reactjs.org/docs/create-a-new-react-app.html)
 * Kubernetes Version:
     * Client:
     * Server:
@@ -46,6 +46,9 @@
     * ``` git rm -r --cached . ```
     * ``` git add . ```
     * ``` git commit -m "fixed untracked files" ```
+* Change the port that your React app runs on ([source](https://scriptverse.academy/tutorials/reactjs-change-port-number.html))
+    * ``` export PORT=8702 ```
+    * ``` npm start ```
 
 <br>
 
