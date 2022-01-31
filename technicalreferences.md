@@ -4,14 +4,14 @@
 
 ## Project Tooling
 * Main Development Languages
-    * Java [15](https://www.oracle.com/java/technologies/downloads/#jdk15) - looking to move to 17
+    * Java [v15](https://www.oracle.com/java/technologies/downloads/#jdk15)
     * JavaScript X
 * Build Tools:
-    * Maven X
-    * NPM X
+    * Maven [v3.6.3](https://maven.apache.org/install.html)
+    * NPM [v8.4.0](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 * Frameworks:
-    * Spring Boot [2.6.3](https://start.spring.io)
-    * Node JS X
+    * Spring Boot [v2.6.3](https://start.spring.io)
+    * Node JS [v14.15.1](https://nodejs.org/en/download/)
     * React JS X
 * Kubernetes Version:
     * Client:
@@ -42,6 +42,10 @@
     * ``` export JAVA_HOME=`/usr/libexec/java_home -v 17.0.1` ```
 * Kill a service running on a particular $PORT
     * ``` lsof -nti:$PORT | xargs kill -9 ```
+* Remove files that are still tracked after adding them to .gitignore ([source](https://stackoverflow.com/questions/11451535/gitignore-is-ignored-by-git))
+    * ``` git rm -r --cached . ```
+    * ``` git add . ```
+    * ``` git commit -m "fixed untracked files" ```
 
 <br>
 

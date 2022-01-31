@@ -38,5 +38,6 @@ a jira-inspired to-do list
 * create 'xyz main' service with base functionality only (dummy endpoint) - establish all microservices
 * complete user service with MYSQL
 * create frontend react with base functionality (unstyled login and redirect)
+* miro further DDD and design API calls flow
 
 MUST DO TDD.
