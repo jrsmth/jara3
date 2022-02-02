@@ -1,0 +1,3 @@
+exports.eurekaRegistry = {
+  urlUserService: null
+};

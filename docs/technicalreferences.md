@@ -97,6 +97,47 @@ TLDR - stop using Jira as a source of documentation, instead keep a top-notch te
     * Instead, consistently add knowledge to techincalreferences.md - build up a great bank of TINTK.
     * You can still put commands, links and details in the Jira comments (there's still some use in that). You can (and should) still keep a top-notch Jira but don't go overboard and invest the same effort into keeping personal documentation.
 
+### Creating a React Frontend that is able to talk with Eureka
+* React is a JavaScript library, not a framework. Hence the frontend application is really a Node.js application, as we needed an express server backend in order to communicate with Eureka and perform REST calls.
+* During my research I came across many references to the use of Zuul as an API gateway, alongside Spring Eureka when setting up a polyglot microservices architecture for the cloud. I also came across the Netflix suggestion of using a spring boot sidecar alongside your non-JVM application when trying to register with Eureka. I also came across references to Ingress controllers and using NGINX as a reverse proxy. All of these things are new to me and maybe the official way of doing things. However I believe the solution I have gone for is sufficient and if there is a better way of doing things, I hope to learn it in the future.
+* The solution I have gone for is inspired by two tutorials that I found:
+    1. [Registering Node.js with Eureka](https://medium.com/@zilayhuda/register-nodejs-service-with-netflix-eureka-and-use-zuul-for-routing-service-part-1-e50fc49d1219)
+        * https://github.com/zilehuda/eureka-zuul-nodejs-microservices
+    2. [Packaging React inside Node.js](https://medium.com/geekculture/build-and-deploy-a-web-application-with-react-and-node-js-express-bce2c3cfec32)
+        * https://github.com/leandroercoli/NodeReact
+* With the first one, I pinched the ```eureka-helper.js``` file, which I then used to register the app with Eureka when Express server is created.
+* The second one allowed me to have a React client running inside my Node.js application that was then able to make use of the register information provided by Eureka in order to make calls to the backend micro-service (i.e the user-service).
+* Steps to create the frontend:
+    * ``` mkdir frontend```
+    * ``` npm init -y ```
+    * ``` npm install ```
+    * ``` npm i express cors dotenv express-validator cross-fetch```
+    * Add the ```scripts``` to ```package.json```
+    * *optional*: Create .gitignore and .env 
+    * Create ```/models``` with ```server.js```, ```eureka-helper.js``` and ```eureka-registry.js```
+        * ```eureka-helper.js```: registers us to the Eureka server and fetches the registry containing the paths to the other services.
+        * ```eureka-registry.js```: gets updated by ```eureka-helper.js``` to store and paths for the other services and exposes them to the client application through the controller.
+    * Create ```app.js```
+        * serves as the entry point to the application - spins us the Express server and registers us with Eureka.
+    * Add the ```/controllers``` and ```/routes```
+        * These controllers and routes are responsible for making the actual REST call. The flow is as follows:
+            * Inside the Client React app, the a Component (such as Login) has a JS function that calls the index.js for the API's (also inside the Client).
+            * The Client's ```/api/index.js``` calls the routes, which have been globally exported in the Node.js wrapper application.
+            * The routes lead to the controller, which is responsible for making the actual call to Eureka, using the URL provided by ```eureka-registry.js```. It thens forwards the response back the Component that requested the call.
+    * *optional*: Add ```/middleware``` for enhancing the REST call - for example, adding validation to input form
+    * Create the React application (in ```/frontend```)
+        * ``` npx create-react-app client ```
+        * ``` cd client ```
+        * ``` npm install ```
+        * ``` npm install react-bootstrap bootstrap@5.1.3 ```
+    * Replace ```App.js```.
+    * Add the ```/src/api/index.js``` to make API calls to the Node.js controller.
+    * Add the Components
+* Notes:
+    * How to Run: ``` node start ```
+        * If you make a change to the React app, ``` npm run build ; node start ```
+
+
 <br>
 
  
