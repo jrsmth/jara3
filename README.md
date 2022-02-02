@@ -23,24 +23,7 @@ a jira-inspired to-do list
 * [Technical References](https://github.com/JRSmiffy/jara3/blob/main/technicalreferences.md)
 * Tools
     * [Miro](https://miro.com/app/board/uXjVOREpiSo=/)
-    * jira, figma, etc
+    * [Jira](https://jrsmiffy.atlassian.net/jira/software/projects/J3/boards/1)
+    * figma, etc
 
 
-
-### For when JIRA comes up: (KANBAN!)
-* ~~set up GitHub repo~~
-* ~~Establish user guide and technical references~~
-* ~~define the git flow~~
-* ~~create architectural designs on miro~~
-* set up GitHub actions (GKE too?)
-* ~~create eureka server~~
-* ~~create user service~~
-* ~~create frontend~~
-* register react frontend with eureka - may need to upodate documentation!
-* create 'xyz main' service with base functionality only (dummy endpoint) - establish all microservices
-* complete user service with MYSQL
-* create frontend react with base functionality (unstyled login and redirect)
-* miro further DDD and design API calls flow
-* Grafana and Prometheus support...
-
-MUST DO TDD.
