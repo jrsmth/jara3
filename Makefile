@@ -5,7 +5,7 @@ start_eureka_locally:
 start_user_service_locally:
 	cd userservice ;  export EUREKA_URI=http://localhost:8761/eureka ; ./mvnw spring-boot:run 
 start_frontend_locally:
-	cd frontend ; node service.js
+	cd frontend ; npm run build ; export PORT=8702 ; node app
 
 start_jara3_locally:
 	make start_eureka_locally & sleep 8
@@ -13,6 +13,7 @@ start_jara3_locally:
 	make start_frontend_locally &
 	# make start_xyz_service_locally
 
-end_frontend_locally:
+stop_jara3_locally:
 	lsof -nti:8702 | xargs kill -9
+	lsof -nti:8772 | xargs kill -9
 	lsof -nti:8761 | xargs kill -9
