@@ -19,8 +19,8 @@ a jira-inspired to-do list
 <br>
 
 ## Useful Links:
-* [User Guide](https://github.com/JRSmiffy/jara3/blob/main/userguide.md)
-* [Technical References](https://github.com/JRSmiffy/jara3/blob/main/technicalreferences.md)
+* [User Guide](https://github.com/JRSmiffy/jara3/blob/main/docs/userguide.md)
+* [Technical References](https://github.com/JRSmiffy/jara3/blob/main/docs/technicalreferences.md)
 * Tools
     * [Miro](https://miro.com/app/board/uXjVOREpiSo=/)
     * [Jira](https://jrsmiffy.atlassian.net/jira/software/projects/J3/boards/1)

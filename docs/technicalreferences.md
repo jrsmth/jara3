@@ -90,10 +90,10 @@ inspired by: https://nvie.com/posts/a-successful-git-branching-model/
 
 
 ### Jira Process
-TLDR - stop using Jira as a source of documentation, keep a top-notch technicalreferences.md
+TLDR - stop using Jira as a source of documentation, instead keep a top-notch technicalreferences.md
 * When working on a ticket, keep a stringent checklist of what exactly needs to be done to complete it (in the description).
 * Use the comments to evidence that the work has been completed, with accompanying media (screen shots, etc).
-* Stop using Jira tickets to document how to do specific tasks; you will eventually lose access to to those tickets and, retrospectively, the information is hard/impossible to pull out in bulk.
+* Stop using Jira tickets to document how to do specific tasks; you will eventually lose access to those tickets and, retrospectively, the information is hard/impossible to pull out in bulk.
     * Instead, consistently add knowledge to techincalreferences.md - build up a great bank of TINTK.
     * You can still put commands, links and details in the Jira comments (there's still some use in that). You can (and should) still keep a top-notch Jira but don't go overboard and invest the same effort into keeping personal documentation.
 

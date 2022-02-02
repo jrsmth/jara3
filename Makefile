@@ -1,5 +1,4 @@
 
-
 start_eureka_locally:
 	cd eurekaserver ; ./mvnw spring-boot:run
 start_user_service_locally:
@@ -11,9 +10,7 @@ start_jara3_locally:
 	make start_eureka_locally & sleep 8
 	make start_user_service_locally &
 	make start_frontend_locally &
-	# make start_xyz_service_locally
-
 stop_jara3_locally:
-	lsof -nti:8702 | xargs kill -9
-	lsof -nti:8772 | xargs kill -9
 	lsof -nti:8761 | xargs kill -9
+	lsof -nti:8772 | xargs kill -9
+	lsof -nti:8702 | xargs kill -9 
