@@ -137,6 +137,37 @@ TLDR - stop using Jira as a source of documentation, instead keep a top-notch te
     * How to Run: ``` node start ```
         * If you make a change to the React app, ``` npm run build ; node start ```
 
+### Domain Driven Design
+This is going to be a very brief introduction and will need to refined over time. This is not intended to be a full dive into DDD, rather an introduction so I can build a base that I can build upon over time.
+* Principles:
+    * DDD is a design approach that aims to make software reflect a real-world system
+        * The structure and language of the code should reflect the business domain - as a crude example, a loans processing application may have classes such as LoanApplication and Customer, and methods such as AcceptOffer and Withdraw.
+    * There are three core principles in DDD:
+        1. Separate the concerns into layers
+        2. Model the Domain
+        3. Manage the life-cycle of Domain objects
+    * 1 - Separate the concerns into layers
+        * User Interface / Presentation Layer
+            * Responible for displaying information to the user (human or another computer system) and interpreting user commands. 
+            * Knows about the Application and Domain Layers only.
+        * Application Layer
+            * Defines the jobs that the software is to perform and coordinates the domain objects accordingly.
+            * This layer is kept thin and does not contain business knowledge. It doesn't have state reflecting the business situation, only state that the reflects the progress of a task, if any state at all.
+            * Knows about the Domain Layer only.
+        * Domain Layer (Model Layer)
+            * Contains the business logic. This layer is the heart of the software. It has state that reflects the business situation (but technical details of storing the state are delegated to the Infrastructure Layer).
+            * Is not aware of any other layers.
+        * Infrastructure Layer
+            * Provides technical capabilities that support the higher layers: message sending, persistence for the domain and so on...
+            * Know of only the Domain Layer.   
+        <br> <img src="./res/ddd_separate_concerns.png" width=500> <br><br>
+    * 2 - Model the Domain
+* Process:
+    * this
+    * that
+* Good resources:
+    * https://medium.com/inato/an-introduction-to-domain-driven-design-386754392465
+    * https://en.wikipedia.org/wiki/Domain-driven_design
 
 <br>
 
