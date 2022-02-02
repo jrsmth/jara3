@@ -105,7 +105,7 @@ TLDR - stop using Jira as a source of documentation, instead keep a top-notch te
         * https://github.com/zilehuda/eureka-zuul-nodejs-microservices
     2. [Packaging React inside Node.js](https://medium.com/geekculture/build-and-deploy-a-web-application-with-react-and-node-js-express-bce2c3cfec32)
         * https://github.com/leandroercoli/NodeReact
-* With the first one, I pinched the ```eureka-helper.js``` file, which I then used to register the app with Eureka when Express server is created. It leaverages the [eureka-js-client](https://www.google.com/search?client=safari&rls=en&q=eureka-js-client&ie=UTF-8&oe=UTF-8)
+* With the first one, I pinched the ```eureka-helper.js``` file, which I then used to register the app with Eureka when Express server is created. It leaverages the [eureka-js-client](https://www.google.com/search?client=safari&rls=en&q=eureka-js-client&ie=UTF-8&oe=UTF-8).
 * The second one allowed me to have a React client running inside my Node.js application that was then able to make use of the register information provided by Eureka in order to make calls to the backend micro-service (i.e the user-service).
 * Steps to create the frontend:
     * ``` mkdir frontend```
