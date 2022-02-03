@@ -24,6 +24,4 @@ a jira-inspired to-do list
 * Tools
     * [Miro](https://miro.com/app/board/uXjVOREpiSo=/)
     * [Jira](https://jrsmiffy.atlassian.net/jira/software/projects/J3/boards/1)
-    * figma, etc
-
-
+    * [Figma](https://www.figma.com/file/UHxgdYXdDUOoLxMO3hyzHh/Jara3)

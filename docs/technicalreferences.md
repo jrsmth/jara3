@@ -221,7 +221,9 @@ This is going to be a very brief introduction and will need to refined over time
             * INTEGRATE: hands on exercises
             * IMPROVISE: in-the-wild experience
 
-### This and That
+### Release Process
+* Store the latest version of Jira and Miro in https://github.com/JRSmiffy/jara3/tree/main/docs
+
 <br>
 
  
