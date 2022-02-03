@@ -28,4 +28,4 @@ https://www.figma.com/file/UHxgdYXdDUOoLxMO3hyzHh/Jara3
 <br>
 
 ### Colour Scheme
-<img src="./res/figma_board3.png" width=800>
+<img src="./res/figma_colours.png" width=800>
