@@ -169,6 +169,59 @@ This is going to be a very brief introduction and will need to refined over time
     * https://medium.com/inato/an-introduction-to-domain-driven-design-386754392465
     * https://en.wikipedia.org/wiki/Domain-driven_design
 
+### School Periods
+* Work can be loosely divided in half between ***passive*** tasks (learning/researching/documenting) and ***assertive*** tasks (designing/building/testing). 
+    * I find that the designing/building tasks are very engaging and can be done for long periods without interuption. On the other hand, whilst the learning/researching tasks are essential, I find them taxing and cannot do them for long periods. 
+    * "A change is as good as a rest"
+        * Alternate between these types of tasks, spending 1h periods on each.
+        * It is useful to switch from learning to doing when your ability to take on new information is wavering.
+        * It is also useful to switch from being stuck on a particular problem and come back to it - often solutions fall out with fresh eyes.
+    * Example:
+        * Let's say I'm learning about Unit Testing/TDD because I've got some tests to write. I can do an hours ***learning*** and then switch to another ***doing*** task that is pending. After an hours ***doing***, I can switch back to ***learning*** and do another hours on TDD. Rinse and repeat.
+        * Doesn't have to be super strict - reach a natural hiatus before stopping the task that you're on.
+    * Time boxing
+        * Timeboxing tasks into 1h chunks is useful not only for switching tasks and means you'll also get more work out per minute. Focus will intesify.
+            * Parkinson's Law: work expands to fill the time allotted for it.
+            * [Elon Musk Timeboxing](https://www.youtube.com/watch?v=fbAYK4KQrso)
+
+### Mastery Cycle
+* Micro
+    * A process to improve. If you're going to spend a unit of time learning something, you should complete a full cycle of this process. 
+        * Example: learning DDD.
+            * Blanket introduction, aim to uncover the full landscape - DDD: discover the three core concepts of separate concerns, model domain and manage domain object lifecycle.
+            * Drill down into one area at a time (isolate) and learn enough to be able to contribute something of value (perhaps cover one topic per individual session). DDD: in individual an session, cover 'separate concerns' and absorb something of use.
+            * Cover each of the concepts in your scope (intergrate) and then apply them to create something - possibly very similar to what you've learnt. DDD: create a DDD design on Miro using the concepts that you've just learnt.
+            * Following the rule of 80:20, whilst applying the concepts that you've learnt add 20% of your own flair to strecth yourself (improvise). Make sure that you get a mentor to review your work and provide feedback. DDD: fill in the gaps in your Miro design with your own ideas; get feedback from a mentor at work and apply it.
+* Macro
+    * The Ido Portal Levels of Mastery
+        * Level 0: NO ABILITY
+            * The "Fool"
+            * You don't know what you don't know
+            * Hero's jounery: Call to Adventure
+            * You have no understanding of the domain and cannot do anything meaninful
+        * Level 1: ISOLATION
+            * The "Apprentice"
+            * You know what you don't know
+            * Hero's Journey: Challenges and Trials, help from Mentors
+            * You are beinnging to understand the domain but are unable to contribute anything of value.
+        * Level 2: INTEGRATION
+            * The "Journeyman"
+            * You know what you know what you know
+            * Hero's Journey: Post-Revelation Transformation
+            * You understand the domain well enough to contribute something of value
+        * Level 3: IMPROVISATION
+            * The "Redeemer"
+            * You don't know what you know
+            * Hero's Journey: Return with the Gift
+            * You understand the domain well enough to create something new (tip of the spear)
+            
+            <img src="./res/300px-Heroesjourney.jpg" width=300> <br><br>
+        * Example: studying for CKAD
+            * ISOLATE: learn the concepts
+            * INTEGRATE: hands on exercises
+            * IMPROVISE: in-the-wild experience
+
+### This and That
 <br>
 
  
