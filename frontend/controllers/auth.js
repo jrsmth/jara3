@@ -24,7 +24,7 @@ const test = async (req, res = response) => {
   console.log("HIT JRS");
   console.log(eurekaRegistry.urlUserService);
 
-  await fetch(eurekaRegistry.urlUserService+"login?user=smith&pass=james", {
+  await fetch(eurekaRegistry.urlUserService+"login?username=smith&password=james", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

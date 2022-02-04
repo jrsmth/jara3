@@ -1,5 +1,7 @@
 package com.jrsmiffy.jara3.userservice.controller;
 
+import com.jrsmiffy.jara3.userservice.model.User;
+import com.jrsmiffy.jara3.userservice.repository.UserRepository;
 import com.netflix.discovery.EurekaClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,17 +31,38 @@ public class UserController {
     @Value("${spring.application.name}")
     private String appName;
 
+    @Autowired
+    private UserRepository userRepository;
+
     /**
-     * Retrieve User by names - login
+     * Login - Verify User Credentials & Accept/Reject Login Request
      */
-    @RequestMapping(path = "/login", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody ResponseEntity<Map<HttpStatus, Object>> login(@RequestParam("user") String user, @RequestParam("pass") String pass) {
-
-        log.info("hit me baby");
-
+    @RequestMapping(path = "/login/{username}/{password}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody ResponseEntity<Map<HttpStatus, Object>> login(@PathVariable("username") String username, @PathVariable("password") String password) {
         Map<HttpStatus, Object> returnObject = new HashMap<>();
         returnObject.put(HttpStatus.OK, "Connection confirmed");
         return ResponseEntity.ok(returnObject);
+    }
+
+    /**
+     * Create User
+     */
+    @RequestMapping(path = "/user", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody ResponseEntity<Map<HttpStatus, Object>> createUser(@RequestBody User newUser) {
+
+        // Are these credentials valid? -> they have already been validated in the frontend
+
+        Map<HttpStatus, Object> returnObject = new HashMap<>();
+        try{
+            // Does this user already exist?
+            userRepository.findByUsername(newUser.getUsername());
+            userRepository.save(newUser);
+        } catch (NullPointerException e){
+            log.error(e.toString());
+        } finally {
+            returnObject.put(HttpStatus.OK, newUser);
+            return ResponseEntity.ok(returnObject);
+        }
     }
 
 
@@ -47,6 +70,3 @@ public class UserController {
 
 
 }
-
-
-
