@@ -55,7 +55,7 @@ public class UserController {
         Map<HttpStatus, Object> returnObject = new HashMap<>();
         try{
             // Does this user already exist?
-            userRepository.findByUsername(newUser.getUsername());
+            userRepository.findByUsername(newUser.getUsername()); // wtf is this logic...
             userRepository.save(newUser);
         } catch (NullPointerException e){
             log.error(e.toString());
