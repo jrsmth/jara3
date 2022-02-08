@@ -49,6 +49,16 @@
 * Change the port that your React app runs on ([source](https://scriptverse.academy/tutorials/reactjs-change-port-number.html))
     * ``` export PORT=8702 ```
     * ``` npm start ```
+* Base64: encode and decode
+    * ``` echo -n amFyYTMtZGV2 | base64 --d ```
+    * ``` echo -n jara3-dev | base64 ```
+* GKE
+    * ``` gcloud auth login ```
+    * ``` gcloud container clusters get-credentials $CLUSTER --zone $ZONE --project $PROJECT ```
+* Manually update an image on GCR
+    * ``` docker build -t jrsmiffy/jara3 -f Dockerfile . ```
+    * ``` docker tag jara3/userservice eu.gcr.io/jrsmiffy/jara3/userservice:latest ```
+	* ``` docker push eu.gcr.io/jrsmiffy/jara3/userservice:latest ```
 
 <br>
 
@@ -223,6 +233,12 @@ This is going to be a very brief introduction and will need to refined over time
 
 ### Release Process
 * Store the latest version of Jira and Miro in https://github.com/JRSmiffy/jara3/tree/main/docs
+
+### Overcoming Obstacles
+* ### spring-data-jpa dependency issue
+    * make sure you the ```spring-boot-starter-data-jpa``` dependency and not the ```spring-data-jpa``` when connecting to a database, using a JPA repository.
+        * I kept facing a ```Consider defining a bean named 'entityManagerFactory' in your configuration``` exception with the latter dependency.
+        * source: [stack overflow](https://stackoverflow.com/questions/41170661/spring-data-jpa-consider-defining-a-bean-named-entitymanagerfactory-in-your/41178250)
 
 <br>
 
