@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: jara3-user-service
+server:
+  port: 8772

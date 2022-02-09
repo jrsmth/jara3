@@ -1,14 +1,22 @@
 spring:
   application:
     name: jara3-user-service
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+  datasource:
+    platform: H2
+    url: jdbc:h2:mem:jara3-local-db
+    username: sa
+    password: password
+    driverClassName: org.h2.Driver
 server:
   port: 8772
 eureka:
   client:
-    fetchRegistry: true
-    registryFetchIntervalSeconds: 5
-    serviceUrl:
-      defaultZone: ${EUREKA_URI:http://eureka-0.eureka:8761/eureka}
-      register-with-eureka: true
-  instance:
-    preferIpAddress: true
+    enabled: 'false'
+
+# This version is used when testing (mvn clean install)
