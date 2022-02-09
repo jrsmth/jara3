@@ -1,6 +1,4 @@
 spring:
-  application:
-    name: jara3-user-service
   jpa:
     show-sql: true
     generate-ddl: true
@@ -12,10 +10,10 @@ spring:
     url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/jara3_db
     username: jara3-dev
     password: password
-server:
-  port: 8772
+    driverClassName: com.mysql.cj.jdbc.Driver
 eureka:
   client:
+    enabled: true
     fetchRegistry: true
     registryFetchIntervalSeconds: 5
     serviceUrl:

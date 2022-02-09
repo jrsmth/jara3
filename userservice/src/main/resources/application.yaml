@@ -17,6 +17,7 @@ server:
   port: 8772
 eureka:
   client:
-    enabled: 'false'
+    enabled: false
 
 # This version is used when testing (mvn clean install)
+# Also as a base for the other application-*.yaml files, so no need to duplicate properties
