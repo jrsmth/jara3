@@ -10,7 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -26,11 +25,7 @@ public class UserController {
     public @ResponseBody ResponseEntity<Map<HttpStatus, Object>> registerUser(@RequestBody User potentialUser) {
 
         // Validate that this user is valid - if so, register them
-        User registeredUser = userService.registerNewUser(potentialUser);
-
-        // Response
-        Map<HttpStatus, Object> returnObject = new HashMap<>();
-        returnObject.put(HttpStatus.OK, registeredUser);
+        Map<HttpStatus, Object> returnObject = userService.registerNewUser(potentialUser);
 
         return ResponseEntity.ok(returnObject);
     }
