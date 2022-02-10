@@ -1,10 +1,15 @@
 package com.jrsmiffy.jara3.userservice.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
 @Entity
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
 
     @Id
@@ -17,5 +22,11 @@ public class User {
     private String password;
 
     private boolean active = Boolean.TRUE;
+
+    public User(String username, String password){
+        this.username = username;
+        this.password = password;
+    }
+
 
 }

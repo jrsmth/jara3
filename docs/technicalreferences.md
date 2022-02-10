@@ -100,7 +100,8 @@ inspired by: https://nvie.com/posts/a-successful-git-branching-model/
 
 
 ### Jira Process
-TLDR - stop using Jira as a source of documentation, instead keep a good technicalreferences.md
+TLDR - stop using Jira as a source of documentation, instead keep a good technicalreferences.md <br>
+TLDR 2 - any documentation that you do want to add to the ticket, keep it in the description, as it gets preserved when exported. Use the comments to update on progress.
 * When working on a ticket, keep a stringent checklist of what exactly needs to be done to complete it (in the description).
 * Use the comments to evidence that the work has been completed, with accompanying media (screen shots, etc).
 * Stop using Jira tickets to document how to do specific tasks; you will eventually lose access to those tickets and, retrospectively, the information is hard/impossible to pull out in bulk.
@@ -147,14 +148,19 @@ TLDR - stop using Jira as a source of documentation, instead keep a good technic
     * How to Run: ``` node start ```
         * If you make a change to the React app, ``` npm run build ; node start ```
 
+### Release Process
+* Store the latest version of Jira and Miro in https://github.com/JRSmiffy/jara3/tree/main/docs
+
+### Test-Driven Design
+* TDD is a must when creating methods, especially in Java-land.
+* Don't test private methods, as a rule.
+* It is worth the initial investment to get efficient code and comprehensive tests.
+
 ### Overcoming Obstacles
 * **spring-data-jpa dependency issue**
     * make sure you the ```spring-boot-starter-data-jpa``` dependency and not the ```spring-data-jpa``` when connecting to a database, using a JPA repository.
         * I kept facing a ```Consider defining a bean named 'entityManagerFactory' in your configuration``` exception with the latter dependency.
         * source: [stack overflow](https://stackoverflow.com/questions/41170661/spring-data-jpa-consider-defining-a-bean-named-entitymanagerfactory-in-your/41178250)
-
-### Release Process
-* Store the latest version of Jira and Miro in https://github.com/JRSmiffy/jara3/tree/main/docs
 
 <br>
 
