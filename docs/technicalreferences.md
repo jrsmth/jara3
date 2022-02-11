@@ -151,6 +151,21 @@ TLDR 2 - any documentation that you do want to add to the ticket, keep it in the
 ### Release Process
 * Store the latest version of Jira and Miro in https://github.com/JRSmiffy/jara3/tree/main/docs
 
+### Coding Standards
+* When refactoring (at the end of TDD) or when reviewing code as part of a pull request, ensure the following standards are upheld:
+    * TDV-inspired coding standards:
+        * Code in comments should be removed
+        * Add appropriate exception handling and error handling
+        * Remove unused endpoints
+        * Organise package structure
+        * Ensure variables are named according to their purpose
+        * Add descriptive code comments
+        * Add logging in code - remove System.out.println
+        * Remove any copy/pasted code and refactor
+        * Remove any hardcoded values
+        * Make variables final - including in method parameters if they are not changing
+* Set aside 15 mins to go through these when you review a PR.
+
 ### Test-Driven Design
 * TDD is a must when creating methods, especially in Java-land.
 * Don't test private methods, as a rule.
