@@ -20,11 +20,14 @@ const login = async (req, res = response) => {
   });
 };
 
-const test = async (req, res = response) => {
+const authenticate = async (req, res = response) => {
   console.log("HIT JRS");
   console.log(eurekaRegistry.urlUserService);
 
-  await fetch(eurekaRegistry.urlUserService+"login?username=smith&password=james", {
+  const { email, password } = req.body;
+  console.log(email);
+  console.log(password);
+  await fetch(eurekaRegistry.urlUserService+"authenticate/"+email+"/"+password, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -45,5 +48,5 @@ const test = async (req, res = response) => {
 
 module.exports = {
   login,
-  test
+  authenticate
 };

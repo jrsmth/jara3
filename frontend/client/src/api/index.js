@@ -35,9 +35,10 @@ export async function searchArtworks({ keyword }) {
     });
 }
 
-export async function test() {
-  return await fetch("/api/auth/test", {
-    method: "GET",
+export async function authenticate({email, password}) {
+  return await fetch("/api/auth/authenticate", {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
     headers: { "Content-Type": "application/json" },
   })
     .then((response) => {

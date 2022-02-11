@@ -65,6 +65,13 @@ exports.registerWithEureka = function(appName, PORT) {
     process.on('SIGINT', exitHandler.bind(null, {exit:true}));
 
     function getNextServerFromEureka(appId){
-        return client.getInstancesByAppId(appId)[0].homePageUrl;
+        let url = "";
+        try{
+            url = client.getInstancesByAppId(appId)[0].homePageUrl;
+        } catch (err) {
+            console.log(err);
+        } finally {
+            return url;
+        }
     }
 };
