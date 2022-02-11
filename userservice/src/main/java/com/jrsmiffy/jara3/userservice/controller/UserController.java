@@ -1,6 +1,7 @@
 package com.jrsmiffy.jara3.userservice.controller;
 
 import com.jrsmiffy.jara3.userservice.model.User;
+import com.jrsmiffy.jara3.userservice.repository.UserRepository;
 import com.jrsmiffy.jara3.userservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -15,6 +17,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     /** Register New User */
     @RequestMapping(path = "/register", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -37,6 +42,18 @@ public class UserController {
         return ResponseEntity.ok(returnObject);
 
     }
+
+    /** Get All Users - Dev Purposes */
+    @RequestMapping(path = "/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody ResponseEntity<Map<HttpStatus, Object>> getAllUsers() {
+
+        final Map<HttpStatus, Object> returnObject = new HashMap<>();
+        returnObject.put(HttpStatus.OK, userRepository.findAll());
+
+        return ResponseEntity.ok(returnObject);
+
+    }
+
 
 
 

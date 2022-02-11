@@ -1,6 +1,5 @@
 package com.jrsmiffy.jara3.userservice.service;
 
-import com.jrsmiffy.jara3.userservice.exception.DuplicateUserException;
 import com.jrsmiffy.jara3.userservice.exception.InvalidUserCredentialsException;
 import com.jrsmiffy.jara3.userservice.model.User;
 import com.jrsmiffy.jara3.userservice.repository.UserRepository;
@@ -35,18 +34,27 @@ public class UserService {
         final Map<HttpStatus, Object> returnObject = new HashMap<>();
 
         try{
-            // Does this user already exist?
-            if(Math.random() < 0.5)
-                throw new DuplicateUserException(String.format("The username '%s' already exists", potentialUser.getUsername()));
+            // Reject registration if user is invalid
+            validateCredentials(potentialUser.getUsername(), potentialUser.getPassword(), "Registration");
 
-            // Save the new user
-            // TODO - save user
-            returnObject.put(HttpStatus.OK, potentialUser);
-        } catch(DuplicateUserException e){
+            // Reject registration if user exists already
+            if(!userRepository.findByUsername(potentialUser.getUsername()).isEmpty()){
+                throw new InvalidUserCredentialsException(String.format("Registration Failed: user '%s' already exists", potentialUser.getUsername()));
+            }
+
+        } catch(InvalidUserCredentialsException e){
             returnObject.put(HttpStatus.CONFLICT, e.getMessage());
-        } finally{
+            log.info(e.getMessage());
             return returnObject;
         }
+
+        userRepository.save(potentialUser);
+        log.info(String.format("Registration Successful: user '%s' saved", potentialUser.getUsername()));
+
+        returnObject.put(HttpStatus.OK, potentialUser);
+
+        return returnObject;
+
     }
 
     /** Authenticate User */
@@ -55,10 +63,9 @@ public class UserService {
         final Map<HttpStatus, Object> returnObject = new HashMap<>();
         final Optional<User> potentialUser;
 
-        // Reject authentication if user is invalid or if username doesn't exist
         try{
             // Reject authentication if user is invalid
-            validateCredentials(username, password);
+            validateCredentials(username, password, "Authentication");
 
             // Reject authentication if username doesn't exist
             potentialUser = userRepository.findByUsername(username);
@@ -84,14 +91,13 @@ public class UserService {
     }
 
     /** Validate Credentials */
-    private void validateCredentials(String username, String password){
+    private void validateCredentials(String username, String password, String messageType){
 
         // User is invalid if it missing a username or password
         if(isEmpty(username) | isEmpty(password))
-            throw new InvalidUserCredentialsException("Authentication Failed: missing username or password");
+            throw new InvalidUserCredentialsException(String.format("%s Failed: missing username or password", messageType));
 
-        // more checks required
-
+        // TODO: add more checks
     }
 
 }

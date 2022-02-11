@@ -8,6 +8,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
@@ -15,8 +17,10 @@ import org.springframework.http.HttpStatus;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,6 +30,9 @@ class UserServiceTest {
     private UserRepository userRepository;
 
     private UserService underTest;
+
+    @Captor
+    private ArgumentCaptor<User> userArgumentCaptor;
 
     @BeforeEach
     void setUp() {
@@ -37,7 +44,7 @@ class UserServiceTest {
     @DisplayName("Should Authenticate User")
     void shouldAuthenticateUser(String username, String password) {
 
-        User potentialUser = new User(0L, username, password, true);
+        User potentialUser = new User(UUID.randomUUID(), username, password, true);
 
         // Expected
         final Map<HttpStatus, Object> expected = new HashMap<>();
@@ -109,7 +116,7 @@ class UserServiceTest {
     @DisplayName("Should Not Authenticate User Because Password Doesn't Match")
     void shouldNotAuthenticateUserBecausePasswordDoesntMatch(String username, String password) {
 
-        User potentialUser = new User(0L, username, "f4k3PAssw0rd", true);
+        User potentialUser = new User(UUID.randomUUID(), username, "f4k3PAssw0rd", true);
 
         // Expected
         final Map<HttpStatus, Object> expected = new HashMap<>();
@@ -126,6 +133,80 @@ class UserServiceTest {
 
         // Then
         assertThat(returnObject).isEqualTo(expected);
+    }
+
+    @ParameterizedTest
+    @CsvSource({"smith,james", "flanagan,owen", "thobhani,ankush", "marikar,umar"})
+    @DisplayName("Should Register User")
+    void shouldRegisterUser(String username, String password) {
+
+        // Given a potential user
+        User potentialUser = new User(UUID.randomUUID(), username, password, true);
+
+        final Map<HttpStatus, Object> expected = new HashMap<>();
+        expected.put(HttpStatus.OK, potentialUser);
+
+        // When
+        when(userRepository.findByUsername(username))
+                .thenReturn(Optional.empty());
+
+        Map<HttpStatus, Object> returnObject = underTest.register(potentialUser);
+
+        // Then
+        then(userRepository).should().save(userArgumentCaptor.capture());
+        User userArgumentCaptorValue = userArgumentCaptor.getValue();
+
+        assertThat(userArgumentCaptorValue).isEqualTo(potentialUser);
+        assertThat(returnObject).isEqualTo(expected);
+
+    }
+
+    @ParameterizedTest
+    @CsvSource({"smith,james", "flanagan,owen", "thobhani,ankush", "marikar,umar"})
+    @DisplayName("Should Not Register User Because User Already Exists")
+    void shouldNotRegisterUserBecauseUserAlreadyExists(String username, String password) {
+
+        // Given a potential user
+        User potentialUser = new User(UUID.randomUUID(), username, password, true);
+
+        final Map<HttpStatus, Object> expected = new HashMap<>();
+        expected.put(HttpStatus.CONFLICT, String.format("Registration Failed: user '%s' already exists", potentialUser.getUsername()));
+
+        // When
+        when(userRepository.findByUsername(username))
+                .thenReturn(Optional.of(potentialUser));
+
+        Map<HttpStatus, Object> returnObject = underTest.register(potentialUser);
+
+        // Then
+        assertThat(returnObject).isEqualTo(expected);
+
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "smith,,Registration Failed: missing username or password",
+            ",james,Registration Failed: missing username or password",
+            "flanagan,,Registration Failed: missing username or password",
+            ",owen,Registration Failed: missing username or password",
+            ",,Registration Failed: missing username or password",
+            // add more checks here
+    })
+    @DisplayName("Should Not Register User Because Credentials Are Invalids")
+    void shouldNotRegisterUserBecauseCredentialsAreInvalids(String username, String password, String reason) {
+
+        // Given a potential user
+        User potentialUser = new User(UUID.randomUUID(), username, password, true);
+
+        final Map<HttpStatus, Object> expected = new HashMap<>();
+        expected.put(HttpStatus.CONFLICT, reason);
+
+        // When
+        Map<HttpStatus, Object> returnObject = underTest.register(potentialUser);
+
+        // Then
+        assertThat(returnObject).isEqualTo(expected);
+
     }
 
 
