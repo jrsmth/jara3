@@ -91,7 +91,7 @@ public class UserService {
     }
 
     /** Validate Credentials */
-    private void validateCredentials(String username, String password, String messageType){
+    private void validateCredentials(final String username, final String password, final String messageType){
 
         // User is invalid if it missing a username or password
         if(isEmpty(username) | isEmpty(password))

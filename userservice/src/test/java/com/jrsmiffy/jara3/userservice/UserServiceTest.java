@@ -42,7 +42,7 @@ class UserServiceTest {
     @ParameterizedTest
     @CsvSource({"smith,james", "flanagan,owen", "thobhani,ankush", "marikar,umar"})
     @DisplayName("Should Authenticate User")
-    void shouldAuthenticateUser(String username, String password) {
+    void shouldAuthenticateUser(final String username, final String password) {
 
         User potentialUser = new User(UUID.randomUUID(), username, password, true);
 
@@ -73,7 +73,7 @@ class UserServiceTest {
             // add more checks here
     })
     @DisplayName("Should Not Authenticate User Because Credentials Are Invalid")
-    void shouldNotAuthenticateUserBecauseCredentialsAreInvalid(String username, String password, String reason) {
+    void shouldNotAuthenticateUserBecauseCredentialsAreInvalid(final String username, final String password, final String reason) {
 
         // Expected
         final Map<HttpStatus, Object> expected = new HashMap<>();
@@ -92,7 +92,7 @@ class UserServiceTest {
     @ParameterizedTest
     @CsvSource({"smith,james", "flanagan,owen", "thobhani,ankush", "marikar,umar"})
     @DisplayName("Should Not Authenticate User Because User Doesn't Exist")
-    void shouldNotAuthenticateUserBecauseUserDoesntExist(String username, String password) {
+    void shouldNotAuthenticateUserBecauseUserDoesntExist(final String username, final String password) {
 
         // Expected
         final Map<HttpStatus, Object> expected = new HashMap<>();
@@ -114,7 +114,7 @@ class UserServiceTest {
     @ParameterizedTest
     @CsvSource({"smith,james", "flanagan,owen", "thobhani,ankush", "marikar,umar"})
     @DisplayName("Should Not Authenticate User Because Password Doesn't Match")
-    void shouldNotAuthenticateUserBecausePasswordDoesntMatch(String username, String password) {
+    void shouldNotAuthenticateUserBecausePasswordDoesntMatch(final String username, final String password) {
 
         User potentialUser = new User(UUID.randomUUID(), username, "f4k3PAssw0rd", true);
 
@@ -138,7 +138,7 @@ class UserServiceTest {
     @ParameterizedTest
     @CsvSource({"smith,james", "flanagan,owen", "thobhani,ankush", "marikar,umar"})
     @DisplayName("Should Register User")
-    void shouldRegisterUser(String username, String password) {
+    void shouldRegisterUser(final String username, final String password) {
 
         // Given a potential user
         User potentialUser = new User(UUID.randomUUID(), username, password, true);
@@ -164,7 +164,7 @@ class UserServiceTest {
     @ParameterizedTest
     @CsvSource({"smith,james", "flanagan,owen", "thobhani,ankush", "marikar,umar"})
     @DisplayName("Should Not Register User Because User Already Exists")
-    void shouldNotRegisterUserBecauseUserAlreadyExists(String username, String password) {
+    void shouldNotRegisterUserBecauseUserAlreadyExists(final String username, final String password) {
 
         // Given a potential user
         User potentialUser = new User(UUID.randomUUID(), username, password, true);
@@ -193,7 +193,7 @@ class UserServiceTest {
             // add more checks here
     })
     @DisplayName("Should Not Register User Because Credentials Are Invalids")
-    void shouldNotRegisterUserBecauseCredentialsAreInvalids(String username, String password, String reason) {
+    void shouldNotRegisterUserBecauseCredentialsAreInvalids(final String username, final String password, final String reason) {
 
         // Given a potential user
         User potentialUser = new User(UUID.randomUUID(), username, password, true);
