@@ -46,7 +46,32 @@ const authenticate = async (req, res = response) => {
 
 };
 
+const register = async (req, res = response) => {
+  console.log(req.body);
+  const {email, password} = req.body;
+  console.log(JSON.stringify({ "username": email, "password": password }));
+  await fetch(eurekaRegistry.urlUserService+"register", {
+      method: "POST",
+      body: JSON.stringify({ "username": email, "password": password }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+  }).then(async function (resp) {
+    // resp.json();
+    const data = await resp.json();
+    console.log(data);
+    if (resp.status >= 400) {
+      throw new Error("Bad response from server");
+    }
+    res.json(data);
+  }).catch( function (err) {
+    console.error(err);
+  })
+
+};
+
 module.exports = {
   login,
-  authenticate
+  authenticate,
+  register
 };
