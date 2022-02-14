@@ -29,10 +29,9 @@ function Login({ onLoginSuccessful }) {
       setHasResponse(true);
     } 
     else {
-      const { name, token } = loginResult;
       // Save user IDs on local storage
-      localStorage.setItem("name", name);
-      localStorage.setItem("token", token);
+      localStorage.setItem("name", response.username);
+      localStorage.setItem("token", "A JWT token to keep the user logged in");
       localStorage.setItem("email", "");
       localStorage.setItem("password", "");
       onLoginSuccessful();
