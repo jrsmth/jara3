@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Container, Form, Button, Alert, Card } from "react-bootstrap";
 import { authenticate, register} from "../../api";
+import Footer from "../footer";
 import "../../css/login.css";
 import j3Logo from '../../res/j3_logo.png';
 
@@ -90,102 +91,33 @@ function Login({ onLoginSuccessful }) {
   };
 
   return (
-    <body>
-      <div id="background-img"></div>
-      <div id="background-overlay"></div>
-      <div id="container-login">
-        <img id="logo" src={j3Logo} alt=""/>
-        <p id="slogan"> a jira-inspired to-do list</p>
-        <Container id="container-login-inner"> 
-          {toggleAction != "Login" && (
-          <Card className="mt-5">
-            <Card.Body>
-              <Form className="w-100" onSubmit={onSubmitLogin}>
-                <Form.Group controlId="formBasicUsername">
-                  <Form.Control
-                    className="input-login"
-                    type="username"
-                    placeholder="Username"
-                    onChange={onUsernameChange}
-                    value={username}
-                  />
-                </Form.Group>
-
-                <Form.Group controlId="formBasicPassword">
-                  <Form.Control
-                    className="input-login"
-                    type="password"
-                    placeholder="Password"
-                    onChange={onPasswordChange}
-                    value={password}
-                  />
-                </Form.Group>
-                {hasResponse && (
-                  <Alert variant={"danger"}>
-                    {response}
-                  </Alert>
-                )}
-                <Button variant="primary" type="submit">
-                  Login
-                </Button>
-              </Form>
-            </Card.Body>
-          </Card>
-          )}
-
-          {toggleAction != "Register" && (
-          <Card className="mt-5">
-            <Card.Body>
-              <Form className="w-100" onSubmit={onSubmitRegister}>
-                <Form.Group controlId="formBasicUsername">
-                  <Form.Control
-                    className="input-login"
-                    type="username"
-                    placeholder="Username"
-                    onChange={onUsernameChange}
-                    value={username}
-                  />
-                </Form.Group>
-
-                <Form.Group controlId="formBasicPassword">
-                  <Form.Control
-                    className="input-login"
-                    type="password"
-                    placeholder="Password"
-                    onChange={onPasswordChange}
-                    value={password}
-                  />
-                </Form.Group>
-                {hasResponse && (
-                  <Alert variant={"danger"}>
-                    {response}
-                  </Alert>
-                )}
-                <Button variant="primary" type="submit">
-                  Register
-                </Button>
-              </Form>
-            </Card.Body>
-          </Card>
-          )}
-
-          <Card className="mt-5">
-            <Card.Body>
-              <Form className="w-100" onSubmit={onSubmitToggle}>
-                <Form.Group controlId="formBasicToggle">
-                  <Form.Control
-                    type="hidden"
-                    value={toggleAction}
-                  />
-                </Form.Group>
-                <Button variant="primary" type="submit">
-                  {toggleMessage}
-                </Button>
-              </Form>
-            </Card.Body>
-          </Card>
-        </Container>
-      </div>
+    <body>  
+        <div id="background-img"></div>
+        <div id="background-overlay"></div>
+        <div id="container-login">
+            <img id="logo" src={j3Logo} alt=""/>
+            <p id="slogan"> a jira-inspired to-do list</p>
+            <div id="container-login-inner">
+                <div class="form">
+                    <form class="register-form" onSubmit={onSubmitRegister}>
+                        <input class="input-register" type="text" placeholder="Username" onChange={onUsernameChange} value={username}/>
+                        <input class="input-register" type="password" placeholder="Password" onChange={onPasswordChange} value={password}/>
+                        <button type="submit">Create</button>
+                        <p class="message">Already registered? <a href="#" onclick="toggleError(false)">Sign In</a></p>
+                    </form>
+                    <form class="login-form" onSubmit={onSubmitLogin}>
+                        <input class="input-login" type="text" placeholder="Username" onChange={onUsernameChange} value={username}/>
+                        <input class="input-login" type="password" placeholder="Password" onChange={onPasswordChange} value={password}/>
+                        <button id="btn-login" type="submit">Login</button>
+                        <p class="message">Not registered? <a href="#" onclick="toggleError(false)">Create an account</a></p>
+                    </form>
+                </div>
+                  <div id="login-error" class="error alert alert-danger"> 
+                      <i class="fa fa-exclamation-circle" aria-hidden="true"></i> <span> Invalid username or password </span>
+                  </div>
+            </div>
+        </div>
+        <Footer/>
     </body>
   );
 }
