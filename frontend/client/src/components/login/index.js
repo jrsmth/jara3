@@ -1,22 +1,22 @@
 import React, { useState } from "react";
 import { Container, Form, Button, Alert, Card } from "react-bootstrap";
-import { login, test, authenticate, register} from "../../api";
+import { authenticate, register} from "../../api";
 
 function Login({ onLoginSuccessful }) {
-  const [email, setEmail] = useState(localStorage.getItem("email"));
+  const [username, setUsername] = useState(localStorage.getItem("username"));
   const [password, setPassword] = useState(localStorage.getItem("password"));
   const [hasResponse, setHasResponse] = useState(false);
   const [response, setResponse] = useState("");
   const [toggleAction, setToggleAction] = useState("Register");
   const [toggleMessage, setToggleMessage] = useState("Don't have an account? Sign up here");
 
-  const onEmailChange = (event) => setEmail(event.target.value);
+  const onUsernameChange = (event) => setUsername(event.target.value);
   const onPasswordChange = (event) => setPassword(event.target.value);
 
   const onSubmitLogin = async (event) => {
     event.preventDefault();
     setHasResponse(false);
-    const loginResult = await authenticate({ email, password });
+    const loginResult = await authenticate({ username, password });
     console.log(loginResult);
     
     var status = Object.keys(loginResult)[0];
@@ -32,7 +32,7 @@ function Login({ onLoginSuccessful }) {
       // Save user IDs on local storage
       localStorage.setItem("name", response.username);
       localStorage.setItem("token", "A JWT token to keep the user logged in");
-      localStorage.setItem("email", "");
+      localStorage.setItem("username", "");
       localStorage.setItem("password", "");
       onLoginSuccessful();
     }
@@ -41,7 +41,7 @@ function Login({ onLoginSuccessful }) {
   const onSubmitRegister = async (event) => {
     event.preventDefault();
     setHasResponse(false);
-    const registrationResult = await register({ email, password });
+    const registrationResult = await register({ username, password });
     console.log(registrationResult);
     
     var status = Object.keys(registrationResult)[0];
@@ -54,7 +54,7 @@ function Login({ onLoginSuccessful }) {
     } 
     else {
       setResponse("Registration Successful");
-      localStorage.setItem("email", email);
+      localStorage.setItem("username", username);
       localStorage.setItem("password", password);
       window.location.reload(false);
     }
@@ -68,7 +68,7 @@ function Login({ onLoginSuccessful }) {
       case "Login":
         setToggleAction("Register");
         setToggleMessage("Don't have an account? Register here");
-        localStorage.setItem("email", "");
+        localStorage.setItem("username", "");
         localStorage.setItem("password", "");
         break;
       case "Register":
@@ -78,12 +78,12 @@ function Login({ onLoginSuccessful }) {
     }
 
     // Reset form when toggled
-    setEmail("");
+    setUsername("");
     setPassword("");
     setHasResponse(false);
     setResponse("");
 
-    console.log(localStorage.getItem("email"));
+    console.log(localStorage.getItem("username"));
     console.log(localStorage.getItem("password"));
   };
 
@@ -94,13 +94,13 @@ function Login({ onLoginSuccessful }) {
         <Card.Header as="h1">Login</Card.Header>
         <Card.Body>
           <Form className="w-100" onSubmit={onSubmitLogin}>
-            <Form.Group controlId="formBasicEmail">
-              <Form.Label>Email Address</Form.Label>
+            <Form.Group controlId="formBasicUsername">
+              <Form.Label>Username</Form.Label>
               <Form.Control
-                type="email"
-                placeholder="Enter email"
-                onChange={onEmailChange}
-                value={email}
+                type="username"
+                placeholder="Enter username"
+                onChange={onUsernameChange}
+                value={username}
               />
             </Form.Group>
 
@@ -131,17 +131,14 @@ function Login({ onLoginSuccessful }) {
         <Card.Header as="h1">Register</Card.Header>
         <Card.Body>
           <Form className="w-100" onSubmit={onSubmitRegister}>
-            <Form.Group controlId="formBasicEmail">
-              <Form.Label>Email Address</Form.Label>
+            <Form.Group controlId="formBasicUsername">
+              <Form.Label>Username</Form.Label>
               <Form.Control
-                type="email"
-                placeholder="Enter email"
-                onChange={onEmailChange}
-                value={email}
+                type="username"
+                placeholder="Enter username"
+                onChange={onUsernameChange}
+                value={username}
               />
-              <Form.Text className="text-muted">
-                We'll never share your email with anyone else.
-              </Form.Text>
             </Form.Group>
 
             <Form.Group controlId="formBasicPassword">

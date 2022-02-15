@@ -2,38 +2,18 @@ const { response } = require("express");
 const fetch = require("cross-fetch");
 const eurekaRegistry = require('../models/eureka-registry').eurekaRegistry;
 
-const login = async (req, res = response) => {
-  const { email, password } = req.body;
-
-  // Ideally search the user in a database,
-  // throw an error if not found.
-  if (password !== "1234") {
-    return res.status(400).json({
-      msg: "User / Password are incorrect",
-    });
-  }
-
-  res.json({
-    name: "Test User",
-    token: "A JWT token to keep the user logged in.",
-    msg: "Successful login",
-  });
-};
-
 const authenticate = async (req, res = response) => {
-  console.log("HIT JRS");
   console.log(eurekaRegistry.urlUserService);
 
-  const { email, password } = req.body;
-  console.log(email);
+  const { username, password } = req.body;
+  console.log(username);
   console.log(password);
-  await fetch(eurekaRegistry.urlUserService+"authenticate/"+email+"/"+password, {
+  await fetch(eurekaRegistry.urlUserService+"authenticate/"+username+"/"+password, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
   }).then(async function (resp) {
-    // resp.json();
     const data = await resp.json();
     console.log(data);
     if (resp.status >= 400) {
@@ -48,16 +28,15 @@ const authenticate = async (req, res = response) => {
 
 const register = async (req, res = response) => {
   console.log(req.body);
-  const {email, password} = req.body;
-  console.log(JSON.stringify({ "username": email, "password": password }));
+  const {username, password} = req.body;
+  console.log(JSON.stringify({ "username": username, "password": password }));
   await fetch(eurekaRegistry.urlUserService+"register", {
       method: "POST",
-      body: JSON.stringify({ "username": email, "password": password }),
+      body: JSON.stringify({ "username": username, "password": password }),
       headers: {
         "Content-Type": "application/json",
       },
   }).then(async function (resp) {
-    // resp.json();
     const data = await resp.json();
     console.log(data);
     if (resp.status >= 400) {
@@ -71,7 +50,6 @@ const register = async (req, res = response) => {
 };
 
 module.exports = {
-  login,
   authenticate,
   register
 };
