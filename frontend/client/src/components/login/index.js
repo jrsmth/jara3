@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Container, Form, Button, Alert, Card } from "react-bootstrap";
 import { authenticate, register} from "../../api";
+import "../../css/login.css";
+import j3Logo from '../../res/j3_logo.png';
 
 function Login({ onLoginSuccessful }) {
   const [username, setUsername] = useState(localStorage.getItem("username"));
@@ -88,97 +90,103 @@ function Login({ onLoginSuccessful }) {
   };
 
   return (
-    <Container>
-      {toggleAction != "Login" && (
-      <Card className="mt-5">
-        <Card.Header as="h1">Login</Card.Header>
-        <Card.Body>
-          <Form className="w-100" onSubmit={onSubmitLogin}>
-            <Form.Group controlId="formBasicUsername">
-              <Form.Label>Username</Form.Label>
-              <Form.Control
-                type="username"
-                placeholder="Enter username"
-                onChange={onUsernameChange}
-                value={username}
-              />
-            </Form.Group>
+    <body>
+      <div id="background-img"></div>
+      <div id="background-overlay"></div>
+      <div id="container-login">
+        <img id="logo" src={j3Logo} alt=""/>
+        <p id="slogan"> a jira-inspired to-do list</p>
+        <Container id="container-login-inner"> 
+          {toggleAction != "Login" && (
+          <Card className="mt-5">
+            <Card.Body>
+              <Form className="w-100" onSubmit={onSubmitLogin}>
+                <Form.Group controlId="formBasicUsername">
+                  <Form.Control
+                    className="input-login"
+                    type="username"
+                    placeholder="Username"
+                    onChange={onUsernameChange}
+                    value={username}
+                  />
+                </Form.Group>
 
-            <Form.Group controlId="formBasicPassword">
-              <Form.Label>Password</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder="Password"
-                onChange={onPasswordChange}
-                value={password}
-              />
-            </Form.Group>
-            {hasResponse && (
-              <Alert variant={"danger"}>
-                {response}
-              </Alert>
-            )}
-            <Button variant="primary" type="submit">
-              Login
-            </Button>
-          </Form>
-        </Card.Body>
-      </Card>
-      )}
+                <Form.Group controlId="formBasicPassword">
+                  <Form.Control
+                    className="input-login"
+                    type="password"
+                    placeholder="Password"
+                    onChange={onPasswordChange}
+                    value={password}
+                  />
+                </Form.Group>
+                {hasResponse && (
+                  <Alert variant={"danger"}>
+                    {response}
+                  </Alert>
+                )}
+                <Button variant="primary" type="submit">
+                  Login
+                </Button>
+              </Form>
+            </Card.Body>
+          </Card>
+          )}
 
-      {toggleAction != "Register" && (
-      <Card className="mt-5">
-        <Card.Header as="h1">Register</Card.Header>
-        <Card.Body>
-          <Form className="w-100" onSubmit={onSubmitRegister}>
-            <Form.Group controlId="formBasicUsername">
-              <Form.Label>Username</Form.Label>
-              <Form.Control
-                type="username"
-                placeholder="Enter username"
-                onChange={onUsernameChange}
-                value={username}
-              />
-            </Form.Group>
+          {toggleAction != "Register" && (
+          <Card className="mt-5">
+            <Card.Body>
+              <Form className="w-100" onSubmit={onSubmitRegister}>
+                <Form.Group controlId="formBasicUsername">
+                  <Form.Control
+                    className="input-login"
+                    type="username"
+                    placeholder="Username"
+                    onChange={onUsernameChange}
+                    value={username}
+                  />
+                </Form.Group>
 
-            <Form.Group controlId="formBasicPassword">
-              <Form.Label>Password</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder="Password"
-                onChange={onPasswordChange}
-                value={password}
-              />
-            </Form.Group>
-            {hasResponse && (
-              <Alert variant={"danger"}>
-                {response}
-              </Alert>
-            )}
-            <Button variant="primary" type="submit">
-              Register
-            </Button>
-          </Form>
-        </Card.Body>
-      </Card>
-      )}
+                <Form.Group controlId="formBasicPassword">
+                  <Form.Control
+                    className="input-login"
+                    type="password"
+                    placeholder="Password"
+                    onChange={onPasswordChange}
+                    value={password}
+                  />
+                </Form.Group>
+                {hasResponse && (
+                  <Alert variant={"danger"}>
+                    {response}
+                  </Alert>
+                )}
+                <Button variant="primary" type="submit">
+                  Register
+                </Button>
+              </Form>
+            </Card.Body>
+          </Card>
+          )}
 
-      <Card className="mt-5">
-        <Card.Body>
-          <Form className="w-100" onSubmit={onSubmitToggle}>
-            <Form.Group controlId="formBasicToggle">
-              <Form.Control
-                type="hidden"
-                value={toggleAction}
-              />
-            </Form.Group>
-            <Button variant="primary" type="submit">
-              {toggleMessage}
-            </Button>
-          </Form>
-        </Card.Body>
-      </Card>
-    </Container>
+          <Card className="mt-5">
+            <Card.Body>
+              <Form className="w-100" onSubmit={onSubmitToggle}>
+                <Form.Group controlId="formBasicToggle">
+                  <Form.Control
+                    type="hidden"
+                    value={toggleAction}
+                  />
+                </Form.Group>
+                <Button variant="primary" type="submit">
+                  {toggleMessage}
+                </Button>
+              </Form>
+            </Card.Body>
+          </Card>
+        </Container>
+      </div>
+    </body>
   );
 }
 
