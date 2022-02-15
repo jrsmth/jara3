@@ -1,21 +1,3 @@
-export async function login({ email, password }) {
-  return await fetch("/api/auth/login", {
-    method: "POST",
-    body: JSON.stringify({ email, password }),
-    headers: { "Content-Type": "application/json" },
-  })
-    .then((response) => {
-      // If request is not successful, display error message
-      if (!response.ok) {
-        throw new Error("HTTP status " + response.status);
-      }
-
-      return response.json();
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-}
 
 export async function searchArtworks({ keyword }) {
   return await fetch(`/api/homepage/getArtworks/${keyword}`, {
@@ -35,9 +17,28 @@ export async function searchArtworks({ keyword }) {
     });
 }
 
-export async function test() {
-  return await fetch("/api/auth/test", {
-    method: "GET",
+export async function authenticate({username, password}) {
+  return await fetch("/api/auth/authenticate", {
+    method: "POST",
+    body: JSON.stringify({ username, password }),
+    headers: { "Content-Type": "application/json" },
+  })
+    .then((response) => {
+      // If request is not successful, display error message
+      if (!response.ok) {
+        throw new Error("HTTP status " + response.status);
+      }
+      return response.json();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
+export async function register({username, password}) {
+  return await fetch("/api/auth/register", {
+    method: "POST",
+    body: JSON.stringify({ username, password }),
     headers: { "Content-Type": "application/json" },
   })
     .then((response) => {

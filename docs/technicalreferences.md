@@ -176,6 +176,13 @@ TLDR 2 - any documentation that you do want to add to the ticket, keep it in the
     * make sure you the ```spring-boot-starter-data-jpa``` dependency and not the ```spring-data-jpa``` when connecting to a database, using a JPA repository.
         * I kept facing a ```Consider defining a bean named 'entityManagerFactory' in your configuration``` exception with the latter dependency.
         * source: [stack overflow](https://stackoverflow.com/questions/41170661/spring-data-jpa-consider-defining-a-bean-named-entitymanagerfactory-in-your/41178250)
+* **Minified React Error #130**
+    * change the version of ```"react-bootstrap": "^2.1.2" ``` to ``` "react-bootstrap": "^1.5.2" ``` in ```client/package.json``` and run ```npm install``` in ```/client```
+    * when you get errors in the client (visible in the browser js console), you can view more detailed logs in the terminal, if you run the client on its own
+        * ``` cd frontend/client ```
+        * ``` export PORT=9000 ```
+        * ``` npm start ```
+
 
 <br>
 
