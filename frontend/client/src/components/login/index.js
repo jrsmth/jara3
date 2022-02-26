@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Container, Form, Button, Alert, Card } from "react-bootstrap";
 import { authenticate, register} from "../../api";
 import Footer from "../footer";
+import Header from "../header"
 import "../../css/login.css";
 import j3Logo from '../../res/j3_logo.png';
 
@@ -90,8 +90,29 @@ function Login({ onLoginSuccessful }) {
     console.log(localStorage.getItem("password"));
   };
 
+  // Toggle Login vs Sign Up (on-screen)
+  // $('.message a').click(function(){
+  //     $('form').animate({height: "toggle", opacity: "toggle"}, 500);
+  //     $(".error").hide();
+  //     $('.input-login').val('');
+  //     $('.input-register').val('');
+  // }); // remove the JQUERY
+
+  // $('#btn-login').click(function(){ $(".error").show(); }); // remove the JQUERY
+
+  // function toggleError(condition){
+  //   if(condition){
+  //       document.getElementById("login-error").style.display = "block";
+  //       document.getElementsByClassName("form")[0].style.padding = "45px 45px 16px 45px";
+  //   } else{
+  //       document.getElementById("login-error").style.display = "none";
+  //       document.getElementsByClassName("form")[0].style.padding = "45px 45px 60px 45px";
+  //   }
+  // }
+
   return (
-    <body>  
+    <html> 
+        <Header/>
         <div id="background-img"></div>
         <div id="background-overlay"></div>
         <div id="container-login">
@@ -103,13 +124,13 @@ function Login({ onLoginSuccessful }) {
                         <input class="input-register" type="text" placeholder="Username" onChange={onUsernameChange} value={username}/>
                         <input class="input-register" type="password" placeholder="Password" onChange={onPasswordChange} value={password}/>
                         <button type="submit">Create</button>
-                        <p class="message">Already registered? <a href="#" onclick="toggleError(false)">Sign In</a></p>
+                        <p class="message">Already registered? <a href="#">Sign In</a></p>
                     </form>
                     <form class="login-form" onSubmit={onSubmitLogin}>
                         <input class="input-login" type="text" placeholder="Username" onChange={onUsernameChange} value={username}/>
                         <input class="input-login" type="password" placeholder="Password" onChange={onPasswordChange} value={password}/>
                         <button id="btn-login" type="submit">Login</button>
-                        <p class="message">Not registered? <a href="#" onclick="toggleError(false)">Create an account</a></p>
+                        <p class="message">Not registered? <a href="#">Create an account</a></p>
                     </form>
                 </div>
                   <div id="login-error" class="error alert alert-danger"> 
@@ -118,7 +139,7 @@ function Login({ onLoginSuccessful }) {
             </div>
         </div>
         <Footer/>
-    </body>
+    </html>
   );
 }
 

@@ -73,6 +73,7 @@ body {
     font-size: 12px;
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.05), 0 1px 1px 0 rgba(0, 0, 0, 0.05);
     border-radius: 20px;
+    color: #4A586D;
 }
 
 .form button {
@@ -116,7 +117,7 @@ body {
 }
 
 .alert {
-    display: none;
+    /* display: none; */
     padding: 15px;
     font-size: 12px;
     margin: 0 auto;
