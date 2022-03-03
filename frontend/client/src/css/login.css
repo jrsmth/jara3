@@ -6,6 +6,7 @@ html{
     color: #4A586D;
     overflow-x: hidden;
     overflow-y: hidden;
+    user-select: none;
 }
 
 body {
@@ -56,12 +57,12 @@ body {
     background-color: #f8f9fb;
 }
 
-.form {
+#form {
     margin: auto;
     padding: 45px 45px 60px 45px;
 }
 
-.form input {
+#form input {
     font-family: "Roboto", sans-serif;
     outline: 0;
     background: #EEEEEE;
@@ -76,7 +77,7 @@ body {
     color: #4A586D;
 }
 
-.form button {
+#form button {
     font-family: "Roboto", sans-serif;
     outline: 0;
     letter-spacing: 1px;
@@ -92,22 +93,23 @@ body {
     border-radius: 20px;
 }
 
-.form button:hover,.form button:active,.form button:focus {
+#form button:hover,.form button:active,.form button:focus {
     background: #172B4D;
 }
 
-.form .message {
+#form .message {
     margin: 15px 0 0 0;
     color: #b3b3b3;
     font-size: 12px;
 }
 
-.form .message a {
+#form .message a {
     color: #0052CC;
     text-decoration: none;
+    cursor: pointer;
 }
 
-.form .register-form {
+#form-register {
     display: none;
 }
 
@@ -116,7 +118,7 @@ body {
     background-color: #FF5630;
 }
 
-.alert {
+#alert {
     /* display: none; */
     padding: 15px;
     font-size: 12px;

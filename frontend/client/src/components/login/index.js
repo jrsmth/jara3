@@ -4,6 +4,7 @@ import Footer from "../footer";
 import Header from "../header"
 import "../../css/login.css";
 import j3Logo from '../../res/j3_logo.png';
+import $ from 'jquery';
 
 function Login({ onLoginSuccessful }) {
   const [username, setUsername] = useState(localStorage.getItem("username"));
@@ -64,39 +65,62 @@ function Login({ onLoginSuccessful }) {
     setHasResponse(true);
   };
 
-  const onSubmitToggle = async (event) => {
-    event.preventDefault();
+  const onSubmitToggle = (toggleAction) => {
 
-    switch(toggleAction){
-      case "Login":
-        setToggleAction("Register");
-        setToggleMessage("Don't have an account? Register here");
-        localStorage.setItem("username", "");
-        localStorage.setItem("password", "");
-        break;
-      case "Register":
-        setToggleAction("Login");
-        setToggleMessage("Already have an account? Login here");
-        break;   
-    }
+    $('form').animate({height: "toggle", opacity: "toggle"}, 500);
+    $(".error").hide();
+    $('.input-login').val('');
+    $('.input-register').val('');
 
-    // Reset form when toggled
-    setUsername("");
-    setPassword("");
-    setHasResponse(false);
-    setResponse("");
+    // document.getElementById("alert").style.display = "none";
 
-    console.log(localStorage.getItem("username"));
-    console.log(localStorage.getItem("password"));
+    // console.log(toggleAction);
+
+    // switch(toggleAction){
+    //   case "LOGIN":
+    //     console.log("1");
+    //     document.getElementById("form-register").style.display = "none";
+    //     document.getElementById("form-login").style.display = "block";
+    //     localStorage.setItem("username", "");
+    //     localStorage.setItem("password", "");
+    //     break;
+    //   case "REGISTER":
+    //     console.log("2");
+    //     document.getElementById("form-register").style.display = "block";
+    //     document.getElementById("form-login").style.display = "none";
+    //     break;   
+    // }
+
+    // switch(toggleAction){
+    //   case "LOGIN":
+    //     setToggleAction("Register");
+    //     setToggleMessage("Don't have an account? Register here");
+    //     localStorage.setItem("username", "");
+    //     localStorage.setItem("password", "");
+    //     break;
+    //   case "REGISTER":
+    //     setToggleAction("Login");
+    //     setToggleMessage("Already have an account? Login here");
+    //     break;   
+    // }
+
+    // // Reset form when toggled
+    // setUsername("");
+    // setPassword("");
+    // setHasResponse(false);
+    // setResponse("");
+
+    // console.log(localStorage.getItem("username"));
+    // console.log(localStorage.getItem("password"));
   };
 
   // Toggle Login vs Sign Up (on-screen)
-  // $('.message a').click(function(){
-  //     $('form').animate({height: "toggle", opacity: "toggle"}, 500);
-  //     $(".error").hide();
-  //     $('.input-login').val('');
-  //     $('.input-register').val('');
-  // }); // remove the JQUERY
+  $('.message a').click(function(){
+      $('form').animate({height: "toggle", opacity: "toggle"}, 500);
+      $(".error").hide();
+      $('.input-login').val('');
+      $('.input-register').val('');
+  }); 
 
   // $('#btn-login').click(function(){ $(".error").show(); }); // remove the JQUERY
 
@@ -119,23 +143,23 @@ function Login({ onLoginSuccessful }) {
             <img id="logo" src={j3Logo} alt=""/>
             <p id="slogan"> a jira-inspired to-do list</p>
             <div id="container-login-inner">
-                <div class="form">
-                    <form class="register-form" onSubmit={onSubmitRegister}>
+                <div id="form">
+                    <form id="form-register" onSubmit={onSubmitRegister}>
                         <input class="input-register" type="text" placeholder="Username" onChange={onUsernameChange} value={username}/>
                         <input class="input-register" type="password" placeholder="Password" onChange={onPasswordChange} value={password}/>
                         <button type="submit">Create</button>
-                        <p class="message">Already registered? <a href="#">Sign In</a></p>
+                        <p class="message">Already registered? <a onClick={() => onSubmitToggle("LOGIN")}>Sign In</a></p>
                     </form>
-                    <form class="login-form" onSubmit={onSubmitLogin}>
+                    <form id="form-login" onSubmit={onSubmitLogin}>
                         <input class="input-login" type="text" placeholder="Username" onChange={onUsernameChange} value={username}/>
                         <input class="input-login" type="password" placeholder="Password" onChange={onPasswordChange} value={password}/>
-                        <button id="btn-login" type="submit">Login</button>
-                        <p class="message">Not registered? <a href="#">Create an account</a></p>
+                        <button id="btn-login" type="submit">Sign In</button>
+                        <p class="message">Not registered? <a onClick={() => onSubmitToggle("REGISTER")}>Create an account</a></p>
                     </form>
                 </div>
-                  <div id="login-error" class="error alert alert-danger"> 
-                      <i class="fa fa-exclamation-circle" aria-hidden="true"></i> <span> Invalid username or password </span>
-                  </div>
+                <div id="alert" class="error alert-danger"> 
+                    <i class="fa fa-exclamation-circle" aria-hidden="true"></i> <span> Invalid username or password </span>
+                </div>
             </div>
         </div>
         <Footer/>
