@@ -119,7 +119,7 @@ body {
 }
 
 #alert {
-    /* display: none; */
+    display: none;
     padding: 15px;
     font-size: 12px;
     margin: 0 auto;

@@ -11,8 +11,6 @@ function Login({ onLoginSuccessful }) {
   const [password, setPassword] = useState(localStorage.getItem("password"));
   const [hasResponse, setHasResponse] = useState(false);
   const [response, setResponse] = useState("");
-  const [toggleAction, setToggleAction] = useState("Register");
-  const [toggleMessage, setToggleMessage] = useState("Don't have an account? Sign up here");
 
   const onUsernameChange = (event) => setUsername(event.target.value);
   const onPasswordChange = (event) => setPassword(event.target.value);
@@ -30,7 +28,8 @@ function Login({ onLoginSuccessful }) {
 
     if (status === "CONFLICT"){
       setResponse(response);
-      setHasResponse(true);
+      toggleAlert(true, response);
+      console.log(response);
     } 
     else {
       // Save user IDs on local storage
@@ -55,6 +54,8 @@ function Login({ onLoginSuccessful }) {
 
     if (status === "CONFLICT"){
       setResponse(response);
+      toggleAlert(true, response);
+      console.log(response);
     } 
     else {
       setResponse("Registration Successful");
@@ -65,74 +66,30 @@ function Login({ onLoginSuccessful }) {
     setHasResponse(true);
   };
 
-  const onSubmitToggle = (toggleAction) => {
-
+  const toggleForm = () => {
+    // perform animation
     $('form').animate({height: "toggle", opacity: "toggle"}, 500);
-    $(".error").hide();
+
+    // hide error message
+    toggleAlert(false, null);
+
+    // reset form
     $('.input-login').val('');
     $('.input-register').val('');
-
-    // document.getElementById("alert").style.display = "none";
-
-    // console.log(toggleAction);
-
-    // switch(toggleAction){
-    //   case "LOGIN":
-    //     console.log("1");
-    //     document.getElementById("form-register").style.display = "none";
-    //     document.getElementById("form-login").style.display = "block";
-    //     localStorage.setItem("username", "");
-    //     localStorage.setItem("password", "");
-    //     break;
-    //   case "REGISTER":
-    //     console.log("2");
-    //     document.getElementById("form-register").style.display = "block";
-    //     document.getElementById("form-login").style.display = "none";
-    //     break;   
-    // }
-
-    // switch(toggleAction){
-    //   case "LOGIN":
-    //     setToggleAction("Register");
-    //     setToggleMessage("Don't have an account? Register here");
-    //     localStorage.setItem("username", "");
-    //     localStorage.setItem("password", "");
-    //     break;
-    //   case "REGISTER":
-    //     setToggleAction("Login");
-    //     setToggleMessage("Already have an account? Login here");
-    //     break;   
-    // }
-
-    // // Reset form when toggled
-    // setUsername("");
-    // setPassword("");
-    // setHasResponse(false);
-    // setResponse("");
-
-    // console.log(localStorage.getItem("username"));
-    // console.log(localStorage.getItem("password"));
+    setUsername("");
+    setPassword("");
   };
 
-  // Toggle Login vs Sign Up (on-screen)
-  $('.message a').click(function(){
-      $('form').animate({height: "toggle", opacity: "toggle"}, 500);
-      $(".error").hide();
-      $('.input-login').val('');
-      $('.input-register').val('');
-  }); 
-
-  // $('#btn-login').click(function(){ $(".error").show(); }); // remove the JQUERY
-
-  // function toggleError(condition){
-  //   if(condition){
-  //       document.getElementById("login-error").style.display = "block";
-  //       document.getElementsByClassName("form")[0].style.padding = "45px 45px 16px 45px";
-  //   } else{
-  //       document.getElementById("login-error").style.display = "none";
-  //       document.getElementsByClassName("form")[0].style.padding = "45px 45px 60px 45px";
-  //   }
-  // }
+  const toggleAlert = (condition, message) => {
+    if(condition){ // show alert
+      document.getElementById("alert").style.display = "block";
+      document.getElementById("form").style.padding = "45px 45px 16px 45px";
+      document.getElementById("alert-message").innerHTML = message;
+    } else{ // hide alert
+      document.getElementById("alert").style.display = "none";
+      document.getElementById("form").style.padding = "45px 45px 60px 45px";
+    }
+  };
 
   return (
     <html> 
@@ -147,18 +104,18 @@ function Login({ onLoginSuccessful }) {
                     <form id="form-register" onSubmit={onSubmitRegister}>
                         <input class="input-register" type="text" placeholder="Username" onChange={onUsernameChange} value={username}/>
                         <input class="input-register" type="password" placeholder="Password" onChange={onPasswordChange} value={password}/>
-                        <button type="submit">Create</button>
-                        <p class="message">Already registered? <a onClick={() => onSubmitToggle("LOGIN")}>Sign In</a></p>
+                        <button type="submit">Register</button>
+                        <p class="message">Already registered? <a onClick={toggleForm}>Sign In</a></p>
                     </form>
                     <form id="form-login" onSubmit={onSubmitLogin}>
                         <input class="input-login" type="text" placeholder="Username" onChange={onUsernameChange} value={username}/>
                         <input class="input-login" type="password" placeholder="Password" onChange={onPasswordChange} value={password}/>
                         <button id="btn-login" type="submit">Sign In</button>
-                        <p class="message">Not registered? <a onClick={() => onSubmitToggle("REGISTER")}>Create an account</a></p>
+                        <p class="message">Not registered? <a onClick={toggleForm}>Register an account</a></p>
                     </form>
                 </div>
                 <div id="alert" class="error alert-danger"> 
-                    <i class="fa fa-exclamation-circle" aria-hidden="true"></i> <span> Invalid username or password </span>
+                    <i class="fa fa-exclamation-circle" aria-hidden="true"></i> <span id="alert-message"> Invalid username or password </span>
                 </div>
             </div>
         </div>
