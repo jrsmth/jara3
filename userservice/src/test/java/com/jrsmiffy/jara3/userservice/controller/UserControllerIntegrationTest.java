@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(UserController.class)
-public class UserControllerTest { // integration tests
+public class UserControllerIntegrationTest { // integration tests
 
     @Autowired
     private MockMvc mockMvc;
