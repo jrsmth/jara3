@@ -5,8 +5,14 @@ a jira-inspired to-do list
 <br>
 <br>
 
-### Login
+### Login Page
 <img width="1200" alt="Jara3 Architecture" src="./docs/res/jara3_login.png">
+
+<br>
+<br>
+<br>
+
+### Todo Page
 
 <br>
 <br>
