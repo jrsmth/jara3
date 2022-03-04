@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -17,7 +18,6 @@ import static org.apache.commons.lang.StringUtils.isEmpty;
 
 @Service
 public class UserService {
-
 
     private UserRepository userRepository;
 
@@ -27,6 +27,7 @@ public class UserService {
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
+    // TODO: why are we doing this? no @Autowired UserRepository? see MON Standards... perhaps
 
     /** Register New User */
     public Map<HttpStatus, Object> register(final User potentialUser){
@@ -99,5 +100,14 @@ public class UserService {
 
         // TODO: add more checks
     }
+
+    /** Get All Users */
+    public List<User> getAllUsers(){
+        return userRepository.findAll();
+    }
+    // TODO: add unit tests (and improve implementation?)
+
+    // TODO: remove HTTP STATUS from service layer, add to controller
+
 
 }
