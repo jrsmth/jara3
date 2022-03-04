@@ -182,6 +182,10 @@ TLDR 2 - any documentation that you do want to add to the ticket, keep it in the
         * ``` cd frontend/client ```
         * ``` export PORT=9000 ```
         * ``` npm start ```
+* **Using JQuery in React**
+    * [stack overflow](https://stackoverflow.com/questions/38518278/how-to-use-jquery-with-reactjs)
+        * ``` npm install jquery --save ```
+        * ``` import $ from 'jquery'; ```
 
 
 <br>
