@@ -6,7 +6,7 @@ a jira-inspired to-do list
 <br>
 
 ### Login Page
-<img width="1200" alt="Jara3 Login Page" src="https://user-images.githubusercontent.com/34093915/156816477-6e2c6f75-cf46-4ab8-a8c9-c5b71f03c34c.png">
+<img width="1200" alt="Jara3 Login Page" src="https://user-images.githubusercontent.com/34093915/156817681-d30f8f44-a015-4a9f-8d37-b70c16b0ab08.png">
 
 <br>
 <br>
