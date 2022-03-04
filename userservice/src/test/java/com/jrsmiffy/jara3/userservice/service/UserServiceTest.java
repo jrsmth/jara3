@@ -1,8 +1,7 @@
-package com.jrsmiffy.jara3.userservice;
+package com.jrsmiffy.jara3.userservice.service;
 
 import com.jrsmiffy.jara3.userservice.model.User;
 import com.jrsmiffy.jara3.userservice.repository.UserRepository;
-import com.jrsmiffy.jara3.userservice.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
