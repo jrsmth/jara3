@@ -9,15 +9,12 @@ import $ from 'jquery';
 function Login({ onLoginSuccessful }) {
   const [username, setUsername] = useState(localStorage.getItem("username"));
   const [password, setPassword] = useState(localStorage.getItem("password"));
-  const [hasResponse, setHasResponse] = useState(false);
-  const [response, setResponse] = useState("");
 
   const onUsernameChange = (event) => setUsername(event.target.value);
   const onPasswordChange = (event) => setPassword(event.target.value);
 
   const onSubmitLogin = async (event) => {
     event.preventDefault();
-    setHasResponse(false);
     const loginResult = await authenticate({ username, password });
     console.log(loginResult);
     
@@ -27,7 +24,6 @@ function Login({ onLoginSuccessful }) {
     console.log(response);
 
     if (status === "CONFLICT"){
-      setResponse(response);
       toggleAlert(true, response);
       console.log(response);
     } 
@@ -43,7 +39,6 @@ function Login({ onLoginSuccessful }) {
 
   const onSubmitRegister = async (event) => {
     event.preventDefault();
-    setHasResponse(false);
     const registrationResult = await register({ username, password });
     console.log(registrationResult);
     
@@ -53,26 +48,19 @@ function Login({ onLoginSuccessful }) {
     console.log(response);
 
     if (status === "CONFLICT"){
-      setResponse(response);
       toggleAlert(true, response);
       console.log(response);
     } 
     else {
-      setResponse("Registration Successful");
       localStorage.setItem("username", username);
       localStorage.setItem("password", password);
       window.location.reload(false);
     }
-    setHasResponse(true);
   };
 
   const toggleForm = () => {
-    // perform animation
-    $('form').animate({height: "toggle", opacity: "toggle"}, 500);
-
-    // hide error message
-    toggleAlert(false, null);
-
+    $('form').animate({height: "toggle", opacity: "toggle"}, 500); // perform animation
+    toggleAlert(false, null); // hide error message
     // reset form
     $('.input-login').val('');
     $('.input-register').val('');
