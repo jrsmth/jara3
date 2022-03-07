@@ -24,21 +24,31 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    /** Register New User */
+    /** Register User */
     public UserResponse register(final User potentialUser){
 
         // perform checks on the username and password
-            // return Optional.empty() if any check fails
+            // return Optional.empty() and response if any check fails
             // save the User and return it if all checks pass
 
-        log.info("Registration Checks");
+        log.info("*** Registration Checks ***");
         log.info("Username: " + potentialUser.getUsername());
         log.info("Password: " + potentialUser.getPassword());
         String response;
 
-        // check 1: does this user exist already?
+        // check 1: are these credentials invalid?
+        ValidationResponse validationResponse = validateCredentials(potentialUser.getUsername(), potentialUser.getPassword());
+        if(validationResponse.isInvalid()){
+            response = "Registration Failed: " + validationResponse.getReason();
+            log.info(response);
+            return new UserResponse(Optional.empty(), response);
+        }
+
+        // check 2: does this user exist already?
         if(userRepository.findByUsername(potentialUser.getUsername()).isPresent()){
-            log.info("Registration Failed: username already exist");
+            response = String.format("Registration Failed: username '%s' already exists", potentialUser.getUsername());
+            log.info(response);
+            return new UserResponse(Optional.empty(), response);
         }
 
         userRepository.save(potentialUser);
@@ -51,7 +61,7 @@ public class UserService {
     public UserResponse authenticate(final String username, final String password){
 
         // perform checks on the username and password
-            // return {Optional.empty(), response} if any check fails
+            // return Optional.empty() and response if any check fails
                 // return {User, response} if all checks pass
 
         log.info("*** Authentication Checks ***");
@@ -70,7 +80,7 @@ public class UserService {
         // check 2: does this user exist?
         Optional<User> thisUser = userRepository.findByUsername(username);
         if(thisUser.isEmpty()){
-            response = "Authentication Failed: username doesn't exist";
+            response = String.format("Authentication Failed: user '%s' does not exist", username);
             log.info(response);
             return new UserResponse(Optional.empty(), response);
         }

@@ -18,6 +18,9 @@ server:
 eureka:
   client:
     enabled: false
+user-response: # Externalised responses, giving null with @Value...
+  register:
+    success: "Registration Successful"
 
 # This version is used when testing (mvn clean install)
 # Also as a base for the other application-*.yaml files, so no need to duplicate properties

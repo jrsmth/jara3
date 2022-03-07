@@ -49,8 +49,7 @@ public class UserController {
 
     /** Get All Users - Dev Purposes */
     @RequestMapping(path = "/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody
-    ResponseEntity<Object> getAllUsers() {
+    public @ResponseBody ResponseEntity<Object> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 

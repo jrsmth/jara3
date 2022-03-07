@@ -36,6 +36,64 @@ class UserServiceTest {
         underTest = new UserService(userRepository);
     }
 
+    /** register() */
+    @ParameterizedTest
+    @CsvSource({"kingArthur, r0undT4bl3", "sirLancelot, br4v3"})
+    @DisplayName("Should Register User")
+    void shouldRegisterUser(final String username, final String password) {
+
+        // Given: a valid potential user (that passes the checks)
+        User validPotentialUser = new User(UUID.randomUUID(), username, password, true);
+
+        // When: mock the repository call with Optional.empty & get the result from register()
+        when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
+        UserResponse actualResult = underTest.register(validPotentialUser);
+
+        // Then: check that this result is equal to the expected; register() should return the User
+        then(userRepository).should().save(userArgumentCaptor.capture());
+        User userArgumentCaptorValue = userArgumentCaptor.getValue();
+        assertThat(userArgumentCaptorValue).isEqualTo(validPotentialUser);
+
+        assertThat(actualResult).isEqualTo(new UserResponse(Optional.of(validPotentialUser), "Registration Successful"));
+    }
+
+    /** register() */
+    @ParameterizedTest
+    @CsvSource({"kingArthur, r0undT4bl3", "sirLancelot, br4v3"})
+    @DisplayName("Should Not Register User - Username Already Exists")
+    void shouldNotRegisterUserBecauseUsernameAlreadyExists(final String username, final String password) {
+
+        // Given: an invalid potential user, where the username already exists (otherUser)
+        User invalidPotentialUser = new User(UUID.randomUUID(), username, password, true);
+        User otherUser = new User(UUID.randomUUID(), username, "password", true);
+
+        // When: mock the repository call with otherUser & get the result from register()
+        when(userRepository.findByUsername(username)).thenReturn(Optional.of(otherUser));
+        UserResponse actualResult = underTest.register(invalidPotentialUser);
+
+        // Then: check that this result is equal to the expected; register() should return the User
+        assertThat(actualResult).isEqualTo(new UserResponse(Optional.empty(), String.format("Registration Failed: username '%s' already exists", username)));
+    }
+
+    /** register() */
+    @ParameterizedTest
+    @CsvSource({
+            "kingArthur,,missing username or password",
+            ", br4v3,missing username or password"
+    })
+    @DisplayName("Should Not Register User - Invalid Credentials")
+    void shouldNotRegisterUserBecauseInvalidCredentials(final String username, final String password, final String reason) {
+
+        // Given: an invalid potential user, where the credentials are invalid
+        User invalidPotentialUser = new User(UUID.randomUUID(), username, password, true);
+
+        // When: repository mock not required; get the result from register()
+        UserResponse actualResult = underTest.register(invalidPotentialUser);
+
+        // Then: check that this result is equal to the expected; authenticate() should return Optional.empty
+        assertThat(actualResult).isEqualTo(new UserResponse(Optional.empty(), "Registration Failed: " + reason));
+    }
+
     /** authenticate() */
     @ParameterizedTest
     @CsvSource({"kingArthur, r0undT4bl3", "sirLancelot, br4v3"})
@@ -68,7 +126,7 @@ class UserServiceTest {
         UserResponse actualResult = underTest.authenticate(username, password);
 
         // Then: check that this result is equal to the expected; authenticate() should return Optional.empty
-        assertThat(actualResult).isEqualTo(new UserResponse(Optional.empty(), "Authentication Failed: username doesn't exist"));
+        assertThat(actualResult).isEqualTo(new UserResponse(Optional.empty(), String.format("Authentication Failed: user '%s' does not exist", username)));
     }
 
     /** authenticate() */
@@ -107,28 +165,6 @@ class UserServiceTest {
         // Then: check that this result is equal to the expected; authenticate() should return Optional.empty
         assertThat(actualResult).isEqualTo(new UserResponse(Optional.empty(), "Authentication Failed: " + reason));
     }
-
-    /** register() */
-    @ParameterizedTest
-    @CsvSource({"kingArthur, r0undT4bl3", "sirLancelot, br4v3"})
-    @DisplayName("Should Register User")
-    void shouldRegisterUser(final String username, final String password) {
-
-        // Given: a valid potential user (that passes the checks)
-        User validPotentialUser = new User(UUID.randomUUID(), username, password, true);
-
-        // When: mock the repository call with Optional.empty & get the result from register()
-        when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
-        UserResponse actualResult = underTest.register(validPotentialUser);
-
-        // Then: check that this result is equal to the expected; register() should return the User
-        then(userRepository).should().save(userArgumentCaptor.capture());
-        User userArgumentCaptorValue = userArgumentCaptor.getValue();
-        assertThat(userArgumentCaptorValue).isEqualTo(validPotentialUser);
-
-        assertThat(actualResult).isEqualTo(new UserResponse(Optional.of(validPotentialUser), "Registration Successful"));
-    }
-
 
 
 }
