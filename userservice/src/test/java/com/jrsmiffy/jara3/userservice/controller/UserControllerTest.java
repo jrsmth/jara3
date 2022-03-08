@@ -96,7 +96,6 @@ public class UserControllerTest {
     void shouldNotAuthenticateUserBecauseChecksFailed() {
 
         // Given: an invalid potential user, where the checks fail
-        User invalidPotentialUser = new User(UUID.randomUUID(), "username", "password", true);
         UserResponse mockedResponse = new UserResponse(Optional.empty(), "response");
         responseMap.put(HttpStatus.CONFLICT, mockedResponse);
         expectedResponse = ResponseEntity.ok(responseMap);
