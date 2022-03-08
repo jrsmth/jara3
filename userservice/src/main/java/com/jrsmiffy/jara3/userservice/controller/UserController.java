@@ -37,7 +37,7 @@ public class UserController {
         if(userResponse.getUser().isPresent())
             responseMap.put(HttpStatus.OK, userResponse);
         else if (userResponse.getUser().isEmpty())
-            responseMap.put(HttpStatus.BAD_REQUEST, userResponse);
+            responseMap.put(HttpStatus.CONFLICT, userResponse);
 
         response = ResponseEntity.ok(responseMap);
         log.info(response.toString());
@@ -59,7 +59,7 @@ public class UserController {
         if(userResponse.getUser().isPresent())
             responseMap.put(HttpStatus.OK, userResponse);
         else if (userResponse.getUser().isEmpty())
-            responseMap.put(HttpStatus.BAD_REQUEST, userResponse);
+            responseMap.put(HttpStatus.CONFLICT, userResponse);
 
         response = ResponseEntity.ok(responseMap);
         log.info(response.toString());

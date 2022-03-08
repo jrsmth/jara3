@@ -62,7 +62,7 @@ public class UserControllerTest {
         // Given: an invalid potential user, where the checks fail
         User invalidPotentialUser = new User(UUID.randomUUID(), "username", "password", true);
         UserResponse mockedResponse = new UserResponse(Optional.empty(), "response");
-        responseMap.put(HttpStatus.BAD_REQUEST, mockedResponse);
+        responseMap.put(HttpStatus.CONFLICT, mockedResponse);
         expectedResponse = ResponseEntity.ok(responseMap);
 
         // When: mock the service call with invalid user & get the result from register()
@@ -98,7 +98,7 @@ public class UserControllerTest {
         // Given: an invalid potential user, where the checks fail
         User invalidPotentialUser = new User(UUID.randomUUID(), "username", "password", true);
         UserResponse mockedResponse = new UserResponse(Optional.empty(), "response");
-        responseMap.put(HttpStatus.BAD_REQUEST, mockedResponse);
+        responseMap.put(HttpStatus.CONFLICT, mockedResponse);
         expectedResponse = ResponseEntity.ok(responseMap);
 
         // When: mock the service call with invalid user & get the result from authenticate()
