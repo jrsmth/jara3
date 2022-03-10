@@ -17,6 +17,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.when;
 
@@ -54,7 +55,7 @@ class UserServiceTest {
         User userArgumentCaptorValue = userArgumentCaptor.getValue();
         assertThat(userArgumentCaptorValue).isEqualTo(validPotentialUser);
 
-        assertThat(actualResult).isEqualTo(new UserResponse(Optional.of(validPotentialUser), "Registration Successful"));
+        assertEquals(new UserResponse(Optional.of(validPotentialUser), "Registration Successful"), actualResult);
     }
 
     /** register() */
@@ -72,7 +73,7 @@ class UserServiceTest {
         UserResponse actualResult = underTest.register(invalidPotentialUser);
 
         // Then: check that this result is equal to the expected; register() should return the User
-        assertThat(actualResult).isEqualTo(new UserResponse(Optional.empty(), String.format("Registration Failed: username '%s' already exists", username)));
+        assertEquals(new UserResponse(Optional.empty(), String.format("Registration Failed: username '%s' already exists", username)), actualResult);
     }
 
     /** register() */
@@ -90,8 +91,8 @@ class UserServiceTest {
         // When: repository mock not required; get the result from register()
         UserResponse actualResult = underTest.register(invalidPotentialUser);
 
-        // Then: check that this result is equal to the expected; authenticate() should return Optional.empty
-        assertThat(actualResult).isEqualTo(new UserResponse(Optional.empty(), "Registration Failed: " + reason));
+        // Then: check that this result is equal to the expected; register() should return Optional.empty
+        assertEquals(new UserResponse(Optional.empty(), "Registration Failed: " + reason), actualResult);
     }
 
     /** authenticate() */
@@ -109,7 +110,7 @@ class UserServiceTest {
         UserResponse actualResult = underTest.authenticate(username, password);
 
         // Then: check that this result is equal to the expected; authenticate() should return the User
-        assertThat(actualResult).isEqualTo(expectedResult);
+        assertEquals(expectedResult, actualResult);
     }
 
     /** authenticate() */
@@ -126,7 +127,7 @@ class UserServiceTest {
         UserResponse actualResult = underTest.authenticate(username, password);
 
         // Then: check that this result is equal to the expected; authenticate() should return Optional.empty
-        assertThat(actualResult).isEqualTo(new UserResponse(Optional.empty(), String.format("Authentication Failed: user '%s' does not exist", username)));
+        assertEquals(new UserResponse(Optional.empty(), String.format("Authentication Failed: user '%s' does not exist", username)), actualResult);
     }
 
     /** authenticate() */
@@ -144,7 +145,7 @@ class UserServiceTest {
         UserResponse actualResult = underTest.authenticate(username, password);
 
         // Then: check that this result is equal to the expected; authenticate() should return Optional.empty
-        assertThat(actualResult).isEqualTo(new UserResponse(Optional.empty(), "Authentication Failed: password doesn't match"));
+        assertEquals(new UserResponse(Optional.empty(), "Authentication Failed: password doesn't match"), actualResult);
     }
 
     /** authenticate() */
@@ -163,7 +164,7 @@ class UserServiceTest {
         UserResponse actualResult = underTest.authenticate(username, password);
 
         // Then: check that this result is equal to the expected; authenticate() should return Optional.empty
-        assertThat(actualResult).isEqualTo(new UserResponse(Optional.empty(), "Authentication Failed: " + reason));
+        assertEquals(new UserResponse(Optional.empty(), "Authentication Failed: " + reason), actualResult);
     }
 
 

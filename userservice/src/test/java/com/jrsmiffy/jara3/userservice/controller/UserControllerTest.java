@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,7 +29,9 @@ public class UserControllerTest {
 
     private UserController underTest;
 
-    private ResponseEntity<Object> expectedResponse;
+    private ResponseEntity<Object> expected;
+
+    private ResponseEntity<Object> result;
 
     private Map<HttpStatus, UserResponse> responseMap = new HashMap<>();
 
@@ -45,14 +48,14 @@ public class UserControllerTest {
         User validPotentialUser = new User(UUID.randomUUID(), "username", "password", true);
         UserResponse mockedResponse = new UserResponse(Optional.of(validPotentialUser), "response");
         responseMap.put(HttpStatus.OK, mockedResponse);
-        expectedResponse = ResponseEntity.ok(responseMap);
+        expected = ResponseEntity.ok(responseMap);
 
         // When: mock the service call with validPotentialUser & get the result from register()
         when(userService.register(validPotentialUser)).thenReturn(mockedResponse);
         ResponseEntity<Object> actualResult = underTest.register(validPotentialUser);
 
         // Then: check that this result is equal to the expected
-        assertThat(actualResult).isEqualTo(expectedResponse);
+        assertEquals(expected, actualResult);
     }
 
     @Test
@@ -63,14 +66,14 @@ public class UserControllerTest {
         User invalidPotentialUser = new User(UUID.randomUUID(), "username", "password", true);
         UserResponse mockedResponse = new UserResponse(Optional.empty(), "response");
         responseMap.put(HttpStatus.CONFLICT, mockedResponse);
-        expectedResponse = ResponseEntity.ok(responseMap);
+        expected = ResponseEntity.ok(responseMap);
 
         // When: mock the service call with invalid user & get the result from register()
         when(userService.register(invalidPotentialUser)).thenReturn(mockedResponse);
         ResponseEntity<Object> actualResult = underTest.register(invalidPotentialUser);
 
         // Then: check that this result is equal to the expected
-        assertThat(actualResult).isEqualTo(expectedResponse);
+        assertEquals(expected, actualResult);
     }
 
     @Test
@@ -81,31 +84,31 @@ public class UserControllerTest {
         User validPotentialUser = new User(UUID.randomUUID(), "username", "password", true);
         UserResponse mockedResponse = new UserResponse(Optional.of(validPotentialUser), "response");
         responseMap.put(HttpStatus.OK, mockedResponse);
-        expectedResponse = ResponseEntity.ok(responseMap);
+        expected = ResponseEntity.ok(responseMap);
 
         // When: mock the service call with validPotentialUser & get the result from authenticate()
         when(userService.authenticate("username", "password")).thenReturn(mockedResponse);
         ResponseEntity<Object> actualResult = underTest.authenticate("username", "password");
 
         // Then: check that this result is equal to the expected
-        assertThat(actualResult).isEqualTo(expectedResponse);
+        assertEquals(expected, actualResult);
     }
 
     @Test
     @DisplayName("Should Not Authenticate User - Checks Failed")
     void shouldNotAuthenticateUserBecauseChecksFailed() {
 
-        // Given: an invalid potential user, where the checks fail
+        // Given: an invalid user, where the checks fail
         UserResponse mockedResponse = new UserResponse(Optional.empty(), "response");
         responseMap.put(HttpStatus.CONFLICT, mockedResponse);
-        expectedResponse = ResponseEntity.ok(responseMap);
+        expected = ResponseEntity.ok(responseMap);
 
-        // When: mock the service call with invalid user & get the result from authenticate()
+        // When
         when(userService.authenticate("username", "password")).thenReturn(mockedResponse);
-        ResponseEntity<Object> actualResult = underTest.authenticate("username", "password");
+        result = underTest.authenticate("username", "password");
 
-        // Then: check that this result is equal to the expected
-        assertThat(actualResult).isEqualTo(expectedResponse);
+        // Then: is the result what we expected? // TODO: only need the explanation on one unit test per class
+        assertThat(result).isEqualTo(expected);
     }
 
 
