@@ -19,6 +19,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -146,6 +147,8 @@ class UserServiceTest {
 
         // Then: check that this result is equal to the expected; authenticate() should return Optional.empty
         assertEquals(new UserResponse(Optional.empty(), "Authentication Failed: password doesn't match"), actualResult);
+
+        verify(userRepository).findByUsername(username); // useful? when should use - investigate online...
     }
 
     /** authenticate() */

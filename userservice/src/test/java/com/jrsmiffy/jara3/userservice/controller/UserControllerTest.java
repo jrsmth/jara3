@@ -109,6 +109,9 @@ public class UserControllerTest {
 
         // Then: is the result what we expected? // TODO: only need the explanation on one unit test per class
         assertThat(result).isEqualTo(expected);
+        // TODO: sort AssertJ format across the board
+
+
     }
 
 
