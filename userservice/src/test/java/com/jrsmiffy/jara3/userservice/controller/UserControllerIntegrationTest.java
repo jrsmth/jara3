@@ -31,8 +31,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-//import org.junit.jupiter.api.Test; giving me errors here; right up on Teams
-
 @RunWith(SpringRunner.class)
 @WebMvcTest(UserController.class)
 public class UserControllerIntegrationTest {
@@ -95,8 +93,11 @@ public class UserControllerIntegrationTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)));
 
         // TODO - tech ref update
+        // TODO - use verify where appropriate - find out where this is and add it to TINTK - what has stackoverflow got to say...
         //import org.junit.jupiter.api.Test; giving me errors here; right up on Teams
         //import org.junit.Test; works like a charm for int tests, is juniper specific to unit tests?
+        // TODO - can we import responses from config file???
+        // TODO - then finally do integration testing!
     }
 
 }

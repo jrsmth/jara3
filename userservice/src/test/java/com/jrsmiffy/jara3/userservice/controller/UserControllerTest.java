@@ -12,13 +12,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,12 +25,6 @@ public class UserControllerTest {
     private UserService userService;
 
     private UserController underTest;
-
-    private ResponseEntity<Object> expected;
-
-    private ResponseEntity<Object> result;
-
-    private Map<HttpStatus, UserResponse> responseMap = new HashMap<>();
 
     @BeforeEach
     void setUp() {
@@ -46,16 +37,15 @@ public class UserControllerTest {
 
         // Given: a valid potential user (that passes the checks)
         User validPotentialUser = new User(UUID.randomUUID(), "username", "password", true);
-        UserResponse mockedResponse = new UserResponse(Optional.of(validPotentialUser), "response");
-        responseMap.put(HttpStatus.OK, mockedResponse);
-        expected = ResponseEntity.ok(responseMap);
+        UserResponse sampleResponse = new UserResponse(Optional.of(validPotentialUser), "response");
+        ResponseEntity<UserResponse> expected = ResponseEntity.ok(sampleResponse);
 
-        // When: mock the service call with validPotentialUser & get the result from register()
-        when(userService.register(validPotentialUser)).thenReturn(mockedResponse);
-        ResponseEntity<Object> actualResult = underTest.register(validPotentialUser);
+        // When:
+        when(userService.register(validPotentialUser)).thenReturn(sampleResponse);
+        ResponseEntity<UserResponse> result = underTest.register(validPotentialUser);
 
-        // Then: check that this result is equal to the expected
-        assertEquals(expected, actualResult);
+        // Then
+        assertThat(result).isEqualTo(expected);
     }
 
     @Test
@@ -64,16 +54,15 @@ public class UserControllerTest {
 
         // Given: an invalid potential user, where the checks fail
         User invalidPotentialUser = new User(UUID.randomUUID(), "username", "password", true);
-        UserResponse mockedResponse = new UserResponse(Optional.empty(), "response");
-        responseMap.put(HttpStatus.CONFLICT, mockedResponse);
-        expected = ResponseEntity.ok(responseMap);
+        UserResponse sampleResponse = new UserResponse(Optional.empty(), "response");
+        ResponseEntity<UserResponse> expected = ResponseEntity.status(HttpStatus.CONFLICT).body(sampleResponse);
 
-        // When: mock the service call with invalid user & get the result from register()
-        when(userService.register(invalidPotentialUser)).thenReturn(mockedResponse);
-        ResponseEntity<Object> actualResult = underTest.register(invalidPotentialUser);
+        // When
+        when(userService.register(invalidPotentialUser)).thenReturn(sampleResponse);
+        ResponseEntity<UserResponse> result = underTest.register(invalidPotentialUser);
 
-        // Then: check that this result is equal to the expected
-        assertEquals(expected, actualResult);
+        // Then
+        assertThat(result).isEqualTo(expected);
     }
 
     @Test
@@ -82,16 +71,15 @@ public class UserControllerTest {
 
         // Given: a valid potential user (that passes the checks)
         User validPotentialUser = new User(UUID.randomUUID(), "username", "password", true);
-        UserResponse mockedResponse = new UserResponse(Optional.of(validPotentialUser), "response");
-        responseMap.put(HttpStatus.OK, mockedResponse);
-        expected = ResponseEntity.ok(responseMap);
+        UserResponse sampleResponse = new UserResponse(Optional.of(validPotentialUser), "response");
+        ResponseEntity<UserResponse> expected = ResponseEntity.status(HttpStatus.OK).body(sampleResponse);
 
-        // When: mock the service call with validPotentialUser & get the result from authenticate()
-        when(userService.authenticate("username", "password")).thenReturn(mockedResponse);
-        ResponseEntity<Object> actualResult = underTest.authenticate("username", "password");
+        // When
+        when(userService.authenticate("username", "password")).thenReturn(sampleResponse);
+        ResponseEntity<UserResponse> result = underTest.authenticate("username", "password");
 
-        // Then: check that this result is equal to the expected
-        assertEquals(expected, actualResult);
+        // Then
+        assertThat(result).isEqualTo(expected);
     }
 
     @Test
@@ -99,19 +87,15 @@ public class UserControllerTest {
     void shouldNotAuthenticateUserBecauseChecksFailed() {
 
         // Given: an invalid user, where the checks fail
-        UserResponse mockedResponse = new UserResponse(Optional.empty(), "response");
-        responseMap.put(HttpStatus.CONFLICT, mockedResponse);
-        expected = ResponseEntity.ok(responseMap);
+        UserResponse sampleResponse = new UserResponse(Optional.empty(), "response");
+        ResponseEntity<UserResponse> expected = ResponseEntity.status(HttpStatus.CONFLICT).body(sampleResponse);
 
         // When
-        when(userService.authenticate("username", "password")).thenReturn(mockedResponse);
-        result = underTest.authenticate("username", "password");
+        when(userService.authenticate("username", "password")).thenReturn(sampleResponse);
+        ResponseEntity<UserResponse> result = underTest.authenticate("username", "password");
 
-        // Then: is the result what we expected? // TODO: only need the explanation on one unit test per class
+        // Then
         assertThat(result).isEqualTo(expected);
-        // TODO: sort AssertJ format across the board
-
-
     }
 
 

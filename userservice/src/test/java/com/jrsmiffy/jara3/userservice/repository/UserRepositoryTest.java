@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,7 +28,7 @@ public class UserRepositoryTest {
     void shouldFindUserByUsername(){ // this is a redundant test but I have included it as an example
 
         // Given
-        User user = underTest.save(new User(null, "username", "password", true));
+        User user = underTest.save(new User(UUID.randomUUID(), "username", "password", true));
         Optional<User> expected = Optional.of(user);
 
         // When

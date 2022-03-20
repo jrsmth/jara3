@@ -10,9 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @RestController
 public class UserController {
 
@@ -26,55 +23,44 @@ public class UserController {
 
     /** Register User */
     @PostMapping(path = "/register")
-    public ResponseEntity<Object> register(@RequestBody final User potentialUser) {
+    public ResponseEntity<UserResponse> register(@RequestBody final User potentialUser) {
 
         // Check that this potential user is valid - if so, register them; else, return err
-        ResponseEntity<Object> response;
-        Map<HttpStatus, UserResponse> responseMap = new HashMap<>();
-
+        ResponseEntity<UserResponse> response;
         final UserResponse userResponse = userService.register(potentialUser);
 
         if(userResponse.getUser().isPresent())
-            responseMap.put(HttpStatus.OK, userResponse);
-        else if (userResponse.getUser().isEmpty())
-            responseMap.put(HttpStatus.CONFLICT, userResponse);
+            response = ResponseEntity.status(HttpStatus.OK).body(userResponse);
+        else
+            response = ResponseEntity.status(HttpStatus.CONFLICT).body(userResponse);
 
-        response = ResponseEntity.ok(responseMap);
         log.info(response.toString());
-
         return response;
     }
 
 
     /** Authenticate User */
     @GetMapping(path = "/authenticate/{username}/{password}")
-    public ResponseEntity<Object> authenticate(@PathVariable("username") final String username, @PathVariable("password") final String password) {
+    public ResponseEntity<UserResponse> authenticate(@PathVariable("username") final String username, @PathVariable("password") final String password) {
 
         // Check that these user credentials match with a valid user - if so, return success; else, return err
-        ResponseEntity<Object> response;
-        Map<HttpStatus, UserResponse> responseMap = new HashMap<>();
+        ResponseEntity<UserResponse> response;
 
         final UserResponse userResponse = userService.authenticate(username, password);
 
         if(userResponse.getUser().isPresent())
-            responseMap.put(HttpStatus.OK, userResponse);
-        else if (userResponse.getUser().isEmpty())
-            responseMap.put(HttpStatus.CONFLICT, userResponse);
+            response = ResponseEntity.status(HttpStatus.OK).body(userResponse);
+        else
+            response = ResponseEntity.status(HttpStatus.CONFLICT).body(userResponse);
 
-        response = ResponseEntity.ok(responseMap);
         log.info(response.toString());
-
         return response;
     }
 
-    /** Get All Users - Dev Purposes */
+    /** Get All Users - Dev Use Only */
     @RequestMapping(path = "/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
-
-
-
-
 
 }
