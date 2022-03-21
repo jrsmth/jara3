@@ -6,6 +6,7 @@ import com.jrsmiffy.jara3.userservice.model.ValidationResponse;
 import com.jrsmiffy.jara3.userservice.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +20,27 @@ public class UserService {
     private UserRepository userRepository;
 
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
+
+    @Value("${response.register.success}")
+    private String responseRegisterSuccess;
+
+    @Value("${response.register.fail.invalid-credentials}")
+    private String responseRegisterFailInvalidCredentials;
+
+    @Value("${response.register.fail.user-exists}")
+    private String responseRegisterFailUserExists;
+
+    @Value("${response.authenticate.success}")
+    private String responseAuthenticateSuccess;
+
+    @Value("${response.authenticate.fail.invalid-credentials}")
+    private String responseAuthenticateFailInvalidCredentials;
+
+    @Value("${response.authenticate.fail.no-user-exists}")
+    private String responseAuthenticateFailNoUserExists;
+
+    @Value("${response.authenticate.fail.incorrect-password}")
+    private String responseAuthenticateFailIncorrectPassword;
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -39,20 +61,20 @@ public class UserService {
         // check 1: are these credentials invalid?
         ValidationResponse validationResponse = validateCredentials(potentialUser.getUsername(), potentialUser.getPassword());
         if(validationResponse.isInvalid()){
-            response = "Registration Failed: " + validationResponse.getReason();
+            response = responseRegisterFailInvalidCredentials + validationResponse.getReason();
             log.info(response);
             return new UserResponse(Optional.empty(), response);
         }
 
         // check 2: does this user exist already?
         if(userRepository.findByUsername(potentialUser.getUsername()).isPresent()){
-            response = String.format("Registration Failed: username '%s' already exists", potentialUser.getUsername());
+            response = String.format(responseRegisterFailUserExists, potentialUser.getUsername());
             log.info(response);
             return new UserResponse(Optional.empty(), response);
         }
 
         userRepository.save(potentialUser);
-        response = "Registration Successful";
+        response = responseRegisterSuccess;
         log.info(response);
         return new UserResponse(Optional.of(potentialUser), response);
     }
@@ -72,7 +94,7 @@ public class UserService {
         // check 1: are these credentials invalid?
         ValidationResponse validationResponse = validateCredentials(username, password);
         if(validationResponse.isInvalid()){
-            response = "Authentication Failed: " + validationResponse.getReason();
+            response = responseAuthenticateFailInvalidCredentials + validationResponse.getReason();
             log.info(response);
             return new UserResponse(Optional.empty(), response);
         }
@@ -80,19 +102,19 @@ public class UserService {
         // check 2: does this user exist?
         Optional<User> thisUser = userRepository.findByUsername(username);
         if(thisUser.isEmpty()){
-            response = String.format("Authentication Failed: user '%s' does not exist", username);
+            response = String.format(responseAuthenticateFailNoUserExists, username);
             log.info(response);
             return new UserResponse(Optional.empty(), response);
         }
 
         // check 3: does the password match?
         if(!thisUser.get().getPassword().equals(password)){
-            response = "Authentication Failed: password doesn't match";
+            response = responseAuthenticateFailIncorrectPassword;
             log.info(response);
             return new UserResponse(Optional.empty(), response);
         }
 
-        response = "Authentication Successful";
+        response = responseAuthenticateSuccess;
         log.info(response);
         return new UserResponse(thisUser, response);
     }

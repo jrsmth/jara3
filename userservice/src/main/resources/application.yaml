@@ -18,9 +18,19 @@ server:
 eureka:
   client:
     enabled: false
-user-response: # Externalised responses, giving null with @Value...
+response:
   register:
     success: "Registration Successful"
+    fail:
+        invalid-credentials: "Registration Failed: "
+        user-exists: "Registration Failed: username '%s' already exists"
+  authenticate:
+    success: "Authentication Successful"
+    fail:
+      invalid-credentials: "Authentication Failed: "
+      no-user-exists: "Authentication Failed: user '%s' does not exist"
+      incorrect-password: "Authentication Failed: password doesn't match"
 
-# This version is used when testing (mvn clean install)
+
+# This version is used when testing (mvn clean test)
 # Also as a base for the other application-*.yaml files, so no need to duplicate properties

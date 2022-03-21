@@ -98,6 +98,9 @@ public class UserControllerIntegrationTest {
         //import org.junit.Test; works like a charm for int tests, is juniper specific to unit tests?
         // TODO - can we import responses from config file???
         // TODO - then finally do integration testing!
+        // TODO - @value null in unit test (explanation: https://stackoverflow.com/questions/57436788/value-returning-null-in-unit-test)
+            // https://stackoverflow.com/questions/23162777/how-do-i-mock-an-autowired-value-field-in-spring-with-mockito
+            //https://stackoverflow.com/questions/38711871/load-different-application-yml-in-springboot-test - @SpringBootTest, nec. evil
     }
 
 }
