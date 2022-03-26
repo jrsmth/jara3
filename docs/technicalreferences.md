@@ -149,8 +149,10 @@ TLDR 2 - any documentation that you do want to add to the ticket, keep it in the
         * If you make a change to the React app, ``` npm run build ; node start ```
 
 ### Release Process
-* Update the latest version of Jira and Miro in https://github.com/JRSmiffy/jara3/tree/main/docs
-* Update the Postman collection (location?)
+* Update the latest versions of tooling data in https://github.com/JRSmiffy/jara3/tree/main/docs
+    * Postman
+    * Jira
+    * Miro
 
 ### Coding Standards
 * When refactoring (at the end of TDD) or when reviewing code as part of a pull request, ensure the following standards are upheld:
@@ -167,7 +169,7 @@ TLDR 2 - any documentation that you do want to add to the ticket, keep it in the
         * Make variables final - including in method parameters if they are not changing
     * Add T2-DB standards:
         * this and that...
-* Set aside 15 mins to go through these when you review a PR.
+* Set aside 15 mins or so, to go through these when you review a PR.
 
 ### Test-Driven Design
 * TDD is a must when creating methods, especially in Java-land.
