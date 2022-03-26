@@ -4,42 +4,35 @@ package com.jrsmiffy.jara3.userservice.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jrsmiffy.jara3.userservice.model.User;
 import com.jrsmiffy.jara3.userservice.model.UserResponse;
-import com.jrsmiffy.jara3.userservice.service.UserService;
+import org.junit.Test;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(UserController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 public class UserControllerIntTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @MockBean
-    private UserService userService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -51,46 +44,83 @@ public class UserControllerIntTest {
 
         // Given: a valid potential user (that passes the checks)
         User validPotentialUser = new User(UUID.randomUUID(), "username", "password", true);
-        UserResponse mockedResponse = new UserResponse(Optional.of(validPotentialUser), "response");
+        UserResponse userResponse = new UserResponse(Optional.of(validPotentialUser), "response");
+        ResponseEntity<Object> expectedResponse = ResponseEntity.status(HttpStatus.OK).body(userResponse);
 
-        ResponseEntity<Object> expectedResponse;
-        Map<HttpStatus, UserResponse> responseMap = new HashMap<>();
-        responseMap.put(HttpStatus.OK, mockedResponse);
-        expectedResponse = ResponseEntity.ok(responseMap);
-
-        // When: mock the service call with validPotentialUser
-        when(userService.register(ArgumentMatchers.any(User.class))).thenReturn(mockedResponse);
-
-        // Then: check that this result is equal to the expected
+        // Then:
         mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON)
-                .content("{\"username\":\"username\",\"password\":\"password\"}"))
-                .andDo(MockMvcResultHandlers.print())
+                .content("{\"username\":\"\",\"password\":\"password\"}"))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)))
                 .andReturn();
     }
 
     @Test
-    @Disabled
+//    @Disabled
     @DisplayName("Test Authenticate Endpoint")
     public void testAuthenticateEndpoint() throws Exception {
 
         // Given: a valid potential user (that passes the checks)
         User validPotentialUser = new User(UUID.randomUUID(), "username", "password", true);
-        UserResponse mockedResponse = new UserResponse(Optional.of(validPotentialUser), "response");
-        ResponseEntity<Object> expectedResponse;
-        Map<HttpStatus, UserResponse> responseMap = new HashMap<>();
-        responseMap.put(HttpStatus.OK, mockedResponse);
-        expectedResponse = ResponseEntity.ok(responseMap);
-
-        // When: mock the service call with validPotentialUser & get the result from authenticate()
-        when(userService.authenticate("username", "password")).thenReturn(mockedResponse);
+        UserResponse userResponse = new UserResponse(Optional.of(validPotentialUser), "response");
+        ResponseEntity<Object> expectedResponse = ResponseEntity.status(HttpStatus.OK).body(userResponse);
 
         // Then: check that this result is equal to the expected
         mockMvc.perform(get("/authenticate/username/password"))
                 .andExpect(status().isOk())
-//                .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)));
                 .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)));
+//                        .andExpect(content().string(containsString("Hello, World")));
+
     }
 
 }
+
+//
+//
+//@ActiveProfiles("rest")
+//@SpringBootTest
+//@AutoConfigureMockMvc
+//@RunWith(SpringRunner.class)
+//public class RestTest {
+//
+//    @Autowired private MockMvc mockMvc;
+//    @Autowired private RestTemplate restTemplate;
+//
+//    private MockRestServiceServer mockServer;
+//
+//    @Before
+//    public void init() {
+//        mockServer = createServer(restTemplate);
+//    }
+//
+//    @Test
+//    public void getsPersonById() throws Exception {
+//        mockServer.expect(once(), requestTo(new URI("http://localhost:8080/employees/1")))
+//                .andExpect(method(GET))
+//                .andRespond(withStatus(OK)
+//                        .contentType(APPLICATION_JSON)
+//                        .body("{\"id\":\"1\",\"firstName\":\"Fred\",\"lastName\":\"Bloggs\",\"extn\":\"123\"}"));
+//
+//        mockMvc.perform(get("/api/v1/persons/1"))
+//                .andDo(print())
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.name").value("Fred Bloggs"));
+//    }
+//}
+//
+//@RunWith(SpringRunner.class)
+//@SpringBootTest
+//@AutoConfigureMockMvc
+//public class ServiceTest {
+//
+//    @Autowired private MockMvc mockMvc;
+//
+//    @Test
+//    public void getsPersonById() throws Exception {
+//        mockMvc.perform(get("/api/v1/persons/1"))
+//                .andDo(print())
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.name").value("Fred"));
+//    }
+//}

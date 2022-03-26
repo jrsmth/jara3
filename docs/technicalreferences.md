@@ -172,7 +172,7 @@ TLDR 2 - any documentation that you do want to add to the ticket, keep it in the
 * Set aside 15 mins or so, to go through these when you review a PR.
 
 ### Test-Driven Design
-* TDD is a must when creating methods, especially in Java-land.
+* Use TDD to develop functionality in both Spring and Angular.
 * Don't test private methods, as a rule.
 * It is worth the initial investment to get efficient code and comprehensive tests.
 

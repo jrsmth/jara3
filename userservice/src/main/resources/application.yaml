@@ -13,6 +13,8 @@ spring:
     username: sa
     password: password
     driverClassName: org.h2.Driver
+  h2:
+    console.enabled: true
 server:
   port: 8772
 eureka:
