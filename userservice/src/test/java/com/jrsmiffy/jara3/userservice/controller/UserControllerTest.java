@@ -38,7 +38,7 @@ public class UserControllerTest {
         // Given: a valid potential user (that passes the checks)
         User validPotentialUser = new User(UUID.randomUUID(), "username", "password", true);
         UserResponse sampleResponse = new UserResponse(Optional.of(validPotentialUser), "response");
-        ResponseEntity<UserResponse> expected = ResponseEntity.ok(sampleResponse);
+        ResponseEntity<UserResponse> expected = ResponseEntity.status(HttpStatus.OK).body(sampleResponse);
 
         // When:
         when(userService.register(validPotentialUser)).thenReturn(sampleResponse);
@@ -55,7 +55,7 @@ public class UserControllerTest {
         // Given: an invalid potential user, where the checks fail
         User invalidPotentialUser = new User(UUID.randomUUID(), "username", "password", true);
         UserResponse sampleResponse = new UserResponse(Optional.empty(), "response");
-        ResponseEntity<UserResponse> expected = ResponseEntity.status(HttpStatus.CONFLICT).body(sampleResponse);
+        ResponseEntity<UserResponse> expected = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(sampleResponse);
 
         // When
         when(userService.register(invalidPotentialUser)).thenReturn(sampleResponse);
@@ -88,7 +88,7 @@ public class UserControllerTest {
 
         // Given: an invalid user, where the checks fail
         UserResponse sampleResponse = new UserResponse(Optional.empty(), "response");
-        ResponseEntity<UserResponse> expected = ResponseEntity.status(HttpStatus.CONFLICT).body(sampleResponse);
+        ResponseEntity<UserResponse> expected = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(sampleResponse);
 
         // When
         when(userService.authenticate("username", "password")).thenReturn(sampleResponse);

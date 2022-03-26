@@ -7,7 +7,7 @@ import com.jrsmiffy.jara3.userservice.model.UserResponse;
 import com.jrsmiffy.jara3.userservice.service.UserService;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(UserController.class)
-public class UserControllerIntegrationTest {
+public class UserControllerIntTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -91,16 +91,6 @@ public class UserControllerIntegrationTest {
                 .andExpect(status().isOk())
 //                .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)));
                 .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)));
-
-        // TODO - tech ref update
-        // TODO - use verify where appropriate - find out where this is and add it to TINTK - what has stackoverflow got to say...
-        //import org.junit.jupiter.api.Test; giving me errors here; right up on Teams
-        //import org.junit.Test; works like a charm for int tests, is juniper specific to unit tests?
-        // TODO - can we import responses from config file???
-        // TODO - then finally do integration testing!
-        // TODO - @value null in unit test (explanation: https://stackoverflow.com/questions/57436788/value-returning-null-in-unit-test)
-            // https://stackoverflow.com/questions/23162777/how-do-i-mock-an-autowired-value-field-in-spring-with-mockito
-            //https://stackoverflow.com/questions/38711871/load-different-application-yml-in-springboot-test - @SpringBootTest, nec. evil
     }
 
 }

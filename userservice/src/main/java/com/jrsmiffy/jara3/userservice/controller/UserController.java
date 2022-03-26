@@ -32,7 +32,7 @@ public class UserController {
         if(userResponse.getUser().isPresent())
             response = ResponseEntity.status(HttpStatus.OK).body(userResponse);
         else
-            response = ResponseEntity.status(HttpStatus.CONFLICT).body(userResponse);
+            response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(userResponse);
 
         log.info(response.toString());
         return response;
@@ -51,7 +51,7 @@ public class UserController {
         if(userResponse.getUser().isPresent())
             response = ResponseEntity.status(HttpStatus.OK).body(userResponse);
         else
-            response = ResponseEntity.status(HttpStatus.CONFLICT).body(userResponse);
+            response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(userResponse);
 
         log.info(response.toString());
         return response;

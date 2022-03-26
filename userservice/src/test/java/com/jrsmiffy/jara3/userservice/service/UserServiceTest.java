@@ -201,7 +201,7 @@ class UserServiceTest {
 
         // Then:
         assertThat(result).isEqualTo(expected);
-        verify(userRepository).findByUsername(username);
+        verify(userRepository).findByUsername(username); // when is it appropriate to use .verify()?
     }
 
 }

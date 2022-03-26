@@ -149,7 +149,8 @@ TLDR 2 - any documentation that you do want to add to the ticket, keep it in the
         * If you make a change to the React app, ``` npm run build ; node start ```
 
 ### Release Process
-* Store the latest version of Jira and Miro in https://github.com/JRSmiffy/jara3/tree/main/docs
+* Update the latest version of Jira and Miro in https://github.com/JRSmiffy/jara3/tree/main/docs
+* Update the Postman collection (location?)
 
 ### Coding Standards
 * When refactoring (at the end of TDD) or when reviewing code as part of a pull request, ensure the following standards are upheld:
@@ -164,6 +165,8 @@ TLDR 2 - any documentation that you do want to add to the ticket, keep it in the
         * Remove any copy/pasted code and refactor
         * Remove any hardcoded values
         * Make variables final - including in method parameters if they are not changing
+    * Add T2-DB standards:
+        * this and that...
 * Set aside 15 mins to go through these when you review a PR.
 
 ### Test-Driven Design
@@ -186,8 +189,17 @@ TLDR 2 - any documentation that you do want to add to the ticket, keep it in the
     * [stack overflow](https://stackoverflow.com/questions/38518278/how-to-use-jquery-with-reactjs)
         * ``` npm install jquery --save ```
         * ``` import $ from 'jquery'; ```
-
-
+* **JUnit Import Confusion**
+    * When specifically running integration tests:
+        *  I got a ```No runnable methods``` error when I used the ```org.junit.jupiter.api.Test``` import.
+        * This was resolved by replacing it with ```org.junit.Test;```
+            * note, the 'juniper' import works fine with unit tests.
+* **Getting ```null``` For ```@value``` in Unit Tests**
+    * In standard unit tests, we don't load up the full spring context and so don't have access to app.yaml in our test classes. I needed to use ```@value``` in my unit tests, so to overcome this, I used ```@SpringBootTest```. This loads up Spring, giving us access to app.yaml but makes running tests more expensive (a neccesary evil in this case).
+        * [Stack Overflow:](https://stackoverflow.com/questions/57436788/value-returning-null-in-unit-test) returning null in test
+        * [Stack Overflow:](https://stackoverflow.com/questions/23162777/how-do-i-mock-an-autowired-value-field-in-spring-with-mockito) mock autowired field
+        * [Stack Overflow:](https://stackoverflow.com/questions/38711871/load-different-application-yml-in-springboot-test) load app.yml in 
+    
 <br>
 
  
