@@ -42,10 +42,10 @@ public class UserControllerTest {
 
         // When:
         when(userService.register(validPotentialUser)).thenReturn(sampleResponse);
-        ResponseEntity<UserResponse> result = underTest.register(validPotentialUser);
+        ResponseEntity<UserResponse> actual = underTest.register(validPotentialUser);
 
         // Then
-        assertThat(result).isEqualTo(expected);
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
@@ -59,10 +59,10 @@ public class UserControllerTest {
 
         // When
         when(userService.register(invalidPotentialUser)).thenReturn(sampleResponse);
-        ResponseEntity<UserResponse> result = underTest.register(invalidPotentialUser);
+        ResponseEntity<UserResponse> actual = underTest.register(invalidPotentialUser);
 
         // Then
-        assertThat(result).isEqualTo(expected);
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
@@ -76,10 +76,10 @@ public class UserControllerTest {
 
         // When
         when(userService.authenticate("username", "password")).thenReturn(sampleResponse);
-        ResponseEntity<UserResponse> result = underTest.authenticate("username", "password");
+        ResponseEntity<UserResponse> actual = underTest.authenticate("username", "password");
 
         // Then
-        assertThat(result).isEqualTo(expected);
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
@@ -92,10 +92,10 @@ public class UserControllerTest {
 
         // When
         when(userService.authenticate("username", "password")).thenReturn(sampleResponse);
-        ResponseEntity<UserResponse> result = underTest.authenticate("username", "password");
+        ResponseEntity<UserResponse> actual = underTest.authenticate("username", "password");
 
         // Then
-        assertThat(result).isEqualTo(expected);
+        assertThat(actual).isEqualTo(expected);
     }
 
 

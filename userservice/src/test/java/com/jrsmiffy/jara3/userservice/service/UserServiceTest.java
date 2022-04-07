@@ -75,11 +75,11 @@ class UserServiceTest {
 
         // When:
         when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
-        UserResponse result = underTest.register(validPotentialUser);
+        UserResponse actual = underTest.register(validPotentialUser);
 
         // Then:
         then(userRepository).should().save(userArgumentCaptor.capture());
-        assertThat(result).isEqualTo(expected);
+        assertThat(actual).isEqualTo(expected);
 
         User userArgumentCaptorValue = userArgumentCaptor.getValue();
         assertThat(userArgumentCaptorValue).isEqualTo(validPotentialUser);
@@ -100,10 +100,10 @@ class UserServiceTest {
         ReflectionTestUtils.setField(underTest, "responseRegisterFailInvalidCredentials", responseRegisterFailInvalidCredentials);
 
         // When:
-        UserResponse result = underTest.register(invalidPotentialUser);
+        UserResponse actual = underTest.register(invalidPotentialUser);
 
         // Then:
-        assertThat(result).isEqualTo(expected);
+        assertThat(actual).isEqualTo(expected);
     }
 
     /** register() */
@@ -120,10 +120,10 @@ class UserServiceTest {
 
         // When:
         when(userRepository.findByUsername(username)).thenReturn(Optional.of(otherUser));
-        UserResponse result = underTest.register(invalidPotentialUser);
+        UserResponse actual = underTest.register(invalidPotentialUser);
 
         // Then:
-        assertThat(result).isEqualTo(expected);
+        assertThat(actual).isEqualTo(expected);
     }
 
     /** authenticate() */
@@ -139,10 +139,10 @@ class UserServiceTest {
 
         // When:
         when(userRepository.findByUsername(username)).thenReturn(Optional.of(validUser));
-        UserResponse result = underTest.authenticate(username, password);
+        UserResponse actual = underTest.authenticate(username, password);
 
         // Then:
-        assertThat(result).isEqualTo(expected);
+        assertThat(actual).isEqualTo(expected);
     }
 
     /** authenticate() */
@@ -159,10 +159,10 @@ class UserServiceTest {
         ReflectionTestUtils.setField(underTest, "responseAuthenticateFailInvalidCredentials", responseAuthenticateFailInvalidCredentials);
 
         // When:
-        UserResponse result = underTest.authenticate(username, password); // repository mock not required
+        UserResponse actual = underTest.authenticate(username, password); // repository mock not required
 
         // Then:
-        assertThat(result).isEqualTo(expected);
+        assertThat(actual).isEqualTo(expected);
     }
 
     /** authenticate() */
@@ -177,10 +177,10 @@ class UserServiceTest {
 
         // When:
         when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
-        UserResponse result = underTest.authenticate(username, password);
+        UserResponse actual = underTest.authenticate(username, password);
 
         // Then:
-        assertThat(result).isEqualTo(expected);
+        assertThat(actual).isEqualTo(expected);
     }
 
     /** authenticate() */
@@ -197,10 +197,10 @@ class UserServiceTest {
 
         // When:
         when(userRepository.findByUsername(username)).thenReturn(Optional.of(validUser));
-        UserResponse result = underTest.authenticate(username, password);
+        UserResponse actual = underTest.authenticate(username, password);
 
         // Then:
-        assertThat(result).isEqualTo(expected);
+        assertThat(actual).isEqualTo(expected);
         verify(userRepository).findByUsername(username); // when is it appropriate to use .verify()?
     }
 

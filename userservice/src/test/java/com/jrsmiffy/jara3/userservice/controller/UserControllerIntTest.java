@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -36,9 +37,6 @@ public class UserControllerIntTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-//    @MockBean
-//    private UserService userService; // give null pointer, as is
-
     private static final Logger log = LoggerFactory.getLogger(UserControllerIntTest.class);
 
     @Value("${response.register.success}")
@@ -47,29 +45,40 @@ public class UserControllerIntTest {
     @Value("${response.authenticate.success}")
     private String responseAuthenticateSuccess;
 
+    private String uuid = "10101010-1010-1010-1010-101010101010";
+
     @Test
 //    @Disabled
     @DisplayName("Test Register Endpoint")
     public void testRegisterEndpoint() throws Exception {
 
         // Given: a valid user (that passes the checks)
-        String uuid = "10101010-1010-1010-1010-101010101010";
         User userValid = new User(UUID.fromString(uuid), "username", "password", true);
-        UserResponse expectedResponse = new UserResponse(Optional.of(userValid), responseRegisterSuccess);
-
-        // When: the UUID is randomly generated, so we need to make this static for assertion
-        // ........
+        UserResponse expected = new UserResponse(Optional.of(userValid), responseRegisterSuccess);
 
         // Then:
         String body = String.format("{\"username\": \"%s\",\"password\":\"%s\"}",
                 userValid.getUsername(),
                 userValid.getPassword());
-        mockMvc.perform(post("/register").contentType(MediaType.APPLICATION_JSON)
+        String response = mockMvc.perform(post("/register")
+                .contentType(MediaType.APPLICATION_JSON)
                 .content(body))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)))
-                .andReturn();
+//                .andExpect(content().json(objectMapper.writeValueAsString(expected)))
+                .andReturn()
+                .getResponse().getContentAsString();
+
+        // the UUID is randomly generated, so we need to test response body separately
+        UserResponse actual = objectMapper.readValue(response, UserResponse.class);
+
+        // extract the UUID and test if valid (not null), what about testing uniqueness?
+        UUID uuidActual = actual.getUser().get().getId();
+        assertThat(uuidActual).isNotNull();
+
+        // ignore the UUID and check that the rest of response is valid
+        actual.getUser().get().setId(UUID.fromString(uuid));
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
@@ -78,21 +87,14 @@ public class UserControllerIntTest {
     public void testAuthenticateEndpoint() throws Exception {
 
         // Given: a valid user (that passes the checks)
-        String uuid = "10101010-1010-1010-1010-101010101010";
         User userValid = new User(UUID.fromString(uuid), "username1", "password1", true);
-        UserResponse expectedResponse = new UserResponse(Optional.of(userValid), responseAuthenticateSuccess);
+        UserResponse expected = new UserResponse(Optional.of(userValid), responseAuthenticateSuccess);
 
         // Then: check that this result is equal to the expected
         mockMvc.perform(get("/authenticate/username1/password1"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)))
+                .andExpect(content().json(objectMapper.writeValueAsString(expected)))
                 .andReturn();
     }
-
-    /** this class is not being executed with mvn test! - investigate
-     * all tests are being run bar this Int class!
-     *          Also @Disabled is being ignored
-     */
-
 }
