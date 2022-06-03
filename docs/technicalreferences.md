@@ -119,7 +119,7 @@ inspired by: https://nvie.com/posts/a-successful-git-branching-model/
 
 ## Coding Standards
 * All functionality should be implemented following Top-Down TDD.
-* As part of the TDD refactoring step or when reviewing a PR, check that coding standards are met.
+* As part of the TDD refactoring step or when reviewing a PR, check that coding standards are met (see TINTK).
 * Set at least 15 mins aside to sit down and walk through a PR, before approving.
 
 
