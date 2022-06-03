@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title> Jara3 </title>
+        <link rel="stylesheet" href="./css/login.css">
+        <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+        <script src="https://kit.fontawesome.com/096f2be9ca.js" crossorigin="anonymous"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+        <script src="./js/login.js"></script>
+    </head>
+
+    <body>
+        <div id="background-img"></div>
+        <div id="background-overlay"></div>
+
+
+
+        <div id="container-login">
+            <img id="logo" src="./res/j3_logo.png" alt="">
+            <p id="slogan"> a jira-inspired to-do list</p>
+            <div id="container-login-inner">
+                <div class="form">
+                    <form class="register-form" action="">
+                      <input class="input-register" type="text" placeholder="Username"/>
+                      <input class="input-register" type="password" placeholder="Password"/>
+                      <button onclick="toggleError(true)">Create</button>
+                      <p class="message">Already registered? <a href="#" onclick="toggleError(false)">Sign In</a></p>
+                    </form>
+                    <form class="login-form" action="">
+                      <input class="input-login" type="text" placeholder="Username"/>
+                      <input class="input-login" type="password" placeholder="Password"/>
+                      <button id="btn-login" onclick="toggleError(true)">Login</button>
+                      <p class="message">Not registered? <a href="#" onclick="toggleError(false)">Create an account</a></p>
+                    </form>
+                </div>
+                  <div id="login-error" class="error alert alert-danger"> 
+                      <i class="fa fa-exclamation-circle" aria-hidden="true"></i> <span> Invalid username or password </span>
+                  </div>
+            </div>
+        </div>
+    </body>
+    <footer>
+        JRSmiffy &copy; <script> document.write(new Date().getFullYear()) </script>
+    </footer>
+
+    <script>
+        $('.message a').click(function(){
+            $('form').animate({height: "toggle", opacity: "toggle"}, 500);
+            $(".error").hide();
+            $('.input-login').val('');
+            $('.input-register').val('');
+        });
+
+        $('#btn-login').click(function(){
+            $(".error").show();
+        });
+    </script>
+</html>

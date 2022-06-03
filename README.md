@@ -5,7 +5,14 @@ a jira-inspired to-do list
 <br>
 <br>
 
-### a beautiful screen shot
+### Login Page
+<img width="1200" alt="Jara3 Login Page" src="https://user-images.githubusercontent.com/34093915/156817681-d30f8f44-a015-4a9f-8d37-b70c16b0ab08.png">
+
+<br>
+<br>
+<br>
+
+### Todo Page
 
 <br>
 <br>
@@ -25,3 +32,4 @@ a jira-inspired to-do list
     * [Miro](https://miro.com/app/board/uXjVOREpiSo=/)
     * [Jira](https://jrsmiffy.atlassian.net/jira/software/projects/J3/boards/1)
     * [Figma](https://www.figma.com/file/UHxgdYXdDUOoLxMO3hyzHh/Jara3)
+    * [Postman](https://github.com/JRSmiffy/jara3/tree/main/docs/postman)

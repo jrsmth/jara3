@@ -1,72 +1,66 @@
 package com.jrsmiffy.jara3.userservice.controller;
 
 import com.jrsmiffy.jara3.userservice.model.User;
-import com.jrsmiffy.jara3.userservice.repository.UserRepository;
-import com.netflix.discovery.EurekaClient;
+import com.jrsmiffy.jara3.userservice.model.UserResponse;
+import com.jrsmiffy.jara3.userservice.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @RestController
 public class UserController {
 
+    private final UserService userService;
+
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
-    /**
-     * Adding Client Service Discovery Capabilities
-     */
-    @Autowired
-    @Lazy
-    private EurekaClient eurekaClient;
-
-    @Value("${spring.application.name}")
-    private String appName;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    /**
-     * Login - Verify User Credentials & Accept/Reject Login Request
-     */
-    @RequestMapping(path = "/login/{username}/{password}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody ResponseEntity<Map<HttpStatus, Object>> login(@PathVariable("username") String username, @PathVariable("password") String password) {
-        Map<HttpStatus, Object> returnObject = new HashMap<>();
-        returnObject.put(HttpStatus.OK, "Connection confirmed");
-        return ResponseEntity.ok(returnObject);
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
-    /**
-     * Create User
-     */
-    @RequestMapping(path = "/user", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody ResponseEntity<Map<HttpStatus, Object>> createUser(@RequestBody User newUser) {
+    /** Register User */
+    @PostMapping(path = "/register")
+    public ResponseEntity<UserResponse> register(@RequestBody final User potentialUser) {
 
-        // Are these credentials valid? -> they have already been validated in the frontend
+        // Check that this potential user is valid - if so, register them; else, return err
+        ResponseEntity<UserResponse> response;
+        final UserResponse userResponse = userService.register(potentialUser);
 
-        Map<HttpStatus, Object> returnObject = new HashMap<>();
-        try{
-            // Does this user already exist?
-            userRepository.findByUsername(newUser.getUsername());
-            userRepository.save(newUser);
-        } catch (NullPointerException e){
-            log.error(e.toString());
-        } finally {
-            returnObject.put(HttpStatus.OK, newUser);
-            return ResponseEntity.ok(returnObject);
-        }
+        if(userResponse.getUser().isPresent())
+            response = ResponseEntity.status(HttpStatus.OK).body(userResponse);
+        else
+            response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(userResponse);
+
+        log.info(response.toString());
+        return response;
     }
 
 
+    /** Authenticate User */
+    @GetMapping(path = "/authenticate/{username}/{password}")
+    public ResponseEntity<UserResponse> authenticate(@PathVariable("username") final String username, @PathVariable("password") final String password) {
 
+        // Check that these user credentials match with a valid user - if so, return success; else, return err
+        ResponseEntity<UserResponse> response;
 
+        final UserResponse userResponse = userService.authenticate(username, password);
+
+        if(userResponse.getUser().isPresent())
+            response = ResponseEntity.status(HttpStatus.OK).body(userResponse);
+        else
+            response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(userResponse);
+
+        log.info(response.toString());
+        return response;
+    }
+
+    /** Get All Users - Dev Use Only */
+    @RequestMapping(path = "/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
 
 }

@@ -1,72 +1,114 @@
 import React, { useState } from "react";
-import { Container, Form, Button, Alert, Card } from "react-bootstrap";
-import { login, test } from "../../api";
+import { authenticate, register} from "../../api";
+import Footer from "../footer";
+import Header from "../header"
+import "../../css/login.css";
+import j3Logo from '../../res/j3_logo.png';
+import $ from 'jquery';
 
 function Login({ onLoginSuccessful }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [hasError, setHasError] = useState(false);
+  const [username, setUsername] = useState(localStorage.getItem("username"));
+  const [password, setPassword] = useState(localStorage.getItem("password"));
 
-  const onEmailChange = (event) => setEmail(event.target.value);
+  const onUsernameChange = (event) => setUsername(event.target.value);
   const onPasswordChange = (event) => setPassword(event.target.value);
 
-  const onSubmit = async (event) => {
+  const onSubmitLogin = async (event) => {
     event.preventDefault();
-    setHasError(false);
-    // const loginResult = await login({ email, password });
-    // if (!loginResult) setHasError(true);
-    // else {
-    //   const { name, token } = loginResult;
-    //   // Save user IDs on local storage
-    //   localStorage.setItem("name", name);
-    //   localStorage.setItem("token", token);
-    //   onLoginSuccessful();
-    // }
-    const loginResult = await test();
-    console.log("JRS*: " + JSON.stringify(loginResult))
+    const loginResult = await authenticate({ username, password });
+    console.log(loginResult);
+    
+    var status = Object.keys(loginResult)[0];
+    var response = Object.values(loginResult)[0];
+    console.log(status);
+    console.log(response);
+
+    if (status === "CONFLICT"){
+      toggleAlert(true, response);
+      console.log(response);
+    } 
+    else {
+      // Save user IDs on local storage
+      localStorage.setItem("name", response.username);
+      localStorage.setItem("token", "A JWT token to keep the user logged in");
+      localStorage.setItem("username", "");
+      localStorage.setItem("password", "");
+      onLoginSuccessful();
+    }
+  };
+
+  const onSubmitRegister = async (event) => {
+    event.preventDefault();
+    const registrationResult = await register({ username, password });
+    console.log(registrationResult);
+    
+    var status = Object.keys(registrationResult)[0];
+    var response = Object.values(registrationResult)[0];
+    console.log(status);
+    console.log(response);
+
+    if (status === "CONFLICT"){
+      toggleAlert(true, response);
+      console.log(response);
+    } 
+    else {
+      localStorage.setItem("username", username);
+      localStorage.setItem("password", password);
+      window.location.reload(false);
+    }
+  };
+
+  const toggleForm = () => {
+    $('form').animate({height: "toggle", opacity: "toggle"}, 500); // perform animation
+    toggleAlert(false, null); // hide error message
+    // reset form
+    $('.input-login').val('');
+    $('.input-register').val('');
+    setUsername("");
+    setPassword("");
+  };
+
+  const toggleAlert = (condition, message) => {
+    if(condition){ // show alert
+      document.getElementById("alert").style.display = "block";
+      document.getElementById("form").style.padding = "45px 45px 16px 45px";
+      document.getElementById("alert-message").innerHTML = message;
+    } else{ // hide alert
+      document.getElementById("alert").style.display = "none";
+      document.getElementById("form").style.padding = "45px 45px 60px 45px";
+    }
   };
 
   return (
-    <Container>
-      <Card className="mt-5">
-        <Card.Header as="h1">Login</Card.Header>
-        <Card.Body>
-          <Form className="w-100" onSubmit={onSubmit}>
-            <Form.Group controlId="formBasicEmail">
-              <Form.Label>Email Jaddress</Form.Label>
-              <Form.Control
-                type="email"
-                placeholder="Enter email"
-                onChange={onEmailChange}
-                value={email}
-              />
-              <Form.Text className="text-muted">
-                We'll never share your email with anyone else.
-              </Form.Text>
-            </Form.Group>
-
-            <Form.Group controlId="formBasicPassword">
-              <Form.Label>Password</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder="Password"
-                onChange={onPasswordChange}
-                value={password}
-              />
-            </Form.Group>
-            {hasError && (
-              <Alert variant={"danger"}>
-                The email address and password you entered don't match any
-                account. Please try again.
-              </Alert>
-            )}
-            <Button variant="primary" type="submit">
-              Submit
-            </Button>
-          </Form>
-        </Card.Body>
-      </Card>
-    </Container>
+    <html> 
+        <Header/>
+        <div id="background-img"></div>
+        <div id="background-overlay"></div>
+        <div id="container-login">
+            <img id="logo" src={j3Logo} alt=""/>
+            <p id="slogan"> a jira-inspired to-do list</p>
+            <div id="container-login-inner">
+                <div id="form">
+                    <form id="form-register" onSubmit={onSubmitRegister}>
+                        <input class="input-register" type="text" placeholder="Username" onChange={onUsernameChange} value={username}/>
+                        <input class="input-register" type="password" placeholder="Password" onChange={onPasswordChange} value={password}/>
+                        <button type="submit">Register</button>
+                        <p class="message">Already registered? <a onClick={toggleForm}>Sign In</a></p>
+                    </form>
+                    <form id="form-login" onSubmit={onSubmitLogin}>
+                        <input class="input-login" type="text" placeholder="Username" onChange={onUsernameChange} value={username}/>
+                        <input class="input-login" type="password" placeholder="Password" onChange={onPasswordChange} value={password}/>
+                        <button id="btn-login" type="submit">Sign In</button>
+                        <p class="message">Not registered? <a onClick={toggleForm}>Register an account</a></p>
+                    </form>
+                </div>
+                <div id="alert" class="error alert-danger"> 
+                    <i class="fa fa-exclamation-circle" aria-hidden="true"></i> <span id="alert-message"> Invalid username or password </span>
+                </div>
+            </div>
+        </div>
+        <Footer/>
+    </html>
   );
 }
 

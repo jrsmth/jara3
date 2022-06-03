@@ -2,7 +2,8 @@
 start_eureka_locally:
 	cd eurekaserver ; ./mvnw spring-boot:run
 start_user_service_locally:
-	cd userservice ;  export EUREKA_URI=http://localhost:8761/eureka ; ./mvnw spring-boot:run -Dspring-boot.run.profiles=local
+	cd userservice ; ./mvnw clean test &
+	cd userservice ; export EUREKA_URI=http://localhost:8761/eureka ; ./mvnw spring-boot:run -Dspring-boot.run.profiles=local
 start_frontend_locally:
 	cd frontend ; npm run build ; export PORT=8702 ; node app
 

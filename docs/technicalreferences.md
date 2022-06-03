@@ -49,6 +49,16 @@
 * Change the port that your React app runs on ([source](https://scriptverse.academy/tutorials/reactjs-change-port-number.html))
     * ``` export PORT=8702 ```
     * ``` npm start ```
+* Base64: encode and decode
+    * ``` echo -n amFyYTMtZGV2 | base64 --d ```
+    * ``` echo -n jara3-dev | base64 ```
+* GKE login
+    * ``` gcloud auth login ```
+    * ``` gcloud container clusters get-credentials $CLUSTER --zone $ZONE --project $PROJECT ```
+* Manually update an image on GCR
+    * ``` docker build -t jrsmiffy/jara3 -f Dockerfile . ```
+    * ``` docker tag jara3/userservice eu.gcr.io/jrsmiffy/jara3/userservice:latest ```
+	* ``` docker push eu.gcr.io/jrsmiffy/jara3/userservice:latest ```
 
 <br>
 
@@ -80,7 +90,7 @@
         * unit tests
     * develop
         * unit tests
-        * ~~deploy to dev environment~~ (single environment only)
+        * ~~deploy to dev environment~~ (prod environment only)
     * main
         * unit tests
         * build images and push to registry
@@ -90,11 +100,12 @@ inspired by: https://nvie.com/posts/a-successful-git-branching-model/
 
 
 ### Jira Process
-TLDR - stop using Jira as a source of documentation, instead keep a top-notch technicalreferences.md
+TLDR - stop using Jira as a source of documentation, instead keep a good technicalreferences.md <br>
+TLDR 2 - any documentation that you do want to add to the ticket, keep it in the description, as it gets preserved when exported. Use the comments to update on progress.
 * When working on a ticket, keep a stringent checklist of what exactly needs to be done to complete it (in the description).
 * Use the comments to evidence that the work has been completed, with accompanying media (screen shots, etc).
 * Stop using Jira tickets to document how to do specific tasks; you will eventually lose access to those tickets and, retrospectively, the information is hard/impossible to pull out in bulk.
-    * Instead, consistently add knowledge to techincalreferences.md - build up a great bank of TINTK.
+    * Instead, consistently add knowledge to techincalreferences.md - plus build up a great bank of private TINTK.
     * You can still put commands, links and details in the Jira comments (there's still some use in that). You can (and should) still keep a top-notch Jira but don't go overboard and invest the same effort into keeping personal documentation.
 
 ### Creating a React Frontend that is able to talk with Eureka
@@ -137,93 +148,60 @@ TLDR - stop using Jira as a source of documentation, instead keep a top-notch te
     * How to Run: ``` node start ```
         * If you make a change to the React app, ``` npm run build ; node start ```
 
-### Domain Driven Design
-This is going to be a very brief introduction and will need to refined over time. This is not intended to be a full dive into DDD, rather an introduction so I can build a base that I can build upon over time.
-* Principles:
-    * DDD is a design approach that aims to make software reflect a real-world system
-        * The structure and language of the code should reflect the business domain - as a crude example, a loans processing application may have classes such as LoanApplication and Customer, and methods such as AcceptOffer and Withdraw.
-    * There are three core principles in DDD:
-        1. Separate the concerns into layers
-        2. Model the Domain
-        3. Manage the life-cycle of Domain objects
-    * 1 - Separate the concerns into layers
-        * User Interface / Presentation Layer
-            * Responible for displaying information to the user (human or another computer system) and interpreting user commands. 
-            * Knows about the Application and Domain Layers only.
-        * Application Layer
-            * Defines the jobs that the software is to perform and coordinates the domain objects accordingly.
-            * This layer is kept thin and does not contain business knowledge. It doesn't have state reflecting the business situation, only state that the reflects the progress of a task, if any state at all.
-            * Knows about the Domain Layer only.
-        * Domain Layer (Model Layer)
-            * Contains the business logic. This layer is the heart of the software. It has state that reflects the business situation (but technical details of storing the state are delegated to the Infrastructure Layer).
-            * Is not aware of any other layers.
-        * Infrastructure Layer
-            * Provides technical capabilities that support the higher layers: message sending, persistence for the domain and so on...
-            * Know of only the Domain Layer.   
-        <br> <img src="./res/ddd_separate_concerns.png" width=500> <br><br>
-    * 2 - Model the Domain
-* Process:
-    * this
-    * that
-* Good resources:
-    * https://medium.com/inato/an-introduction-to-domain-driven-design-386754392465
-    * https://en.wikipedia.org/wiki/Domain-driven_design
-
-### School Periods
-* Work can be loosely divided in half between ***passive*** tasks (learning/researching/documenting) and ***assertive*** tasks (designing/building/testing). 
-    * I find that the designing/building tasks are very engaging and can be done for long periods without interuption. On the other hand, whilst the learning/researching tasks are essential, I find them taxing and cannot do them for long periods. 
-    * "A change is as good as a rest"
-        * Alternate between these types of tasks, spending 1h periods on each.
-        * It is useful to switch from learning to doing when your ability to take on new information is wavering.
-        * It is also useful to switch from being stuck on a particular problem and come back to it - often solutions fall out with fresh eyes.
-    * Example:
-        * Let's say I'm learning about Unit Testing/TDD because I've got some tests to write. I can do an hours ***learning*** and then switch to another ***doing*** task that is pending. After an hours ***doing***, I can switch back to ***learning*** and do another hours on TDD. Rinse and repeat.
-        * Doesn't have to be super strict - reach a natural hiatus before stopping the task that you're on.
-    * Time boxing
-        * Timeboxing tasks into 1h chunks is useful not only for switching tasks and means you'll also get more work out per minute. Focus will intesify.
-            * Parkinson's Law: work expands to fill the time allotted for it.
-            * [Elon Musk Timeboxing](https://www.youtube.com/watch?v=fbAYK4KQrso)
-
-### Mastery Cycle
-* Micro
-    * A process to improve. If you're going to spend a unit of time learning something, you should complete a full cycle of this process. 
-        * Example: learning DDD.
-            * Blanket introduction, aim to uncover the full landscape - DDD: discover the three core concepts of separate concerns, model domain and manage domain object lifecycle.
-            * Drill down into one area at a time (isolate) and learn enough to be able to contribute something of value (perhaps cover one topic per individual session). DDD: in individual an session, cover 'separate concerns' and absorb something of use.
-            * Cover each of the concepts in your scope (intergrate) and then apply them to create something - possibly very similar to what you've learnt. DDD: create a DDD design on Miro using the concepts that you've just learnt.
-            * Following the rule of 80:20, whilst applying the concepts that you've learnt add 20% of your own flair to strecth yourself (improvise). Make sure that you get a mentor to review your work and provide feedback. DDD: fill in the gaps in your Miro design with your own ideas; get feedback from a mentor at work and apply it.
-* Macro
-    * The Ido Portal Levels of Mastery
-        * Level 0: NO ABILITY
-            * The "Fool"
-            * You don't know what you don't know
-            * Hero's jounery: Call to Adventure
-            * You have no understanding of the domain and cannot do anything meaninful
-        * Level 1: ISOLATION
-            * The "Apprentice"
-            * You know what you don't know
-            * Hero's Journey: Challenges and Trials, help from Mentors
-            * You are beinnging to understand the domain but are unable to contribute anything of value.
-        * Level 2: INTEGRATION
-            * The "Journeyman"
-            * You know what you know what you know
-            * Hero's Journey: Post-Revelation Transformation
-            * You understand the domain well enough to contribute something of value
-        * Level 3: IMPROVISATION
-            * The "Redeemer"
-            * You don't know what you know
-            * Hero's Journey: Return with the Gift
-            * You understand the domain well enough to create something new (tip of the spear)
-            
-            <img src="./res/300px-Heroesjourney.jpg" width=300> <br><br>
-        * Example: studying for CKAD
-            * ISOLATE: learn the concepts
-            * INTEGRATE: hands on exercises
-            * IMPROVISE: in-the-wild experience
-
 ### Release Process
-* Store the latest version of Jira and Miro in https://github.com/JRSmiffy/jara3/tree/main/docs
+* Update the latest versions of tooling data in https://github.com/JRSmiffy/jara3/tree/main/docs
+    * Postman
+    * Jira
+    * Miro
 
+### Coding Standards
+* When refactoring (at the end of TDD) or when reviewing code as part of a pull request, ensure the following standards are upheld:
+    * TDV-inspired coding standards:
+        * Code in comments should be removed
+        * Add appropriate exception handling and error handling
+        * Remove unused endpoints
+        * Organise package structure
+        * Ensure variables are named according to their purpose
+        * Add descriptive code comments
+        * Add logging in code - remove System.out.println
+        * Remove any copy/pasted code and refactor
+        * Remove any hardcoded values
+        * Make variables final - including in method parameters if they are not changing
+    * Add T2-DB standards:
+        * this and that...
+* Set aside 15 mins or so, to go through these when you review a PR.
+
+### Test-Driven Design
+* Use TDD to develop functionality in both Spring and Angular.
+* Don't test private methods, as a rule.
+* It is worth the initial investment to get efficient code and comprehensive tests.
+
+### Overcoming Obstacles
+* **spring-data-jpa dependency issue**
+    * make sure you the ```spring-boot-starter-data-jpa``` dependency and not the ```spring-data-jpa``` when connecting to a database, using a JPA repository.
+        * I kept facing a ```Consider defining a bean named 'entityManagerFactory' in your configuration``` exception with the latter dependency.
+        * source: [stack overflow](https://stackoverflow.com/questions/41170661/spring-data-jpa-consider-defining-a-bean-named-entitymanagerfactory-in-your/41178250)
+* **Minified React Error #130**
+    * change the version of ```"react-bootstrap": "^2.1.2" ``` to ``` "react-bootstrap": "^1.5.2" ``` in ```client/package.json``` and run ```npm install``` in ```/client```
+    * when you get errors in the client (visible in the browser js console), you can view more detailed logs in the terminal, if you run the client on its own
+        * ``` cd frontend/client ```
+        * ``` export PORT=9000 ```
+        * ``` npm start ```
+* **Using JQuery in React**
+    * [stack overflow](https://stackoverflow.com/questions/38518278/how-to-use-jquery-with-reactjs)
+        * ``` npm install jquery --save ```
+        * ``` import $ from 'jquery'; ```
+* **JUnit Import Confusion**
+    * When specifically running integration tests:
+        *  I got a ```No runnable methods``` error when I used the ```org.junit.jupiter.api.Test``` import.
+        * This was resolved by replacing it with ```org.junit.Test;```
+            * note, the 'juniper' import works fine with unit tests.
+* **Getting ```null``` For ```@value``` in Unit Tests**
+    * In standard unit tests, we don't load up the full spring context and so don't have access to app.yaml in our test classes. I needed to use ```@value``` in my unit tests, so to overcome this, I used ```@SpringBootTest```. This loads up Spring, giving us access to app.yaml but makes running tests more expensive (a neccesary evil in this case).
+        * [Stack Overflow:](https://stackoverflow.com/questions/57436788/value-returning-null-in-unit-test) returning null in test
+        * [Stack Overflow:](https://stackoverflow.com/questions/23162777/how-do-i-mock-an-autowired-value-field-in-spring-with-mockito) mock autowired field
+        * [Stack Overflow:](https://stackoverflow.com/questions/38711871/load-different-application-yml-in-springboot-test) load app.yml in 
+    
 <br>
 
  
