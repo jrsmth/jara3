@@ -19,7 +19,7 @@ a jira-inspired to-do list
 <br>
 
 ### Jara3 Architecture
-<img width="1200" alt="Jara3 Architecture" src="https://user-images.githubusercontent.com/34093915/151743423-6bae0e65-0d80-4d6d-aab8-c134ce0f2d78.png">
+<img width="1200" alt="Jara3 Login Page" src="./docs/res/jara3_architecture_v2.png">
 
 <br>
 <br>
