@@ -6,7 +6,7 @@
 * Run these commands in separate terminal windows:
     *  ``` make start_eureka_local ```
     *  ``` make start_user_local ```
-    *  ``` make start_webapp_local ```
+    *  ``` make start_web_app_local ```
 
 <br>
 
