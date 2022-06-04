@@ -111,7 +111,7 @@ inspired by: https://nvie.com/posts/a-successful-git-branching-model/
 <br>
 
 ## Release Process
-* [release notes](../release-notes.md)
+* [release notes](../releasenotes.md)
 
 <br>
 

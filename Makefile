@@ -4,7 +4,7 @@ start_eureka_local:
 start_user_local:
 	cd user-service ; ./mvnw clean test &
 	cd user-service ; export EUREKA_URI=http://localhost:8761/eureka ; ./mvnw spring-boot:run -Dspring-boot.run.profiles=local
-start_webapp_local:
+start_web_app_local:
 	cd web-app ; npm run build ; export PORT=8702 ; node app
 
 start_jara3_local:
