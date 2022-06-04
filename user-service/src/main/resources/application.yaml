@@ -1,8 +1,17 @@
 spring:
   application:
     name: jara3-user-service
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    defer-datasource-initialization: true
+
 server:
   port: 8772
+
 eureka:
   client:
     enabled: true
