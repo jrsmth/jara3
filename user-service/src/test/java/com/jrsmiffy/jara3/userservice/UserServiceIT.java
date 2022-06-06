@@ -5,6 +5,7 @@ import com.jayway.jsonpath.JsonPath;
 import com.jrsmiffy.jara3.userservice.model.User;
 import com.jrsmiffy.jara3.userservice.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,6 +50,12 @@ public class UserServiceIT {
                 .build();
     }
 
+    @AfterEach
+    void tearDown() {
+        this.userRepository.deleteAll();
+        // wiping the database is required because usernames must be unique
+    }
+
     @Test
     @DisplayName("Should Authenticate User")
     void shouldAuthenticateUser() throws Exception {
@@ -72,7 +79,18 @@ public class UserServiceIT {
          */
     }
 
-    /** Generic Should Not Authenticate */
+    @Test
+    @DisplayName("Should Not Authenticate User")
+    void shouldNotAuthenticateUser() throws Exception {
+        // Given: an invalid user (not saved in the database, password mismatch, etc)
+
+        // Then: try authenticating this user
+        this.mockMvc.perform(
+                get("/authenticate/"+USERNAME+"/"+PASSWORD))
+                .andExpect(status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user").value(null));
+    }
+
 
     @Test
     @DisplayName("Should Register User")
@@ -102,6 +120,21 @@ public class UserServiceIT {
         assertThat(returnedUser.getPassword()).isEqualTo(savedUser.getPassword());
     }
 
-    /** Generic Should Not Register */
+    @Test
+    @DisplayName("Should Not Register User")
+    void shouldNotRegisterUser() throws Exception {
+        // Given: an invalid user (already present in the database, invalid credentials, etc)
+
+        // Then: try authenticating this user
+        this.mockMvc.perform(
+                MockMvcRequestBuilders
+                        .post("/register")
+                        .param("username", USERNAME)
+                        .param("password", PASSWORD)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user").value(null));
+    }
 
 }
