@@ -19,8 +19,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.UUID;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -56,14 +54,15 @@ public class UserServiceIT {
     void shouldAuthenticateUser() throws Exception {
 
         // Given: a valid user saved in the database
-        final User user = new User(UUID.randomUUID(), USERNAME, PASSWORD, true);
+        final User user = new User(USERNAME, PASSWORD); // UUID auto-gen upon save
         this.userRepository.save(user);
 
         // Then: try to authenticate this user
         this.mockMvc.perform(
                 get("/authenticate/"+USERNAME+"/"+PASSWORD))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.user").value(user));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user.username").value(user.getUsername()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user.password").value(user.getPassword()));
 
         /*
             We want to decouple the test from the implementation to reduce test fragility,
@@ -72,6 +71,8 @@ public class UserServiceIT {
             How they're ordered is up to the implementation, we can check this in the unit tests.
          */
     }
+
+    /** Generic Should Not Authenticate */
 
     @Test
     @DisplayName("Should Register User")
@@ -95,10 +96,12 @@ public class UserServiceIT {
         // Assert that the user was persisted
         final Object userMap = JsonPath.read(result.getResponse().getContentAsString(), "$.user");
         final User returnedUser = objectMapper.convertValue(userMap, User.class);
-        log.info(returnedUser.toString());
 
         final User savedUser = userRepository.findByUsername(USERNAME).get();
-        log.info(savedUser.toString());
-        assertThat(returnedUser).isEqualTo(savedUser);
+        assertThat(returnedUser.getUsername()).isEqualTo(savedUser.getUsername());
+        assertThat(returnedUser.getPassword()).isEqualTo(savedUser.getPassword());
     }
+
+    /** Generic Should Not Register */
+
 }
