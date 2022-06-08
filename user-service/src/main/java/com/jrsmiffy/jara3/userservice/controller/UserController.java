@@ -52,7 +52,7 @@ public class UserController {
     }
 
 
-    
+    /** Add controller unit tests for register endpoint! */
     /** Add and test the dev endpoint and then move onto User svc TDD */
 
 }

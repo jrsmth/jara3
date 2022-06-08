@@ -1,6 +1,5 @@
 package com.jrsmiffy.jara3.userservice.controller;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.jrsmiffy.jara3.userservice.model.User;
