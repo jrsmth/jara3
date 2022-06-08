@@ -1,5 +1,6 @@
 package com.jrsmiffy.jara3.userservice.controller;
 
+import com.jrsmiffy.jara3.userservice.model.User;
 import com.jrsmiffy.jara3.userservice.model.UserResponse;
 import com.jrsmiffy.jara3.userservice.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -7,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -33,6 +36,13 @@ public class UserController {
         return createResponseEntity(userResponse);
     }
 
+    /** Get All Users - Dev Use Only */
+    @GetMapping(path = "/users")
+    public List<User> getAllUsers() {
+        log.info(userService.getAllUsers().toString());
+        return userService.getAllUsers();
+    }
+
     /** Create Response Entity*/
     private ResponseEntity<UserResponse> createResponseEntity(final UserResponse userResponse) {
         // Create response entity, based on whether User is null or not
@@ -50,9 +60,5 @@ public class UserController {
         log.info(response.toString());
         return response;
     }
-
-
-    /** Add controller unit tests for register endpoint! */
-    /** Add and test the dev endpoint and then move onto User svc TDD */
 
 }

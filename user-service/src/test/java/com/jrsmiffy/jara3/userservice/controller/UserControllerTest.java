@@ -14,8 +14,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -80,5 +82,62 @@ public class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.response").exists());
     }
 
+    @Test
+    @DisplayName("Should Register User")
+    public void shouldRegisterUser() throws Exception {
+        // Given: a valid potential user (no invalid or duplicate credentials)
+        // USERNAME, PASSWORD
 
+        // When
+        User registeredUser = new User(UUID.randomUUID(), USERNAME, PASSWORD, true);
+        when(userService.register(USERNAME, PASSWORD))
+                .thenReturn(new UserResponse(Optional.of(registeredUser),""));
+
+        // Then
+        this.mockMvc.perform(
+                MockMvcRequestBuilders
+                        .post("/register")
+                        .param("username", USERNAME)
+                        .param("password", PASSWORD))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user.username").value(USERNAME))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user.password").value(PASSWORD))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.response").exists());
+    }
+
+    @Test
+    @DisplayName("Should Not Register User")
+    public void shouldNotRegisterUser() throws Exception {
+        // Given: an invalid user (already present in the database, invalid credentials, etc)
+
+        // When
+        when(userService.register(USERNAME, PASSWORD))
+                .thenReturn(new UserResponse(Optional.empty(),""));
+
+        // Then: try authenticating this user
+        this.mockMvc.perform(
+                MockMvcRequestBuilders
+                        .post("/register")
+                        .param("username", USERNAME)
+                        .param("password", PASSWORD))
+                .andExpect(status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user").isEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.response").exists());
+    }
+
+    @Test
+    @DisplayName("Should Get All Users") // DEV USE ONLY
+    public void shouldGetAllUsers() throws Exception {
+        // Given: a user "saved" in the database
+        User savedUser = new User(UUID.randomUUID(), USERNAME, PASSWORD, true);
+
+        // When
+        when(userService.getAllUsers())
+                .thenReturn(List.of(savedUser));
+
+        // Then
+        this.mockMvc.perform(get("/users"))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$").exists());
+    }
 }

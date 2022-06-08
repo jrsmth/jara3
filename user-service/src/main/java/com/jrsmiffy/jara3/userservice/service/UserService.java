@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -27,4 +28,10 @@ public class UserService {
         return new UserResponse(Optional.of(newUser), "Hello World, from Jara3!");
     }
 
+    /** Get All Users */
+    public List<User> getAllUsers(){
+        return userRepository.findAll();
+    }
+
+    // TODO: start doing UserService TDD
 }
