@@ -66,7 +66,7 @@ public class UserServiceIT {
 
         // Then: try to authenticate this user
         this.mockMvc.perform(
-                get("/authenticate/"+USERNAME+"/"+PASSWORD))
+                get("/authenticate/{username}/{password}", USERNAME, PASSWORD))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.user.username").value(user.getUsername()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.user.password").value(user.getPassword()));
@@ -86,7 +86,7 @@ public class UserServiceIT {
 
         // Then: try authenticating this user
         this.mockMvc.perform(
-                get("/authenticate/"+USERNAME+"/"+PASSWORD))
+                get("/authenticate/{username}/{password}", USERNAME, PASSWORD))
                 .andExpect(status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.user").value(null));
     }
