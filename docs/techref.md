@@ -137,6 +137,11 @@ inspired by: https://nvie.com/posts/a-successful-git-branching-model/
     * make sure you the ```spring-boot-starter-data-jpa``` dependency and not the ```spring-data-jpa``` when connecting to a database, using a JPA repository.
         * I kept facing a ```Consider defining a bean named 'entityManagerFactory' in your configuration``` exception with the latter dependency.
         * source: [stack overflow](https://stackoverflow.com/questions/41170661/spring-data-jpa-consider-defining-a-bean-named-entitymanagerfactory-in-your/41178250)
-    
+* **Unit & Integration Tests Not Running with Maven**
+    * When using the `spring-boot-maven-plugin`:
+        * Stick to using `JUnit5`.
+            * Upgrading tests from `JUnit4` to `JUnit5` solved the issue of my `UserController` unit tests not working.
+        * When using the `*IT.java` naming convention for integration tests, be sure to add `<include>**/*IT.java</include>` to the `spring-boot-maven-plugin` configuration in `pom.xml`
+            * source: [stack overflow](https://stackoverflow.com/questions/1399240/how-do-i-get-my-maven-integration-tests-to-run)
  
 

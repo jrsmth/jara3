@@ -34,5 +34,4 @@ public class UserService {
     }
 
     // TODO: start doing UserService TDD
-    // TODO: need to fix the profiles for running test and local... err
 }
