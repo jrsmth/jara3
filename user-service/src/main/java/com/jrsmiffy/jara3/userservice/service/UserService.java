@@ -4,7 +4,7 @@ import com.jrsmiffy.jara3.userservice.model.User;
 import com.jrsmiffy.jara3.userservice.model.UserResponse;
 import com.jrsmiffy.jara3.userservice.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,15 +14,24 @@ import java.util.Optional;
 @Service
 public class UserService {
 
-    @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
-    public UserResponse authenticate(final String username, final String password) {
-        User potentialUser = userRepository.findByUsername(username).get();
-        log.info(new UserResponse(Optional.of(potentialUser), "Hello World, from Jara3!").toString());
-        return new UserResponse(Optional.of(potentialUser), "Hello World, from Jara3!");
+    @Value("${response.authenticate.success}")
+    private String responseAuthenticateSuccess;
+
+    UserService(final UserRepository userRepository){
+        this.userRepository = userRepository;
+        /** NOTE: Constructor injection is preferred over Field injection (@Autowired) */
+        /** https://stackoverflow.com/questions/40620000/spring-autowire-on-properties-vs-constructor */
     }
 
+    /** Authenticate */
+    public UserResponse authenticate(final String username, final String password) {
+        Optional<User> potentialUser = userRepository.findByUsername(username);
+        return new UserResponse(potentialUser, responseAuthenticateSuccess);
+    }
+
+    /** Register */
     public UserResponse register(final String username, final String password){
         User newUser = userRepository.save(new User(username, password));
         return new UserResponse(Optional.of(newUser), "Hello World, from Jara3!");
@@ -33,5 +42,5 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    // TODO: start doing UserService TDD
+    // TODO: UserService TDD
 }

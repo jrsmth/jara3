@@ -15,3 +15,7 @@ eureka:
       register-with-eureka: true
   instance:
     preferIpAddress: true
+
+response:
+  authenticate:
+    success: "Authentication Successful"

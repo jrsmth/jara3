@@ -47,10 +47,6 @@
 			<artifactId>hibernate-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 			<version>${spring.version}</version>
@@ -84,19 +80,32 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>3.0.0-M3</version>
+				<configuration>
+					<skipTests>false</skipTests>
+					<includes>
+						<include>**/*IT.java</include>
+					</includes>
+				</configuration>
 				<executions>
 					<execution>
-						<configuration>
-							<includes>
-								<include>**/*IT.java</include>
-							</includes>
-							<excludes>
-								<exclude>
-									<groupId>org.projectlombok</groupId>
-									<artifactId>lombok</artifactId>
-								</exclude>
-							</excludes>
-						</configuration>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
 					</execution>
 				</executions>
 			</plugin>

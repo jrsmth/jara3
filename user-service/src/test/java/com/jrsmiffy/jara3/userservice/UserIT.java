@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.jrsmiffy.jara3.userservice.model.User;
 import com.jrsmiffy.jara3.userservice.repository.UserRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,8 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ActiveProfiles("test")
-@Slf4j
-public class UserServiceIT {
+class UserIT {
 
     @Autowired
     private WebApplicationContext applicationContext;

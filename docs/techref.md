@@ -138,10 +138,12 @@ inspired by: https://nvie.com/posts/a-successful-git-branching-model/
         * I kept facing a ```Consider defining a bean named 'entityManagerFactory' in your configuration``` exception with the latter dependency.
         * source: [stack overflow](https://stackoverflow.com/questions/41170661/spring-data-jpa-consider-defining-a-bean-named-entitymanagerfactory-in-your/41178250)
 * **Unit & Integration Tests Not Running with Maven**
-    * When using the `spring-boot-maven-plugin`:
-        * Stick to using `JUnit5`.
-            * Upgrading tests from `JUnit4` to `JUnit5` solved the issue of my `UserController` unit tests not working.
-        * When using the `*IT.java` naming convention for integration tests, be sure to add `<include>**/*IT.java</include>` to the `spring-boot-maven-plugin` configuration in `pom.xml`
-            * source: [stack overflow](https://stackoverflow.com/questions/1399240/how-do-i-get-my-maven-integration-tests-to-run)
- 
+    * Stick to using `JUnit5`.
+        * Upgrading tests from `JUnit4` to `JUnit5` solved the issue of my `UserController` unit tests not working.
+            * Watch out for accidental imports of `org.junit.test` (`JUnit4`) instead of `org.junit.juniper.api.test` (`JUnit5`).
+    * Add the `maven-failsafe-plugin` to `pom.xml` to run integration tests.
+        * When using the `*IT.java` naming convention, be sure to add `<include>**/*IT.java</include>` to the configuration.
+        * `mvn clean test` will run unit tests only.
+        * `mvn clean verify` will run both unit and integration tests.
+        * source: [Geeky Hacker](https://www.geekyhacker.com/2020/07/11/run-integration-tests-with-maven-failsafe-plugin/)
 

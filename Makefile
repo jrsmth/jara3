@@ -2,7 +2,7 @@
 start_eureka_locally:
 	cd eureka-server ; ./mvnw spring-boot:run
 start_user_locally:
-	# cd user-service ; ./mvnw clean test &
+	# cd user-service ; ./mvnw clean verify &
 	cd user-service ; export EUREKA_URI=http://localhost:8761/eureka ; ./mvnw spring-boot:run -Dspring-boot.run.profiles=local
 start_web_app_locally:
 	cd web-app ; ng serve
