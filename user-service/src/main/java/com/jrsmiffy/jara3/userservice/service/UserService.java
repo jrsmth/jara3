@@ -19,6 +19,12 @@ public class UserService {
     @Value("${response.authenticate.success}")
     private String responseAuthenticateSuccess;
 
+    @Value("${response.authenticate.fail.no-user-exists}")
+    private String responseAuthenticateFailNoUserExists;
+
+    @Value("${response.authenticate.fail.incorrect-password}")
+    private String responseAuthenticateFailIncorrectPassword;
+
     UserService(final UserRepository userRepository){
         this.userRepository = userRepository;
         /** NOTE: Constructor injection is preferred over Field injection (@Autowired) */
@@ -28,7 +34,25 @@ public class UserService {
     /** Authenticate */
     public UserResponse authenticate(final String username, final String password) {
         Optional<User> potentialUser = userRepository.findByUsername(username);
-        return new UserResponse(potentialUser, responseAuthenticateSuccess);
+        String response;
+
+        // TODO: add logging
+
+        // CHECK 1: Does this user exist in the system?
+        if (potentialUser.isEmpty()) {
+            response = String.format(responseAuthenticateFailNoUserExists, username);
+        }
+        // CHECK 2: Does the password match?
+        else if (!potentialUser.get().getPassword().equals(password)) {
+            response = String.format(responseAuthenticateFailIncorrectPassword);
+            potentialUser = Optional.empty();
+        }
+        // CHECKS PASSED
+        else {
+            response = responseAuthenticateSuccess;
+        }
+
+        return new UserResponse(potentialUser, response);
     }
 
     /** Register */
@@ -43,4 +67,7 @@ public class UserService {
     }
 
     // TODO: UserService TDD
+    // TODO: implement JWT, then done for this service? (delete legacy)
+    //  merge branch + start proper branching and using JIRA
+        // TODO: redo frontend and add e2e tests support for JWT (frontend)
 }

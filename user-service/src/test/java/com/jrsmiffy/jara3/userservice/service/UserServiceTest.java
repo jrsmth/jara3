@@ -35,13 +35,19 @@ class UserServiceTest {
     @Value("${response.authenticate.success}")
     private String responseAuthenticateSuccess;
 
-    @BeforeEach
+    @Value("${response.authenticate.fail.no-user-exists}")
+    private String responseAuthenticateFailNoUserExists;
+
+    @Value("${response.authenticate.fail.incorrect-password}")
+    private String responseAuthenticateFailIncorrectPassword;
+
+    @BeforeEach // @BeforeEach vs @Before, former is necessary for ReflectionTestUtils.setField() [at least...]
     void setup() {
         this.underTest = new UserService(userRepository);
     }
 
     @ParameterizedTest
-    @CsvFileSource(resources = "/users.csv")
+    @CsvFileSource(resources="/users.csv")
     @DisplayName("Should Authenticate User")
     void shouldAuthenticateUser(final String username, final String password){
         // Given: a valid user (that passes the checks)
@@ -51,7 +57,40 @@ class UserServiceTest {
 
         // When:
         when(userRepository.findByUsername(username)).thenReturn(Optional.of(validUser));
-        UserResponse actual = underTest.authenticate(username, password);
+        final UserResponse actual = underTest.authenticate(username, password);
+
+        // Then:
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @ParameterizedTest
+    @CsvFileSource(resources="/users.csv")
+    @DisplayName("Should Not Authenticate User Because Username Does Not Exist")
+    void shouldNotAuthenticateUserBecauseUsernameDoesNotExist(final String username, final String password) {
+        // Given: a username that does not exist in the system
+        UserResponse expected = new UserResponse(Optional.empty(), String.format(responseAuthenticateFailNoUserExists, username));
+        ReflectionTestUtils.setField(underTest, "responseAuthenticateFailNoUserExists", responseAuthenticateFailNoUserExists);
+
+        // When:
+        when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
+        final UserResponse actual = underTest.authenticate(username, password);
+
+        // Then:
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @ParameterizedTest
+    @CsvFileSource(resources="/users.csv")
+    @DisplayName("Should Not Authenticate User Because Password Does Not Match")
+    void shouldNotAuthenticateUserBecausePasswordDoesNotMatch(final String username, final String password) {
+        // Given: a password that does not match the password in the system for this username
+        final User savedUser = new User(UUID.randomUUID(), username, "INCORRECT_PASSWORD", true);
+        UserResponse expected = new UserResponse(Optional.empty(), responseAuthenticateFailIncorrectPassword);
+        ReflectionTestUtils.setField(underTest, "responseAuthenticateFailIncorrectPassword", responseAuthenticateFailIncorrectPassword);
+
+        // When:
+        when(userRepository.findByUsername(username)).thenReturn(Optional.of(savedUser));
+        final UserResponse actual = underTest.authenticate(username, password);
 
         // Then:
         assertThat(actual).isEqualTo(expected);
