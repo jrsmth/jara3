@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,17 +21,19 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@SpringBootTest // required to load spring profile (app.yaml)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
 class UserServiceTest {
 
+    @InjectMocks
     private UserService underTest;
 
     @Mock
-    private UserRepository userRepository;
+    private UserRepository mockRepository;
 
     @Value("${response.authenticate.success}")
     private String responseAuthenticateSuccess;
@@ -41,9 +44,21 @@ class UserServiceTest {
     @Value("${response.authenticate.fail.incorrect-password}")
     private String responseAuthenticateFailIncorrectPassword;
 
+    @Value("${response.authenticate.fail.invalid-credentials}")
+    private String responseAuthenticateFailInvalidCredentials;
+
+    @Value("${response.register.success}")
+    private String responseRegisterSuccess;
+
+    @Value("${response.register.fail.user-exists}")
+    private String responseRegisterFailUserExists;
+
+    @Value("${response.register.fail.invalid-credentials}")
+    private String responseRegisterFailInvalidCredentials;
+
     @BeforeEach // @BeforeEach vs @Before, former is necessary for ReflectionTestUtils.setField() [at least...]
     void setup() {
-        this.underTest = new UserService(userRepository);
+        this.underTest = new UserService(mockRepository);
     }
 
     @ParameterizedTest
@@ -56,11 +71,13 @@ class UserServiceTest {
         ReflectionTestUtils.setField(underTest, "responseAuthenticateSuccess", responseAuthenticateSuccess);
 
         // When:
-        when(userRepository.findByUsername(username)).thenReturn(Optional.of(validUser));
+        when(mockRepository.findByUsername(username)).thenReturn(Optional.of(validUser));
         final UserResponse actual = underTest.authenticate(username, password);
 
         // Then:
         assertThat(actual).isEqualTo(expected);
+
+        verify(mockRepository).findByUsername(username);
     }
 
     @ParameterizedTest
@@ -72,11 +89,13 @@ class UserServiceTest {
         ReflectionTestUtils.setField(underTest, "responseAuthenticateFailNoUserExists", responseAuthenticateFailNoUserExists);
 
         // When:
-        when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
+        when(mockRepository.findByUsername(username)).thenReturn(Optional.empty());
         final UserResponse actual = underTest.authenticate(username, password);
 
         // Then:
         assertThat(actual).isEqualTo(expected);
+
+        verify(mockRepository).findByUsername(username);
     }
 
     @ParameterizedTest
@@ -89,8 +108,40 @@ class UserServiceTest {
         ReflectionTestUtils.setField(underTest, "responseAuthenticateFailIncorrectPassword", responseAuthenticateFailIncorrectPassword);
 
         // When:
-        when(userRepository.findByUsername(username)).thenReturn(Optional.of(savedUser));
+        when(mockRepository.findByUsername(username)).thenReturn(Optional.of(savedUser));
         final UserResponse actual = underTest.authenticate(username, password);
+
+        // Then:
+        assertThat(actual).isEqualTo(expected);
+
+        verify(mockRepository).findByUsername(username);
+    }
+
+    @ParameterizedTest
+    @CsvFileSource(resources="/users_invalid.csv")
+    @DisplayName("Should Not Authenticate User Because Credentials Are Invalid")
+    void shouldNotAuthenticateUserBecauseCredentialsAreInvalid(final String username, final String password, final String reason) {
+        // Given: credentials (username and/or password) that are invalid
+        UserResponse expected = new UserResponse(Optional.empty(), responseAuthenticateFailInvalidCredentials + reason);
+        ReflectionTestUtils.setField(underTest, "responseAuthenticateFailInvalidCredentials", responseAuthenticateFailInvalidCredentials);
+
+        // When:
+        final UserResponse actual = underTest.authenticate(username, password);
+
+        // Then:
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @ParameterizedTest
+    @CsvFileSource(resources="/users_invalid.csv")
+    @DisplayName("Should Not Register User Because Credentials Are Invalid")
+    void shouldNotRegisterUserBecauseCredentialsAreInvalid(final String username, final String password, final String reason) {
+        // Given: credentials (username and/or password) that are invalid
+        UserResponse expected = new UserResponse(Optional.empty(), responseRegisterFailInvalidCredentials + reason);
+        ReflectionTestUtils.setField(underTest, "responseRegisterFailInvalidCredentials", responseRegisterFailInvalidCredentials);
+
+        // When:
+        final UserResponse actual = underTest.register(username, password);
 
         // Then:
         assertThat(actual).isEqualTo(expected);
@@ -103,11 +154,13 @@ class UserServiceTest {
         User savedUser = new User(UUID.randomUUID(), username, password, true);
 
         // When
-        when(userRepository.findAll())
+        when(mockRepository.findAll())
                 .thenReturn(List.of(savedUser));
 
         // Then
         assertThat(underTest.getAllUsers()).isEqualTo(List.of(savedUser));
+
+        verify(mockRepository).findAll();
     }
 
 }

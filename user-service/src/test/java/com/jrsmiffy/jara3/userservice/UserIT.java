@@ -31,7 +31,7 @@ class UserIT {
     private WebApplicationContext applicationContext;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserRepository userRepository; // TODO: I think there may be an issue somewhere here...
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -123,7 +123,7 @@ class UserIT {
     void shouldNotRegisterUser() throws Exception {
         // Given: an invalid user (already present in the database, invalid credentials, etc)
 
-        // Then: try authenticating this user
+        // Then: try registering this user
         this.mockMvc.perform(
                 MockMvcRequestBuilders
                         .post("/register")

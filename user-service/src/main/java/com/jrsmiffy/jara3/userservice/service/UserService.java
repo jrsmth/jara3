@@ -2,6 +2,7 @@ package com.jrsmiffy.jara3.userservice.service;
 
 import com.jrsmiffy.jara3.userservice.model.User;
 import com.jrsmiffy.jara3.userservice.model.UserResponse;
+import com.jrsmiffy.jara3.userservice.model.ValidationResponse;
 import com.jrsmiffy.jara3.userservice.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
+import static org.apache.logging.log4j.util.Strings.isEmpty;
 
 @Slf4j
 @Service
@@ -25,6 +28,18 @@ public class UserService {
     @Value("${response.authenticate.fail.incorrect-password}")
     private String responseAuthenticateFailIncorrectPassword;
 
+    @Value("${response.authenticate.fail.invalid-credentials}")
+    private String responseAuthenticateFailInvalidCredentials;
+
+    @Value("${response.register.success}")
+    private String responseRegisterSuccess;
+
+    @Value("${response.register.fail.invalid-credentials}")
+    private String responseRegisterFailInvalidCredentials;
+
+    @Value("${response.register.fail.user-exists}")
+    private String responseRegisterFailUserExists;
+
     UserService(final UserRepository userRepository){
         this.userRepository = userRepository;
         /** NOTE: Constructor injection is preferred over Field injection (@Autowired) */
@@ -33,38 +48,76 @@ public class UserService {
 
     /** Authenticate */
     public UserResponse authenticate(final String username, final String password) {
-        Optional<User> potentialUser = userRepository.findByUsername(username);
+
+        // CHECK 0: Are these credentials invalid?
+        ValidationResponse validationResponse = validateCredentials(username, password);
+        if (validationResponse.isInvalid()) {
+            log.info(responseAuthenticateFailInvalidCredentials + validationResponse.getResponse());
+            return new UserResponse(Optional.empty(),
+                    responseAuthenticateFailInvalidCredentials + validationResponse.getResponse());
+        }
+
         String response;
+        Optional<User> potentialUser = userRepository.findByUsername(username);
 
-        // TODO: add logging
-
-        // CHECK 1: Does this user exist in the system?
+        // CHECK 1: Does this user not exist in the system?
         if (potentialUser.isEmpty()) {
             response = String.format(responseAuthenticateFailNoUserExists, username);
         }
-        // CHECK 2: Does the password match?
+        // CHECK 2: Does the password not match?
         else if (!potentialUser.get().getPassword().equals(password)) {
-            response = String.format(responseAuthenticateFailIncorrectPassword);
+            response = responseAuthenticateFailIncorrectPassword;
             potentialUser = Optional.empty();
         }
-        // CHECKS PASSED
+        // CHECKS PASSED: user is authenticated
         else {
             response = responseAuthenticateSuccess;
         }
 
+        log.info(response);
         return new UserResponse(potentialUser, response);
     }
 
     /** Register */
-    public UserResponse register(final String username, final String password){
+    public UserResponse register(final String username, final String password) {
+
+        // CHECK 0: Are these credentials invalid?
+        ValidationResponse validationResponse = validateCredentials(username, password);
+        if (validationResponse.isInvalid()) {
+            log.info(responseRegisterFailInvalidCredentials + validationResponse.getResponse());
+            return new UserResponse(Optional.empty(),
+                    responseRegisterFailInvalidCredentials + validationResponse.getResponse());
+        }
+
         User newUser = userRepository.save(new User(username, password));
         return new UserResponse(Optional.of(newUser), "Hello World, from Jara3!");
     }
 
     /** Get All Users */
-    public List<User> getAllUsers(){
+    public List<User> getAllUsers() {
         return userRepository.findAll();
     }
+
+    /** Validate Credentials */
+    private ValidationResponse validateCredentials(final String username, final String password) {
+        String reason;
+
+        // CHECK 1: are credentials missing username or password?
+        if(isEmpty(username) || isEmpty(password)) {
+            reason = "missing username or password";
+            log.info(reason);
+            return new ValidationResponse(false, reason);
+        }
+        // TODO: add more checks
+
+        reason = "Credentials Validated";
+        log.info(reason);
+        return new ValidationResponse(true, reason);
+    }
+
+
+
+
 
     // TODO: UserService TDD
     // TODO: implement JWT, then done for this service? (delete legacy)

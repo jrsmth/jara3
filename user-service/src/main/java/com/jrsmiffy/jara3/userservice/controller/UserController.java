@@ -39,8 +39,9 @@ public class UserController {
     /** Get All Users - Dev Use Only */
     @GetMapping(path = "/users")
     public List<User> getAllUsers() {
-        log.info(userService.getAllUsers().toString());
-        return userService.getAllUsers();
+        List<User> users = userService.getAllUsers();
+        log.info(users.toString());
+        return users;
     }
 
     /** Create Response Entity*/
