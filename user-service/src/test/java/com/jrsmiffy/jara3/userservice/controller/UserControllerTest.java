@@ -1,143 +1,135 @@
 package com.jrsmiffy.jara3.userservice.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.JsonPath;
 import com.jrsmiffy.jara3.userservice.model.User;
 import com.jrsmiffy.jara3.userservice.model.UserResponse;
 import com.jrsmiffy.jara3.userservice.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
 @ActiveProfiles("test")
+@ExtendWith(MockitoExtension.class)
 public class UserControllerTest {
+    // inspiration: https://stackoverflow.com/questions/68133634/how-to-unit-test-a-controller-method-with-spring-boot-and-mockito
 
-    @Autowired
-    private MockMvc mockMvc;
+    @InjectMocks
+    private UserController underTest;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @MockBean
-    private UserService userService;
+    @Mock
+    private UserService mockService;
 
     private static final String USERNAME = "username";
     private static final String PASSWORD = "password";
 
     @Test
     @DisplayName("Should Authenticate User")
-    public void shouldAuthenticateUser() throws Exception {
+    void shouldAuthenticateUser() {
         // Given: a valid user ("saved in the database")
         User savedUser = new User(UUID.randomUUID(), USERNAME, PASSWORD, true);
 
         // When
-        when(userService.authenticate(USERNAME, PASSWORD))
+        when(mockService.authenticate(USERNAME, PASSWORD))
                 .thenReturn(new UserResponse(Optional.of(savedUser), ""));
         // no need to focus on what the response is here, this is the responsibility of the user svc
 
-        // Then
-        MvcResult result = this.mockMvc.perform(get("/authenticate/{username}/{password}", USERNAME, PASSWORD))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.user").exists())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.response").exists())
-                .andReturn();
+        ResponseEntity<UserResponse> actual = underTest.authenticate(USERNAME, PASSWORD);
 
-        final Object userMap = JsonPath.read(result.getResponse().getContentAsString(), "$.user");
-        final User returnedUser = objectMapper.convertValue(userMap, User.class);
-        assertThat(returnedUser).isEqualTo(savedUser);
+        // Then
+        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(actual.getBody().getUser().get().getUsername()).isEqualTo(USERNAME);
+        assertThat(actual.getBody().getUser().get().getPassword()).isEqualTo(PASSWORD);
+        assertThat(actual.getBody().getResponse()).isNotNull();
+
+        verify(mockService).authenticate(USERNAME, PASSWORD);
     }
 
     @Test
     @DisplayName("Should Not Authenticate User")
-    public void shouldNotAuthenticateUser() throws Exception {
+    void shouldNotAuthenticateUser() {
         // Given: an invalid user ("not saved in database", etc)
 
         // When
-        when(userService.authenticate(USERNAME, PASSWORD))
+        when(mockService.authenticate(USERNAME, PASSWORD))
                 .thenReturn(new UserResponse(Optional.empty(), ""));
 
+        ResponseEntity<UserResponse> actual = underTest.authenticate(USERNAME, PASSWORD);
+
         // Then
-        this.mockMvc.perform(get("/authenticate/{username}/{password}", USERNAME, PASSWORD))
-                .andExpect(status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.user").isEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.response").exists());
+        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(actual.getBody().getUser()).isEmpty();
+        assertThat(actual.getBody().getResponse()).isNotNull();
+
+        verify(mockService).authenticate(USERNAME, PASSWORD);
     }
 
     @Test
     @DisplayName("Should Register User")
-    public void shouldRegisterUser() throws Exception {
+    void shouldRegisterUser() {
         // Given: a valid potential user (no invalid or duplicate credentials)
         // USERNAME, PASSWORD
 
         // When
-        User registeredUser = new User(UUID.randomUUID(), USERNAME, PASSWORD, true);
-        when(userService.register(USERNAME, PASSWORD))
-                .thenReturn(new UserResponse(Optional.of(registeredUser),""));
+        when(mockService.register(USERNAME, PASSWORD))
+                .thenReturn(new UserResponse(Optional.of(new User(USERNAME, PASSWORD)),""));
+
+        ResponseEntity<UserResponse> actual = underTest.register(USERNAME, PASSWORD);
 
         // Then
-        this.mockMvc.perform(
-                MockMvcRequestBuilders
-                        .post("/register")
-                        .param("username", USERNAME)
-                        .param("password", PASSWORD))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.user.username").value(USERNAME))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.user.password").value(PASSWORD))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.response").exists());
+        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(actual.getBody().getUser().get().getUsername()).isEqualTo(USERNAME);
+        assertThat(actual.getBody().getUser().get().getPassword()).isEqualTo(PASSWORD);
+        assertThat(actual.getBody().getResponse()).isNotNull();
+
+        verify(mockService).register(USERNAME, PASSWORD);
     }
 
     @Test
     @DisplayName("Should Not Register User")
-    public void shouldNotRegisterUser() throws Exception {
+    void shouldNotRegisterUser() {
         // Given: an invalid user (already present in the database, invalid credentials, etc)
 
         // When
-        when(userService.register(USERNAME, PASSWORD))
+        when(mockService.register(USERNAME, PASSWORD))
                 .thenReturn(new UserResponse(Optional.empty(),""));
 
-        // Then: try authenticating this user
-        this.mockMvc.perform(
-                MockMvcRequestBuilders
-                        .post("/register")
-                        .param("username", USERNAME)
-                        .param("password", PASSWORD))
-                .andExpect(status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.user").isEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.response").exists());
+        ResponseEntity<UserResponse> actual = underTest.register(USERNAME, PASSWORD);
+
+        // Then:
+        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(actual.getBody().getUser()).isEmpty();
+        assertThat(actual.getBody().getResponse()).isNotNull();
+
+        verify(mockService).register(USERNAME, PASSWORD);
     }
 
     @Test
     @DisplayName("Should Get All Users") // DEV USE ONLY
-    public void shouldGetAllUsers() throws Exception {
+    void shouldGetAllUsers() {
         // Given: a user "saved" in the database
         User savedUser = new User(UUID.randomUUID(), USERNAME, PASSWORD, true);
 
         // When
-        when(userService.getAllUsers())
+        when(mockService.getAllUsers())
                 .thenReturn(List.of(savedUser));
 
         // Then
-        this.mockMvc.perform(get("/users"))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$").exists());
+        assertThat(underTest.getAllUsers())
+                .isEqualTo(List.of(savedUser));
+
+        verify(mockService).getAllUsers();
     }
 }
