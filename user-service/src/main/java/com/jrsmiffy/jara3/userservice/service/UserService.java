@@ -89,8 +89,19 @@ public class UserService {
                     responseRegisterFailInvalidCredentials + validationResponse.getResponse());
         }
 
+        // CHECK 1: Does this user exist in the system?
+        Optional<User> potentialUser = userRepository.findByUsername(username);
+        if (potentialUser.isPresent()) {
+            log.info(String.format(responseRegisterFailUserExists, username));
+            return new UserResponse(Optional.empty(),
+                    String.format(responseRegisterFailUserExists, username));
+        }
+
+        // CHECKS PASSED: user is registered
         User newUser = userRepository.save(new User(username, password));
-        return new UserResponse(Optional.of(newUser), "Hello World, from Jara3!");
+
+        log.info(responseRegisterSuccess);
+        return new UserResponse(Optional.of(newUser), responseRegisterSuccess);
     }
 
     /** Get All Users */
@@ -116,11 +127,11 @@ public class UserService {
     }
 
 
-
-
-
-    // TODO: UserService TDD
+    // TODO: UserService TDD: final refactor - maybe its fine already.... register() could be more readable.
+        // FIX IT tests
     // TODO: implement JWT, then done for this service? (delete legacy)
+        // get the DB running and test it manually in postman...
+
     //  merge branch + start proper branching and using JIRA
         // TODO: redo frontend and add e2e tests support for JWT (frontend)
 }

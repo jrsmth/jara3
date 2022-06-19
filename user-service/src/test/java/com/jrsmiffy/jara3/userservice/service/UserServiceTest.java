@@ -8,6 +8,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -34,6 +36,9 @@ class UserServiceTest {
 
     @Mock
     private UserRepository mockRepository;
+
+    @Captor
+    private ArgumentCaptor<User> userArgumentCaptor;
 
     @Value("${response.authenticate.success}")
     private String responseAuthenticateSuccess;
@@ -130,6 +135,45 @@ class UserServiceTest {
 
         // Then:
         assertThat(actual).isEqualTo(expected);
+    }
+
+    @ParameterizedTest
+    @CsvFileSource(resources="/users.csv")
+    @DisplayName("Should Register User")
+    void shouldRegisterUser(final String username, final String password) {
+        // Given: a valid user (that passes the checks)
+        User validUser = new User(UUID.randomUUID(), username, password, true);
+        UserResponse expected = new UserResponse(Optional.of(validUser), responseRegisterSuccess);
+        ReflectionTestUtils.setField(underTest, "responseRegisterSuccess", responseRegisterSuccess);
+
+        // When:
+        when(mockRepository.findByUsername(username)).thenReturn(Optional.empty());
+        when(mockRepository.save(new User(username, password))).thenReturn(validUser);
+        final UserResponse actual = underTest.register(username, password);
+
+        // Then:
+        assertThat(actual).isEqualTo(expected);
+
+        verify(mockRepository).findByUsername(username);
+        verify(mockRepository).save(new User(username, password));
+    }
+
+    @ParameterizedTest
+    @CsvFileSource(resources="/users.csv")
+    @DisplayName("Should Not Register User Because Username Exists")
+    void shouldNotRegisterUserBecauseUsernameExists(final String username, final String password) {
+        // Given: a username that already exists in the system
+        UserResponse expected = new UserResponse(Optional.empty(), String.format(responseRegisterFailUserExists, username));
+        ReflectionTestUtils.setField(underTest, "responseRegisterFailUserExists", responseRegisterFailUserExists);
+
+        // When:
+        when(mockRepository.findByUsername(username)).thenReturn(Optional.of(new User(username, password)));
+        final UserResponse actual = underTest.register(username, password);
+
+        // Then:
+        assertThat(actual).isEqualTo(expected);
+
+        verify(mockRepository).findByUsername(username);
     }
 
     @ParameterizedTest
