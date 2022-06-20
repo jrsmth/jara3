@@ -86,7 +86,7 @@ class UserIT {
         this.mockMvc.perform(
                 get("/authenticate/{username}/{password}", USERNAME, PASSWORD))
                 .andExpect(status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.user").value(null));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user").isEmpty());
     }
 
 
@@ -127,12 +127,12 @@ class UserIT {
         this.mockMvc.perform(
                 MockMvcRequestBuilders
                         .post("/register")
-                        .param("username", USERNAME)
-                        .param("password", PASSWORD)
+                        .param("username", USERNAME + "Duplicate")
+                        .param("password", PASSWORD + "Duplicate")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.user").value(null));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.user").isEmpty());
     }
 
 }

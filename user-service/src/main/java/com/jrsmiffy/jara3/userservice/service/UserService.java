@@ -89,19 +89,27 @@ public class UserService {
                     responseRegisterFailInvalidCredentials + validationResponse.getResponse());
         }
 
+        String response;
+        User registeredUser = null;
+
+        log.info("JRS***");
+        log.info(username);
+        log.info(userRepository.findByUsername(username).toString());
+
         // CHECK 1: Does this user exist in the system?
-        Optional<User> potentialUser = userRepository.findByUsername(username);
-        if (potentialUser.isPresent()) {
-            log.info(String.format(responseRegisterFailUserExists, username));
-            return new UserResponse(Optional.empty(),
-                    String.format(responseRegisterFailUserExists, username));
+        if (userRepository.findByUsername(username).isPresent()) {
+            log.info("JRS***");
+            log.info(userRepository.findByUsername(username).toString());
+            response = String.format(responseRegisterFailUserExists, username);
+        }
+        // CHECKS PASSED: user is registered
+        else {
+            registeredUser = userRepository.save(new User(username, password));
+            response = responseRegisterSuccess;
         }
 
-        // CHECKS PASSED: user is registered
-        User newUser = userRepository.save(new User(username, password));
-
-        log.info(responseRegisterSuccess);
-        return new UserResponse(Optional.of(newUser), responseRegisterSuccess);
+        log.info(response);
+        return new UserResponse(Optional.ofNullable(registeredUser), response);
     }
 
     /** Get All Users */
@@ -127,8 +135,7 @@ public class UserService {
     }
 
 
-    // TODO: UserService TDD: final refactor - maybe its fine already.... register() could be more readable.
-        // FIX IT tests
+    // TODO: FIX IT tests, make sure ALL tests run from the mvn clwan install
     // TODO: implement JWT, then done for this service? (delete legacy)
         // get the DB running and test it manually in postman...
 
