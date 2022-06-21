@@ -122,13 +122,14 @@ class UserIT {
     @DisplayName("Should Not Register User")
     void shouldNotRegisterUser() throws Exception {
         // Given: an invalid user (already present in the database, invalid credentials, etc)
+        this.userRepository.save(new User(USERNAME, PASSWORD));
 
         // Then: try registering this user
         this.mockMvc.perform(
                 MockMvcRequestBuilders
                         .post("/register")
-                        .param("username", USERNAME + "Duplicate")
-                        .param("password", PASSWORD + "Duplicate")
+                        .param("username", USERNAME)
+                        .param("password", PASSWORD)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())

@@ -92,14 +92,8 @@ public class UserService {
         String response;
         User registeredUser = null;
 
-        log.info("JRS***");
-        log.info(username);
-        log.info(userRepository.findByUsername(username).toString());
-
         // CHECK 1: Does this user exist in the system?
         if (userRepository.findByUsername(username).isPresent()) {
-            log.info("JRS***");
-            log.info(userRepository.findByUsername(username).toString());
             response = String.format(responseRegisterFailUserExists, username);
         }
         // CHECKS PASSED: user is registered
@@ -134,8 +128,7 @@ public class UserService {
         return new ValidationResponse(true, reason);
     }
 
-
-    // TODO: FIX IT tests, make sure ALL tests run from the mvn clwan install
+    
     // TODO: implement JWT, then done for this service? (delete legacy)
         // get the DB running and test it manually in postman...
 
