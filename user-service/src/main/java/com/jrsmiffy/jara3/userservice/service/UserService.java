@@ -128,7 +128,7 @@ public class UserService {
         return new ValidationResponse(true, reason);
     }
 
-    
+
     // TODO: implement JWT, then done for this service? (delete legacy)
         // get the DB running and test it manually in postman...
 

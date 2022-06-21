@@ -31,7 +31,7 @@ class UserIT {
     private WebApplicationContext applicationContext;
 
     @Autowired
-    private UserRepository userRepository; // TODO: I think there may be an issue somewhere here...
+    private UserRepository userRepository;
 
     @Autowired
     private ObjectMapper objectMapper;
