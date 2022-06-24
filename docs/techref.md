@@ -11,7 +11,7 @@
     * NPM [v8.4.0](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
     * Gradle
 * Frameworks:
-    * Spring Boot [v2.7.0](https://start.spring.io)
+    * Spring Boot [v2.6.9](https://start.spring.io)
     * Node JS [v14.15.1](https://nodejs.org/en/download/)
         * Angular v12
 * Kubernetes Version:

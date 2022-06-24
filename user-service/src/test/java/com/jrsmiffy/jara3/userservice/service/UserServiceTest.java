@@ -1,6 +1,7 @@
 package com.jrsmiffy.jara3.userservice.service;
 
-import com.jrsmiffy.jara3.userservice.model.User;
+import com.jrsmiffy.jara3.userservice.model.AppUser;
+import com.jrsmiffy.jara3.userservice.model.Role;
 import com.jrsmiffy.jara3.userservice.model.UserResponse;
 import com.jrsmiffy.jara3.userservice.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,13 +33,13 @@ import static org.mockito.Mockito.when;
 class UserServiceTest {
 
     @InjectMocks
-    private UserService underTest;
+    private UserServiceImpl underTest;
 
     @Mock
     private UserRepository mockRepository;
 
     @Captor
-    private ArgumentCaptor<User> userArgumentCaptor;
+    private ArgumentCaptor<AppUser> userArgumentCaptor;
 
     @Value("${response.authenticate.success}")
     private String responseAuthenticateSuccess;
@@ -63,7 +64,7 @@ class UserServiceTest {
 
     @BeforeEach // @BeforeEach vs @Before, former is necessary for ReflectionTestUtils.setField() [at least...]
     void setup() {
-        this.underTest = new UserService(mockRepository);
+        this.underTest = new UserServiceImpl(mockRepository);
     }
 
     @ParameterizedTest
@@ -71,7 +72,7 @@ class UserServiceTest {
     @DisplayName("Should Authenticate User")
     void shouldAuthenticateUser(final String username, final String password){
         // Given: a valid user (that passes the checks)
-        User validUser = new User(UUID.randomUUID(), username, password, true);
+        AppUser validUser = new AppUser(UUID.randomUUID(), username, password, Role.USER,true);
         UserResponse expected = new UserResponse(Optional.of(validUser), responseAuthenticateSuccess);
         ReflectionTestUtils.setField(underTest, "responseAuthenticateSuccess", responseAuthenticateSuccess);
 
@@ -108,7 +109,7 @@ class UserServiceTest {
     @DisplayName("Should Not Authenticate User Because Password Does Not Match")
     void shouldNotAuthenticateUserBecausePasswordDoesNotMatch(final String username, final String password) {
         // Given: a password that does not match the password in the system for this username
-        final User savedUser = new User(UUID.randomUUID(), username, "INCORRECT_PASSWORD", true);
+        final AppUser savedUser = new AppUser(UUID.randomUUID(), username, "INCORRECT_PASSWORD", Role.USER,true);
         UserResponse expected = new UserResponse(Optional.empty(), responseAuthenticateFailIncorrectPassword);
         ReflectionTestUtils.setField(underTest, "responseAuthenticateFailIncorrectPassword", responseAuthenticateFailIncorrectPassword);
 
@@ -142,20 +143,20 @@ class UserServiceTest {
     @DisplayName("Should Register User")
     void shouldRegisterUser(final String username, final String password) {
         // Given: a valid user (that passes the checks)
-        User validUser = new User(UUID.randomUUID(), username, password, true);
+        AppUser validUser = new AppUser(UUID.randomUUID(), username, password, Role.USER,true);
         UserResponse expected = new UserResponse(Optional.of(validUser), responseRegisterSuccess);
         ReflectionTestUtils.setField(underTest, "responseRegisterSuccess", responseRegisterSuccess);
 
         // When:
         when(mockRepository.findByUsername(username)).thenReturn(Optional.empty());
-        when(mockRepository.save(new User(username, password))).thenReturn(validUser);
+        when(mockRepository.save(new AppUser(username, password))).thenReturn(validUser);
         final UserResponse actual = underTest.register(username, password);
 
         // Then:
         assertThat(actual).isEqualTo(expected);
 
         verify(mockRepository).findByUsername(username);
-        verify(mockRepository).save(new User(username, password));
+        verify(mockRepository).save(new AppUser(username, password));
     }
 
     @ParameterizedTest
@@ -167,7 +168,7 @@ class UserServiceTest {
         ReflectionTestUtils.setField(underTest, "responseRegisterFailUserExists", responseRegisterFailUserExists);
 
         // When:
-        when(mockRepository.findByUsername(username)).thenReturn(Optional.of(new User(username, password)));
+        when(mockRepository.findByUsername(username)).thenReturn(Optional.of(new AppUser(username, password)));
         final UserResponse actual = underTest.register(username, password);
 
         // Then:
@@ -195,7 +196,7 @@ class UserServiceTest {
     @CsvFileSource(resources = "/users.csv")
     @DisplayName("Should Get All Users")
     void shouldGetAllUsers(final String username, final String password) {
-        User savedUser = new User(UUID.randomUUID(), username, password, true);
+        AppUser savedUser = new AppUser(UUID.randomUUID(), username, password, Role.USER, true);
 
         // When
         when(mockRepository.findAll())

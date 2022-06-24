@@ -1,10 +1,9 @@
 package com.jrsmiffy.jara3.userservice.controller;
 
-import com.jrsmiffy.jara3.userservice.model.User;
+import com.jrsmiffy.jara3.userservice.model.AppUser;
 import com.jrsmiffy.jara3.userservice.model.UserResponse;
 import com.jrsmiffy.jara3.userservice.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,8 +14,11 @@ import java.util.List;
 @RestController
 public class UserController {
 
-    @Autowired
-    UserService userService;
+    private UserService userService;
+
+    UserController(final UserService userService) {
+        this.userService = userService;
+    }
 
     /** Authenticate User */
     @GetMapping(path = "/authenticate/{username}/{password}")
@@ -38,8 +40,8 @@ public class UserController {
 
     /** Get All Users - Dev Use Only */
     @GetMapping(path = "/users")
-    public List<User> getAllUsers() {
-        List<User> users = userService.getAllUsers();
+    public List<AppUser> getAllUsers() {
+        List<AppUser> users = userService.getAllUsers();
         log.info(users.toString());
         return users;
     }

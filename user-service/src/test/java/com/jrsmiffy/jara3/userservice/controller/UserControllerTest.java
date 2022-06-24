@@ -1,8 +1,9 @@
 package com.jrsmiffy.jara3.userservice.controller;
 
-import com.jrsmiffy.jara3.userservice.model.User;
+import com.jrsmiffy.jara3.userservice.model.AppUser;
+import com.jrsmiffy.jara3.userservice.model.Role;
 import com.jrsmiffy.jara3.userservice.model.UserResponse;
-import com.jrsmiffy.jara3.userservice.service.UserService;
+import com.jrsmiffy.jara3.userservice.service.UserServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,7 +31,7 @@ public class UserControllerTest {
     private UserController underTest;
 
     @Mock
-    private UserService mockService;
+    private UserServiceImpl mockService;
 
     private static final String USERNAME = "username";
     private static final String PASSWORD = "password";
@@ -39,7 +40,7 @@ public class UserControllerTest {
     @DisplayName("Should Authenticate User")
     void shouldAuthenticateUser() {
         // Given: a valid user ("saved in the database")
-        User savedUser = new User(UUID.randomUUID(), USERNAME, PASSWORD, true);
+        AppUser savedUser = new AppUser(UUID.randomUUID(), USERNAME, PASSWORD, Role.USER,true);
 
         // When
         when(mockService.authenticate(USERNAME, PASSWORD))
@@ -84,7 +85,7 @@ public class UserControllerTest {
 
         // When
         when(mockService.register(USERNAME, PASSWORD))
-                .thenReturn(new UserResponse(Optional.of(new User(USERNAME, PASSWORD)),""));
+                .thenReturn(new UserResponse(Optional.of(new AppUser(USERNAME, PASSWORD)),""));
 
         ResponseEntity<UserResponse> actual = underTest.register(USERNAME, PASSWORD);
 
@@ -120,7 +121,7 @@ public class UserControllerTest {
     @DisplayName("Should Get All Users") // DEV USE ONLY
     void shouldGetAllUsers() {
         // Given: a user "saved" in the database
-        User savedUser = new User(UUID.randomUUID(), USERNAME, PASSWORD, true);
+        AppUser savedUser = new AppUser(UUID.randomUUID(), USERNAME, PASSWORD, Role.USER,true);
 
         // When
         when(mockService.getAllUsers())

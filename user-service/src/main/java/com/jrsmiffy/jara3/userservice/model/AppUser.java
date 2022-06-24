@@ -12,8 +12,8 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="J3_USER") // USER is a reserved keyword in H2
-public class User {
+@Table(name="J3_USER") // USER is a reserved keyword in H2, Spring Security
+public class AppUser {
 
     @Id
     @GeneratedValue(generator = "uuid2")
@@ -26,9 +26,11 @@ public class User {
 
     private String password;
 
+    private Role role = Role.USER;
+
     private boolean active = Boolean.TRUE;
 
-    public User(String username, String password){
+    public AppUser(String username, String password){
         this.username = username;
         this.password = password;
     }

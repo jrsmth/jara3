@@ -1,6 +1,6 @@
 package com.jrsmiffy.jara3.userservice.repository;
 
-import com.jrsmiffy.jara3.userservice.model.User;
+import com.jrsmiffy.jara3.userservice.model.AppUser;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,10 +28,10 @@ public class UserRepositoryTest {
     @DisplayName("Should Find User By Username")
     void shouldFindUserByUsername(){ // this is a redundant test but I have included it as an example
         // Given
-        User user = underTest.save(new User("username", "password"));
-        Optional<User> expected = Optional.of(user);
+        AppUser user = underTest.save(new AppUser("username", "password"));
+        Optional<AppUser> expected = Optional.of(user);
         // When
-        Optional<User> actual = underTest.findByUsername("username");
+        Optional<AppUser> actual = underTest.findByUsername("username");
         // Then
         assertThat(actual).isEqualTo(expected);
     }

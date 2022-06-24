@@ -2,7 +2,7 @@ package com.jrsmiffy.jara3.userservice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
-import com.jrsmiffy.jara3.userservice.model.User;
+import com.jrsmiffy.jara3.userservice.model.AppUser;
 import com.jrsmiffy.jara3.userservice.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -59,7 +59,7 @@ class UserIT {
     void shouldAuthenticateUser() throws Exception {
 
         // Given: a valid user saved in the database
-        final User user = new User(USERNAME, PASSWORD); // UUID auto-gen upon save
+        final AppUser user = new AppUser(USERNAME, PASSWORD); // UUID auto-gen upon save
         this.userRepository.save(user);
 
         // Then: try to authenticate this user
@@ -111,9 +111,9 @@ class UserIT {
 
         // Assert that the user was persisted
         final Object userMap = JsonPath.read(result.getResponse().getContentAsString(), "$.user");
-        final User returnedUser = objectMapper.convertValue(userMap, User.class);
+        final AppUser returnedUser = objectMapper.convertValue(userMap, AppUser.class);
 
-        final User savedUser = userRepository.findByUsername(USERNAME).get();
+        final AppUser savedUser = userRepository.findByUsername(USERNAME).get();
         assertThat(returnedUser.getUsername()).isEqualTo(savedUser.getUsername());
         assertThat(returnedUser.getPassword()).isEqualTo(savedUser.getPassword());
     }
@@ -122,7 +122,7 @@ class UserIT {
     @DisplayName("Should Not Register User")
     void shouldNotRegisterUser() throws Exception {
         // Given: an invalid user (already present in the database, invalid credentials, etc)
-        this.userRepository.save(new User(USERNAME, PASSWORD));
+        this.userRepository.save(new AppUser(USERNAME, PASSWORD));
 
         // Then: try registering this user
         this.mockMvc.perform(

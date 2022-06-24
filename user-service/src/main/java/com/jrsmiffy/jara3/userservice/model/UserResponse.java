@@ -9,6 +9,6 @@ import java.util.Optional;
 @AllArgsConstructor
 public class UserResponse {
 
-    private Optional<User> user;
+    private Optional<AppUser> user;
     private String response;
 }
