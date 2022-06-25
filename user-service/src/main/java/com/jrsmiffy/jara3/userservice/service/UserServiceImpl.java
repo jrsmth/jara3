@@ -6,6 +6,11 @@ import com.jrsmiffy.jara3.userservice.model.ValidationResponse;
 import com.jrsmiffy.jara3.userservice.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,9 +20,11 @@ import static org.apache.logging.log4j.util.Strings.isEmpty;
 
 @Slf4j
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, UserDetailsService {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Value("${response.authenticate.success}")
     private String responseAuthenticateSuccess;
@@ -40,13 +47,44 @@ public class UserServiceImpl implements UserService {
     @Value("${response.register.fail.user-exists}")
     private String responseRegisterFailUserExists;
 
-    UserServiceImpl(final UserRepository userRepository){
+    UserServiceImpl(final UserRepository userRepository, final PasswordEncoder passwordEncoder){
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
         /** NOTE: Constructor injection is preferred over Field injection (@Autowired) */
         /** https://stackoverflow.com/questions/40620000/spring-autowire-on-properties-vs-constructor */
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<AppUser> potentialUser = userRepository.findByUsername(username);
+
+        if (potentialUser.isPresent()) {
+            log.info("User found in the database: {}", username);
+        } else {
+            log.error("User not found in the database");
+            throw new UsernameNotFoundException("User not found in the database");
+        }
+
+        AppUser user = potentialUser.get();
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(user.getRole().toString());
+        UserDetails userDetails = new org.springframework.security.core.userdetails.User(
+                user.getUsername(),
+                user.getPassword(),
+                List.of(authority));
+
+        return userDetails;
+    }
+
+    // TODO: override from interface?
+    // TODO: make "AppUser appUser" consistent through the whole app? now we have inconsistent naming throughout the svc, think + refactor...
+    public AppUser saveUser(AppUser appUser) {
+        log.info("Saving new user to the databse: {}", appUser.getUsername());
+        appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
+        return userRepository.save(appUser);
+    }
+
     /** Authenticate */
+    @Override
     public UserResponse authenticate(final String username, final String password) {
 
         // CHECK 0: Are these credentials invalid?
@@ -79,6 +117,7 @@ public class UserServiceImpl implements UserService {
     }
 
     /** Register */
+    @Override
     public UserResponse register(final String username, final String password) {
 
         // CHECK 0: Are these credentials invalid?
@@ -107,6 +146,7 @@ public class UserServiceImpl implements UserService {
     }
 
     /** Get All Users */
+    @Override
     public List<AppUser> getAllUsers() {
         return userRepository.findAll();
     }

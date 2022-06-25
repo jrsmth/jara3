@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -37,6 +38,9 @@ class UserServiceTest {
 
     @Mock
     private UserRepository mockRepository;
+
+    @Mock
+    private PasswordEncoder mockPasswordEncoder;
 
     @Captor
     private ArgumentCaptor<AppUser> userArgumentCaptor;
@@ -64,7 +68,7 @@ class UserServiceTest {
 
     @BeforeEach // @BeforeEach vs @Before, former is necessary for ReflectionTestUtils.setField() [at least...]
     void setup() {
-        this.underTest = new UserServiceImpl(mockRepository);
+        this.underTest = new UserServiceImpl(mockRepository, mockPasswordEncoder);
     }
 
     @ParameterizedTest

@@ -12,7 +12,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="J3_USER") // USER is a reserved keyword in H2, Spring Security
+@Table(name="J3_USER") // USER is reserved in H2 & Spring Security
 public class AppUser {
 
     @Id

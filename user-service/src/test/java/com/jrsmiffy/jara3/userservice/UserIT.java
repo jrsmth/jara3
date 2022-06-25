@@ -64,7 +64,7 @@ class UserIT {
 
         // Then: try to authenticate this user
         this.mockMvc.perform(
-                get("/authenticate/{username}/{password}", USERNAME, PASSWORD))
+                get("/api/authenticate/{username}/{password}", USERNAME, PASSWORD))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.user.username").value(user.getUsername()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.user.password").value(user.getPassword()));
@@ -84,7 +84,7 @@ class UserIT {
 
         // Then: try authenticating this user
         this.mockMvc.perform(
-                get("/authenticate/{username}/{password}", USERNAME, PASSWORD))
+                get("/api/authenticate/{username}/{password}", USERNAME, PASSWORD))
                 .andExpect(status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.user").isEmpty());
     }
@@ -100,7 +100,7 @@ class UserIT {
         // Then: try to register this user
         MvcResult result = this.mockMvc.perform(
                 MockMvcRequestBuilders
-                        .post("/register")
+                        .post("/api/register")
                         .param("username", USERNAME)
                         .param("password", PASSWORD)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -127,7 +127,7 @@ class UserIT {
         // Then: try registering this user
         this.mockMvc.perform(
                 MockMvcRequestBuilders
-                        .post("/register")
+                        .post("/api/register")
                         .param("username", USERNAME)
                         .param("password", PASSWORD)
                         .contentType(MediaType.APPLICATION_JSON)
