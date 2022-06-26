@@ -13,5 +13,6 @@ public interface UserService {
     UserResponse register(final String username, final String password);
 
     List<AppUser> getAllUsers();
+    // TODO: should paginate this response, else performance won't scale as the database grows
 
 }

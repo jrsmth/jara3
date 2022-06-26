@@ -90,7 +90,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         // CHECK 0: Are these credentials invalid?
         ValidationResponse validationResponse = validateCredentials(username, password);
         if (validationResponse.isInvalid()) {
-            log.info(responseAuthenticateFailInvalidCredentials + validationResponse.getResponse());
+            log.error(responseAuthenticateFailInvalidCredentials + validationResponse.getResponse());
             return new UserResponse(Optional.empty(),
                     responseAuthenticateFailInvalidCredentials + validationResponse.getResponse());
         }
@@ -123,7 +123,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         // CHECK 0: Are these credentials invalid?
         ValidationResponse validationResponse = validateCredentials(username, password);
         if (validationResponse.isInvalid()) {
-            log.info(responseRegisterFailInvalidCredentials + validationResponse.getResponse());
+            log.error(responseRegisterFailInvalidCredentials + validationResponse.getResponse());
             return new UserResponse(Optional.empty(),
                     responseRegisterFailInvalidCredentials + validationResponse.getResponse());
         }
@@ -137,7 +137,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
         // CHECKS PASSED: user is registered
         else {
-            registeredUser = userRepository.save(new AppUser(username, password));
+//            registeredUser = userRepository.save(new AppUser(username, password));
+            registeredUser = saveUser(new AppUser(username, password)); // TODO: REFACTOR, test...
             response = responseRegisterSuccess;
         }
 
@@ -158,7 +159,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         // CHECK 1: are credentials missing username or password?
         if(isEmpty(username) || isEmpty(password)) {
             reason = "missing username or password";
-            log.info(reason);
+            log.error(reason);
             return new ValidationResponse(false, reason);
         }
         // TODO: add more checks

@@ -3,6 +3,7 @@ package com.jrsmiffy.jara3.userservice.controller;
 import com.jrsmiffy.jara3.userservice.model.AppUser;
 import com.jrsmiffy.jara3.userservice.model.UserResponse;
 import com.jrsmiffy.jara3.userservice.service.UserService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,15 +12,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Slf4j
+@RequiredArgsConstructor // handles our constructor-based dependency injection
 @RestController
 @RequestMapping("/api")
 public class UserController {
 
-    private UserService userService;
-
-    UserController(final UserService userService) {
-        this.userService = userService;
-    }
+    private final UserService userService;
 
     /** Authenticate User */
     @GetMapping(path = "/authenticate/{username}/{password}")
@@ -40,7 +38,7 @@ public class UserController {
     }
 
     /** Get All Users - Dev Use Only */
-    @GetMapping(path = "/users")
+    @GetMapping(path = "/admin/users")
     public List<AppUser> getAllUsers() {
         List<AppUser> users = userService.getAllUsers();
         log.info(users.toString());

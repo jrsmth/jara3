@@ -64,7 +64,7 @@ class UserIT {
 
         // Then: try to authenticate this user
         this.mockMvc.perform(
-                get("/api/authenticate/{username}/{password}", USERNAME, PASSWORD))
+                get("/api/authenticate/{username}/{password}", USERNAME, PASSWORD)) // TODO: use the spring profile urls
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.user.username").value(user.getUsername()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.user.password").value(user.getPassword()));

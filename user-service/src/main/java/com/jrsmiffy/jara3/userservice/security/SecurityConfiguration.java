@@ -1,7 +1,10 @@
 package com.jrsmiffy.jara3.userservice.security;
 
 
-import lombok.RequiredArgsConstructor;
+import com.jrsmiffy.jara3.userservice.security.filter.CustomAuthenticationFilter;
+import com.jrsmiffy.jara3.userservice.security.filter.CustomAuthorisationFilter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,18 +14,27 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
-@RequiredArgsConstructor // handles our constructor-based dependency injection
-@EnableWebSecurity
 @Configuration
+@EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     // Spring Boot <2.7.0 is required to use WebSecurityConfigurerAdapter:
     // https://spring.io/blog/2022/02/21/spring-security-without-the-websecurityconfigureradapter
 
-    private final UserDetailsService userDetailsService;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    private UserDetailsService userDetailsService;
+
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Value("${url.login}")
+    private String loginUrl;
+
+    @Value("${url.admin}")
+    private String adminUrl;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -31,10 +43,19 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
+        customAuthenticationFilter.setFilterProcessesUrl(loginUrl);
+
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(STATELESS);
-        http.authorizeRequests().anyRequest().permitAll();
-        http.addFilter(new CustomAuthenticationFilter(authenticationManagerBean()));
+
+        http.authorizeRequests().antMatchers("/api/register/**").permitAll(); // TODO: TEMP...
+        http.authorizeRequests().antMatchers(loginUrl + "/**").permitAll();
+//        http.authorizeRequests().antMatchers(GET, adminUrl + "/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().anyRequest().authenticated();
+
+        http.addFilter(customAuthenticationFilter);
+        http.addFilterBefore(new CustomAuthorisationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean

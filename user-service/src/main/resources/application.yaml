@@ -16,6 +16,10 @@ eureka:
   instance:
     preferIpAddress: true
 
+url:
+  login: "/api/login"
+  admin: "/api/admin"
+
 response:
   authenticate:
     success: "Authentication Successful"
