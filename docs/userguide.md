@@ -31,5 +31,4 @@
 * `mysql -u root`
 * `use jara3_db;`
 * `truncate table j3_user;`
-* `select * from j3_user;`
 * `quit`

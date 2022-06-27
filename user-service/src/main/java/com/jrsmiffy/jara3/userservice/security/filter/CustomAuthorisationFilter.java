@@ -47,13 +47,16 @@ public class CustomAuthorisationFilter extends OncePerRequestFilter {
                     String username = decodedJWT.getSubject();
                     String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
                     Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+                    log.info(roles[0]);
                     stream(roles).forEach(role -> {
+                        log.info(role);
                         authorities.add((new SimpleGrantedAuthority(role)));
                     });
-                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, authorities);
+                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, authorities);
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                     filterChain.doFilter(request, response);
-                } catch (Exception e) {
+                } catch (Exception e) { // TODO: Seems to do f*ck all, xcome back to at the end,... next do the refresh token.
+                    log.info("hit");
                     log.error("Error logging in: {}", e.getMessage());
                     response.setHeader("error", e.getMessage());
                     response.setStatus(FORBIDDEN.value());

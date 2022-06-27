@@ -1,6 +1,7 @@
 package com.jrsmiffy.jara3.userservice.security;
 
 
+import com.jrsmiffy.jara3.userservice.model.Role;
 import com.jrsmiffy.jara3.userservice.security.filter.CustomAuthenticationFilter;
 import com.jrsmiffy.jara3.userservice.security.filter.CustomAuthorisationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +50,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(STATELESS);
 
-        http.authorizeRequests().antMatchers("/api/register/**").permitAll(); // TODO: TEMP...
+        http.authorizeRequests().antMatchers( "/api/register/**").permitAll(); // TODO: TEMP...
+        http.authorizeRequests().antMatchers("/api/admin/users/**").hasAnyAuthority(Role.ADMIN.name()); // TODO: TEMP...
         http.authorizeRequests().antMatchers(loginUrl + "/**").permitAll();
 //        http.authorizeRequests().antMatchers(GET, adminUrl + "/**").hasAnyAuthority("ADMIN");
         http.authorizeRequests().anyRequest().authenticated();
