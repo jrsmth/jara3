@@ -11,9 +11,9 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -21,14 +21,17 @@ import java.util.Date;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Slf4j
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
-    private static final int ACCESS_TOKEN_EXPIRATION_MINUTES = 15; //TODO: @value, environment variable?
+    private static final int ACCESS_TOKEN_EXPIRATION_MINUTES = 1; //TODO: @value, environment variable?
     private static final int REFRESH_TOKEN_EXPIRATION_HOURS = 24; //TODO: @value, environment variable?
+
+    private final static UrlPathHelper urlPathHelper = new UrlPathHelper();
 
     public CustomAuthenticationFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
@@ -45,7 +48,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException {
         User user = (User) authResult.getPrincipal();
         Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
 
@@ -64,6 +67,16 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         Map<String, String> tokens = Map.of("access_token", accessToken, "refresh_token", refreshToken);
         response.setContentType(APPLICATION_JSON_VALUE);
-        new ObjectMapper().writeValue(response.getOutputStream(), tokens);
+        new ObjectMapper().writeValue(response.getOutputStream(), tokens); // todo: wtf is this doing???
+    }
+
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
+        log.error("[CustomAuthenticationFilter] Error: " + failed.toString());
+        // todo: in the future, perhaps we could have more detailed failure responses (no user exists, incorrect password)
+        // from initial RE, it is quite involved...
+        response.setContentType(APPLICATION_JSON_VALUE);
+        response.setStatus(UNAUTHORIZED.value());
+        new ObjectMapper().writeValue(response.getOutputStream(), failed.getMessage());
     }
 }

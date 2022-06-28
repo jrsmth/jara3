@@ -34,7 +34,7 @@ public class CustomAuthorisationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (request.getServletPath().equals(loginUrl)) {
+        if (request.getServletPath().equals(loginUrl) || request.getServletPath().equals("/api/token/refresh")) { // todo: refactor BS
             filterChain.doFilter(request, response);
         } else {
             String authorizationHeader = request.getHeader(AUTHORIZATION);
@@ -55,7 +55,7 @@ public class CustomAuthorisationFilter extends OncePerRequestFilter {
                     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, authorities);
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                     filterChain.doFilter(request, response);
-                } catch (Exception e) { // TODO: Seems to do f*ck all, xcome back to at the end,... next do the refresh token.
+                } catch (Exception e) { // TODO: This is used for invalid token (1/3 of parts, etc..., not for lesser authority - enhance?)
                     log.info("hit");
                     log.error("Error logging in: {}", e.getMessage());
                     response.setHeader("error", e.getMessage());

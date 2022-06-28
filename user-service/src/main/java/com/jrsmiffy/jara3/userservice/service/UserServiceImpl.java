@@ -54,6 +54,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         /** https://stackoverflow.com/questions/40620000/spring-autowire-on-properties-vs-constructor */
     }
 
+    public AppUser getUser(String username) { // todo: fix this sh!te...
+        return userRepository.findByUsername(username).get();
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<AppUser> potentialUser = userRepository.findByUsername(username);
