@@ -37,14 +37,18 @@ public class CustomAuthorisationFilter extends OncePerRequestFilter {
         if (request.getServletPath().equals(loginUrl) || request.getServletPath().equals("/api/token/refresh")) { // todo: refactor BS
             filterChain.doFilter(request, response);
         } else {
+            log.info("JRS***");
             String authorizationHeader = request.getHeader(AUTHORIZATION);
+            log.info(authorizationHeader);
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
                 try {
                     String token = authorizationHeader.substring("Bearer ".length());
                     Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
                     JWTVerifier verifier = JWT.require(algorithm).build();
                     DecodedJWT decodedJWT = verifier.verify(token);
+                    log.info(decodedJWT.toString());
                     String username = decodedJWT.getSubject();
+                    log.info("USERNAME: " + username);
                     String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
                     Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
                     log.info(roles[0]);

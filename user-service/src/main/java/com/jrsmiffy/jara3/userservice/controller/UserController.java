@@ -95,6 +95,7 @@ public class UserController {
     @GetMapping(path = "/admin/users")
     public List<AppUser> getAllUsers() {
         List<AppUser> users = userService.getAllUsers();
+        log.info("JRS***");
         log.info(users.toString());
         return users;
     }
