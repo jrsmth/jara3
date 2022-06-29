@@ -40,8 +40,11 @@ public interface UserService {
     // /getALlUsers: good only... so need need for testing...
 
 
+// great article and github: https://medium.com/geekculture/implementing-json-web-token-jwt-authentication-using-spring-security-detailed-walkthrough-1ac480a8d970
+    //
 
 
+    // FINISH THIS MY EO-weekend
 }
 
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.jrsmiffy.jara3.userservice.model.AppUser;
 import com.jrsmiffy.jara3.userservice.repository.UserRepository;
+import com.jrsmiffy.jara3.userservice.security.jwt.JwtUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -37,7 +38,8 @@ class UserIT {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private JwtEndpointAccessTokenGenerator jwtTokenGenerator;
+    @Autowired
+    private JwtUtils jwtUtils;
 
     private MockMvc mockMvc;
 
@@ -155,15 +157,16 @@ class UserIT {
 
     @Test
     @DisplayName("Should Not Get All Users Because Of Insufficient Role")
-    @WithMockUser(username = "user", password = "user", roles = "USER")
+    @WithMockUser(username = "user", password = "user", roles = "USER") // how to reference??? even need?
     void shouldNotGetAllUsersBecauseOfInsufficientRole() throws Exception {
         // Given: a user request without the ADMIN role
+        String accessToken = jwtUtils.generateToken("username");
 
         // Then: try requesting all users
-        this.mockMvc.perform( //todo: see the accepted answer: HERE! https://stackoverflow.com/questions/70262617/how-to-mock-jwt-token-to-use-it-with-mockito-and-spring-boot
+        this.mockMvc.perform( //todo: build out JwT Utils to work properly...
                 MockMvcRequestBuilders
                         .get("/api/admin/users")
-                        .header("Authorization", "Bearer token from @MOckUser"))
+                        .header("Authorization", "Bearer " + accessToken))
                 .andExpect(status().isForbidden()); // no auth header is set ffs...
     }
 

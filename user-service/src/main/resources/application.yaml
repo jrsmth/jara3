@@ -20,6 +20,9 @@ url:
   login: "/api/login"
   admin: "/api/admin"
 
+jwt:
+  secret: "secret"
+
 response:
   authenticate:
     success: "Authentication Successful"
