@@ -168,6 +168,22 @@ class UserIT {
                 .andExpect(status().isForbidden());
     }
 
+//    @Test
+//    @DisplayName("Should Get New Access Token")
+//    @WithMockUser(username = USERNAME, roles = "USER")
+//    void shouldGetNewAccessToken() throws Exception {
+//        // Given: a valid refresh token
+//        String refreshToken = jwtUtils.generateAccessToken(USERNAME, Role.USER);
+//
+//        // Then: try requesting a new access token
+//        this.mockMvc.perform(
+//                MockMvcRequestBuilders
+//                        .get("/api/token/refresh")
+//                        .header("Authorization", "Bearer " + "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4NzcyL2FwaS9sb2dpbiIsImV4cCI6MTY1NjcxNDk2M30.04huUr9qdgKC5uf6r6hBsIJgTx9erf8N0rbJd8Wffnk"))
+//                .andExpect(status().isOk());
+//    }
+
     // todo: add tests for /login, /refreshtoken, remove /authenticate tests
+     // todo: arrange tests logically...
 
 }

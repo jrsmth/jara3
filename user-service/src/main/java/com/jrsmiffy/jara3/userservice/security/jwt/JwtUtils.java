@@ -23,11 +23,10 @@ public class JwtUtils {
     private static String APP_NAME = "app name";
 
     @Value("${jwt.expiration-in-minutes.access}")
-    private static int ACCESS_TOKEN_EXPIRATION_MINUTES = 1;
+    private static int ACCESS_TOKEN_EXPIRATION_MINUTES = 15;
 
     @Value("${jwt.expiration-in-minutes.refresh}")
-    private static int REFRESH_TOKEN_EXPIRATION_MINUTES = 1;
-
+    private static int REFRESH_TOKEN_EXPIRATION_MINUTES = 1440;
 
     /**
      * Signs & creates a JWT for use as an access token
