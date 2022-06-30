@@ -34,7 +34,13 @@ public class CustomAuthorisationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (request.getServletPath().equals(loginUrl) || request.getServletPath().equals("/api/token/refresh")) { // todo: refactor BS
+        log.info(request.getServletPath());
+        if (
+                request.getServletPath().equals(loginUrl)
+                || request.getServletPath().equals("/api/token/refresh")
+                || request.getServletPath().equals("/api/register")
+        ) { // todo: refactor BS
+            log.info("hit");
             filterChain.doFilter(request, response);
         } else {
             log.info("JRS***");
@@ -57,6 +63,7 @@ public class CustomAuthorisationFilter extends OncePerRequestFilter {
                         authorities.add((new SimpleGrantedAuthority(role)));
                     });
                     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, authorities);
+                    log.info(authenticationToken.toString());
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                     filterChain.doFilter(request, response);
                 } catch (Exception e) { // TODO: This is used for invalid token (1/3 of parts, etc..., not for lesser authority - enhance?)

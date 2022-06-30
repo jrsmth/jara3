@@ -22,6 +22,10 @@ url:
 
 jwt:
   secret: "secret"
+  token:
+    expiration-in-minutes:
+      access: 15
+      refresh: 1440
 
 response:
   authenticate:

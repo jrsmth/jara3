@@ -6,32 +6,57 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.jrsmiffy.jara3.userservice.model.Role;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.List;
 
-@Component // Marks this as a component. Now, Spring Boot will handle the creation and management of the JWTUtil Bean
-// and you will be able to inject it in other places of your code
+@Component
 public class JwtUtils {
 
-    // Injects the jwt-secret property set in the resources/application.properties file
     @Value("${jwt.secret}")
-    private String secret;
+    private static String JWT_SECRET = "secret";
 
-    // Method to sign and create a JWT using the injected secret
-    public String generateToken(String email) throws IllegalArgumentException, JWTCreationException {
+    @Value("${spring.application.name")
+    private static String APP_NAME = "app name";
+
+    @Value("${jwt.expiration-in-minutes.access}")
+    private static int ACCESS_TOKEN_EXPIRATION_MINUTES = 1;
+
+    @Value("${jwt.expiration-in-minutes.refresh}")
+    private static int REFRESH_TOKEN_EXPIRATION_MINUTES = 1;
+
+
+    /**
+     * Signs & creates a JWT for use as an access token
+     */
+    public String generateAccessToken(String username, Role role) throws IllegalArgumentException, JWTCreationException {
         return JWT.create()
-                .withSubject("User Details")
-                .withClaim("email", email)
-                .withIssuedAt(new Date())
-                .withIssuer("YOUR APPLICATION/PROJECT/COMPANY NAME")
-                .sign(Algorithm.HMAC256(secret));
+                .withSubject(username)
+                .withExpiresAt(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION_MINUTES * 60 * 1000))
+                .withIssuer(APP_NAME)
+                .withClaim("roles", List.of(role.name()))
+                .sign(Algorithm.HMAC256(JWT_SECRET));
     }
+
+    /**
+     * Signs & creates a JWT for use as an refresh token
+     */
+    public String generateRefreshToken(String username) throws IllegalArgumentException, JWTCreationException {
+        return JWT.create()
+                .withSubject(username)
+                .withExpiresAt(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION_MINUTES * 60 * 1000))
+                .withIssuer(APP_NAME)
+                .sign(Algorithm.HMAC256(JWT_SECRET));
+    }
+
+
 
     // Method to verify the JWT and then decode and extract the user email stored in the payload of the token
     public String validateTokenAndRetrieveSubject(String token)throws JWTVerificationException {
-        JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secret))
+        JWTVerifier verifier = JWT.require(Algorithm.HMAC256(JWT_SECRET))
                 .withSubject("User Details")
                 .withIssuer("YOUR APPLICATION/PROJECT/COMPANY NAME")
                 .build();

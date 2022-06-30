@@ -11,7 +11,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
@@ -30,8 +29,6 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     private final AuthenticationManager authenticationManager;
     private static final int ACCESS_TOKEN_EXPIRATION_MINUTES = 1; //TODO: @value, environment variable?
     private static final int REFRESH_TOKEN_EXPIRATION_HOURS = 24; //TODO: @value, environment variable?
-
-    private final static UrlPathHelper urlPathHelper = new UrlPathHelper();
 
     public CustomAuthenticationFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;

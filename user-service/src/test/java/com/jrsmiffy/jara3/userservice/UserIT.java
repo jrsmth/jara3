@@ -3,6 +3,7 @@ package com.jrsmiffy.jara3.userservice;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.jrsmiffy.jara3.userservice.model.AppUser;
+import com.jrsmiffy.jara3.userservice.model.Role;
 import com.jrsmiffy.jara3.userservice.repository.UserRepository;
 import com.jrsmiffy.jara3.userservice.security.jwt.JwtUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -12,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -99,9 +99,7 @@ class UserIT {
     @Test
     @DisplayName("Should Register User")
     void shouldRegisterUser() throws Exception {
-
         // Given: a valid potential user (no invalid or duplicate credentials)
-        // USERNAME, PASSWORD
 
         // Then: try to register this user
         MvcResult result = this.mockMvc.perform(
@@ -127,7 +125,7 @@ class UserIT {
     @Test
     @DisplayName("Should Not Register User")
     void shouldNotRegisterUser() throws Exception {
-        // Given: an invalid user (already present in the database, invalid credentials, etc)
+        // Given: an invalid user (already present in the database)
         this.userRepository.save(new AppUser(USERNAME, PASSWORD));
 
         // Then: try registering this user
@@ -144,30 +142,32 @@ class UserIT {
 
     @Test
     @DisplayName("Should Get All Users")
-    @WithMockUser(username = "admin", password = "admin", roles = "ADMIN")
     void shouldGetAllUsers() throws Exception {
         // Given: a user request with the ADMIN role
+        String accessToken = jwtUtils.generateAccessToken(USERNAME, Role.ADMIN);
 
         // Then: try requesting all users
         this.mockMvc.perform(
                 MockMvcRequestBuilders
-                    .get("/api/admin/users"))
+                    .get("/api/admin/users")
+                    .header("Authorization", "Bearer " + accessToken))
                 .andExpect(status().isOk());
     }
 
     @Test
     @DisplayName("Should Not Get All Users Because Of Insufficient Role")
-    @WithMockUser(username = "user", password = "user", roles = "USER") // how to reference??? even need?
     void shouldNotGetAllUsersBecauseOfInsufficientRole() throws Exception {
         // Given: a user request without the ADMIN role
-        String accessToken = jwtUtils.generateToken("username");
+        String accessToken = jwtUtils.generateAccessToken(USERNAME, Role.USER);
 
         // Then: try requesting all users
-        this.mockMvc.perform( //todo: build out JwT Utils to work properly...
+        this.mockMvc.perform(
                 MockMvcRequestBuilders
                         .get("/api/admin/users")
                         .header("Authorization", "Bearer " + accessToken))
-                .andExpect(status().isForbidden()); // no auth header is set ffs...
+                .andExpect(status().isForbidden());
     }
+
+    // todo: add tests for /login, /refreshtoken, remove /authenticate tests
 
 }
