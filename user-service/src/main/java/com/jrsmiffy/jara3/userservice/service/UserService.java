@@ -4,6 +4,7 @@ import com.jrsmiffy.jara3.userservice.model.AppUser;
 import com.jrsmiffy.jara3.userservice.model.UserResponse;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
     // TODO: why use an interface here? - good OOP, decoupled for testing, extensibility?
@@ -15,12 +16,13 @@ public interface UserService {
     List<AppUser> getAllUsers();
     // TODO: should paginate this response, else performance won't scale as the database grows
 
-    AppUser getUser(String username); // todo: refactor this sh!te, inconsistent use of user/app user...
+    Optional<AppUser> getUser(String username); // todo: refactor this sh!te, inconsistent use of user/app user...
 
     // TODO: complete miro designs for user svc / auth story...
 
     // TODO NEXT STEPS
-    // todo: tests, refactor
+    // todo: take on unit tests for controller, refactor as you go...
+    // todo: see todos in UserIT
 
     // SVC FUNCTIONALITY:
         // POST to /login with {username, password}
@@ -32,19 +34,7 @@ public interface UserService {
         // GET to get all users (by admins only) - 403 FORBIDDEN
 
 
-    // TESTS
-    // start with IT's (try to avoid duplicacy in test suite)
-    // /login: good, bad
-    // /register: good, bad
-    // /token/refresh: good, bad
-    // /getALlUsers: good only... so need need for testing...
 
-
-// great article and github: https://medium.com/geekculture/implementing-json-web-token-jwt-authentication-using-spring-security-detailed-walkthrough-1ac480a8d970
-    //
-
-
-    // FINISH THIS MY EO-weekend
 }
 
 

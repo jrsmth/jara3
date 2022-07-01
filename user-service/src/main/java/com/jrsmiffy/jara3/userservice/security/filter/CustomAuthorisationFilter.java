@@ -6,7 +6,6 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,18 +28,18 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Slf4j
 public class CustomAuthorisationFilter extends OncePerRequestFilter {
 
-    @Value("${url.login}")
-    private String loginUrl;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         log.info(request.getServletPath());
+        log.info("/api/login");
+        log.info(request.getServletPath().equals("/api/login") + "");
         if (
-                request.getServletPath().equals(loginUrl)
+                request.getServletPath().equals("/api/login")
                 || request.getServletPath().equals("/api/token/refresh")
                 || request.getServletPath().equals("/api/register")
         ) { // todo: refactor BS
-            log.info("hit");
+            log.info("Servlet Path matches freely permitted route");
             filterChain.doFilter(request, response);
         } else {
             log.info("JRS***");
@@ -65,6 +64,7 @@ public class CustomAuthorisationFilter extends OncePerRequestFilter {
                     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, authorities);
                     log.info(authenticationToken.toString());
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                    log.info("Servlet Path requires authorisation");
                     filterChain.doFilter(request, response);
                 } catch (Exception e) { // TODO: This is used for invalid token (1/3 of parts, etc..., not for lesser authority - enhance?)
                     log.info("hit");
@@ -76,6 +76,7 @@ public class CustomAuthorisationFilter extends OncePerRequestFilter {
                     new ObjectMapper().writeValue(response.getOutputStream(), error);
                 }
             } else {
+                log.info("Servlet Path requires authorisation");
                 filterChain.doFilter(request, response);
             }
         }

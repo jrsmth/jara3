@@ -142,26 +142,26 @@ class UserServiceTest {
         assertThat(actual).isEqualTo(expected);
     }
 
-    @ParameterizedTest
-    @CsvFileSource(resources="/users.csv")
-    @DisplayName("Should Register User")
-    void shouldRegisterUser(final String username, final String password) {
-        // Given: a valid user (that passes the checks)
-        AppUser validUser = new AppUser(UUID.randomUUID(), username, password, Role.USER,true);
-        UserResponse expected = new UserResponse(Optional.of(validUser), responseRegisterSuccess);
-        ReflectionTestUtils.setField(underTest, "responseRegisterSuccess", responseRegisterSuccess);
-
-        // When:
-        when(mockRepository.findByUsername(username)).thenReturn(Optional.empty());
-        when(mockRepository.save(new AppUser(username, password))).thenReturn(validUser);
-        final UserResponse actual = underTest.register(username, password);
-
-        // Then:
-        assertThat(actual).isEqualTo(expected);
-
-        verify(mockRepository).findByUsername(username);
-        verify(mockRepository).save(new AppUser(username, password));
-    }
+//    @ParameterizedTest
+//    @CsvFileSource(resources="/users.csv")
+//    @DisplayName("Should Register User")
+//    void shouldRegisterUser(final String username, final String password) {
+//        // Given: a valid user (that passes the checks)
+//        AppUser validUser = new AppUser(UUID.randomUUID(), username, password, Role.USER,true);
+//        UserResponse expected = new UserResponse(Optional.of(validUser), responseRegisterSuccess);
+//        ReflectionTestUtils.setField(underTest, "responseRegisterSuccess", responseRegisterSuccess);
+//
+//        // When:
+//        when(mockRepository.findByUsername(username)).thenReturn(Optional.empty());
+//        when(mockRepository.save(new AppUser(username, password))).thenReturn(validUser);
+//        final UserResponse actual = underTest.register(username, password);
+//
+//        // Then:
+//        assertThat(actual).isEqualTo(expected);
+//
+//        verify(mockRepository).findByUsername(username);
+//        verify(mockRepository).save(new AppUser(username, password));
+//    }
 
     @ParameterizedTest
     @CsvFileSource(resources="/users.csv")

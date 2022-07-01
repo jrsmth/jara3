@@ -1,12 +1,12 @@
 package com.jrsmiffy.jara3.userservice.controller;
 
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jrsmiffy.jara3.userservice.model.AppUser;
 import com.jrsmiffy.jara3.userservice.model.UserResponse;
+import com.jrsmiffy.jara3.userservice.security.jwt.JwtUtils;
 import com.jrsmiffy.jara3.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,17 +33,19 @@ public class UserController {
 
     private final UserService userService;
 
+    private final JwtUtils jwtUtils;
+
     @GetMapping(path = "/token/refresh") // todo: should be in a separate controller, or leave here? - Token/SecurityController?
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             try {
                 String refreshToken = authorizationHeader.substring("Bearer ".length());
-                Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
-                JWTVerifier verifier = JWT.require(algorithm).build();
-                DecodedJWT decodedJWT = verifier.verify(refreshToken);
+                log.info("hit -3");
+                DecodedJWT decodedJWT = jwtUtils.getDecodedJwt(refreshToken);
                 String username = decodedJWT.getSubject();
-                AppUser user = userService.getUser(username);
+                log.info("hit -2");
+                AppUser user = userService.getUser(username).get(); // test leakage? runs on its own....
                 log.info("hit -1");
                 log.info(user.getRole().toString());
                 String accessToken = JWT.create()
@@ -51,7 +53,7 @@ public class UserController {
                         .withExpiresAt(new Date(System.currentTimeMillis() + 15 * 60 * 1000))
                         .withIssuer(request.getRequestURL().toString())
                         .withClaim("roles", List.of(user.getRole().name()))
-                        .sign(algorithm);
+                        .sign(Algorithm.HMAC256("secret"));
 
                 log.info("hit 0");
 
@@ -60,7 +62,7 @@ public class UserController {
                 new ObjectMapper().writeValue(response.getOutputStream(), tokens);
             } catch (Exception e) { // TODO: This is used for invalid token (1/3 of parts, etc..., not for lesser authority - enhance?)
                 log.info("hit");
-                log.error("[UserController] Error: " + e.toString());
+                log.error("Error: " + e.toString());
                 response.setHeader("error", e.getMessage());
                 response.setStatus(FORBIDDEN.value());
                 Map<String, String> error = Map.of("error_message", e.getMessage());

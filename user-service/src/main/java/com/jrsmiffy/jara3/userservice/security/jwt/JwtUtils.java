@@ -51,6 +51,13 @@ public class JwtUtils {
                 .sign(Algorithm.HMAC256(JWT_SECRET));
     }
 
+    /**
+     * Verifies & Decodes a JWT
+     */
+    public DecodedJWT getDecodedJwt(String token) {
+        return JWT.require(Algorithm.HMAC256(JWT_SECRET)).build().verify(token);
+    }
+
 
 
     // Method to verify the JWT and then decode and extract the user email stored in the payload of the token
