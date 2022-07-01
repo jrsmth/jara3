@@ -42,8 +42,7 @@ public class UserController {
             try {
                 String refreshToken = authorizationHeader.substring("Bearer ".length());
                 log.info("hit -3");
-                DecodedJWT decodedJWT = jwtUtils.getDecodedJwt(refreshToken);
-                String username = decodedJWT.getSubject();
+                String username = jwtUtils.retrieveSubject(refreshToken);
                 log.info("hit -2");
                 AppUser user = userService.getUser(username).get(); // test leakage? runs on its own....
                 log.info("hit -1");

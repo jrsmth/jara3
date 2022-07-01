@@ -4,6 +4,7 @@ package com.jrsmiffy.jara3.userservice.security;
 import com.jrsmiffy.jara3.userservice.model.Role;
 import com.jrsmiffy.jara3.userservice.security.filter.CustomAuthenticationFilter;
 import com.jrsmiffy.jara3.userservice.security.filter.CustomAuthorisationFilter;
+import com.jrsmiffy.jara3.userservice.security.jwt.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -44,7 +45,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
+        CustomAuthenticationFilter customAuthenticationFilter =
+                new CustomAuthenticationFilter(authenticationManagerBean(), new JwtUtils()); // todo: hack JwtUtil injection...
+
         customAuthenticationFilter.setFilterProcessesUrl(loginUrl);
 
         http.csrf().disable();

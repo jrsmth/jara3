@@ -136,6 +136,7 @@ class UserIT {
         final AppUser savedUser = userRepository.findByUsername(USERNAME).get();
         assertThat(returnedUser.getUsername()).isEqualTo(savedUser.getUsername());
         assertThat(returnedUser.getPassword()).isEqualTo(savedUser.getPassword());
+        // todo: duplicate test logic: save for controller unit only? refactor... slim...
     }
 
     @Test
@@ -210,7 +211,7 @@ class UserIT {
         // Assert that the access token exists and is valid // todo: this check belongs in the controller (slim this test)
         final Object accessTokenObj = JsonPath.read(result.getResponse().getContentAsString(), "$.access_token");
         final String accessToken = objectMapper.convertValue(accessTokenObj, String.class);
-        final String usernameAccessToken = jwtUtils.getDecodedJwt(accessToken).getSubject();
+        final String usernameAccessToken = jwtUtils.retrieveSubject(accessToken); // todo: JwtUtil/Controller unit test, could test exception thrown
         assertThat(usernameAccessToken).isEqualTo("admin");
     }
 

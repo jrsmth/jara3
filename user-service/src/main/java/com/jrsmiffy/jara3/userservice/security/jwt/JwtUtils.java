@@ -20,7 +20,7 @@ public class JwtUtils {
     private static String JWT_SECRET = "secret";
 
     @Value("${spring.application.name")
-    private static String APP_NAME = "app name";
+    private static String APP_NAME = "APP_NAME";
 
     @Value("${jwt.expiration-in-minutes.access}")
     private static int ACCESS_TOKEN_EXPIRATION_MINUTES = 15;
@@ -52,22 +52,11 @@ public class JwtUtils {
     }
 
     /**
-     * Verifies & Decodes a JWT
+     * Verifies token & retrieves the subject
      */
-    public DecodedJWT getDecodedJwt(String token) {
-        return JWT.require(Algorithm.HMAC256(JWT_SECRET)).build().verify(token);
-    }
-
-
-
-    // Method to verify the JWT and then decode and extract the user email stored in the payload of the token
-    public String validateTokenAndRetrieveSubject(String token)throws JWTVerificationException {
-        JWTVerifier verifier = JWT.require(Algorithm.HMAC256(JWT_SECRET))
-                .withSubject("User Details")
-                .withIssuer("YOUR APPLICATION/PROJECT/COMPANY NAME")
-                .build();
+    public String retrieveSubject(String token) throws JWTVerificationException{
+        JWTVerifier verifier = JWT.require(Algorithm.HMAC256(JWT_SECRET)).build();
         DecodedJWT jwt = verifier.verify(token);
-        return jwt.getClaim("email").asString();
+        return jwt.getSubject();
     }
-
 }
