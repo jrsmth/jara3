@@ -1,17 +1,20 @@
 
 start_eureka_locally:
-	cd eurekaserver ; ./mvnw spring-boot:run
-start_user_service_locally:
-	cd userservice ; ./mvnw clean test &
-	cd userservice ; export EUREKA_URI=http://localhost:8761/eureka ; ./mvnw spring-boot:run -Dspring-boot.run.profiles=local
-start_frontend_locally:
-	cd frontend ; npm run build ; export PORT=8702 ; node app
+	cd eureka-server ; ./mvnw spring-boot:run
+start_user_locally:
+	# cd user-service ; ./mvnw clean verify &
+	cd user-service ; export EUREKA_URI=http://localhost:8761/eureka ; ./mvnw spring-boot:run -Dspring-boot.run.profiles=local
+start_web_app_locally:
+	cd web-app ; ng serve
 
 start_jara3_locally:
 	make start_eureka_locally & sleep 8
-	make start_user_service_locally &
-	make start_frontend_locally &
+	make start_user_locally &
+	make start_web_app_locally &
 stop_jara3_locally:
+	# Eureka
 	lsof -nti:8761 | xargs kill -9
+	# User
 	lsof -nti:8772 | xargs kill -9
-	lsof -nti:8702 | xargs kill -9 
+	# Web App
+	lsof -nti:4200 | xargs kill -9 

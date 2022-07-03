@@ -1,0 +1,132 @@
+{
+	"info": {
+		"_postman_id": "80acbf02-7a58-4b49-818d-840dd5fd1137",
+		"name": "Jara3",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Register User Locally",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8772/api/register?username=JRSmiffy&password=admin",
+					"host": [
+						"localhost"
+					],
+					"port": "8772",
+					"path": [
+						"api",
+						"register"
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "JRSmiffy"
+						},
+						{
+							"key": "password",
+							"value": "admin"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Spring Security Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "user",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "user",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8772/api/login",
+					"host": [
+						"localhost"
+					],
+					"port": "8772",
+					"path": [
+						"api",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Users Locally",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer ",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:8772/api/admin/users",
+					"host": [
+						"localhost"
+					],
+					"port": "8772",
+					"path": [
+						"api",
+						"admin",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Refresh Token",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiaXNzIjoiQVBQX05BTUUiLCJleHAiOjE2NTY5NDk5NDV9.2_ULH-fxmZrWv0d7-Mt4gSy7ynw2qBGPRakiHCA4lUc",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:8772/api/token/refresh",
+					"host": [
+						"localhost"
+					],
+					"port": "8772",
+					"path": [
+						"api",
+						"token",
+						"refresh"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

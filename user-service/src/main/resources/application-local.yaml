@@ -1,0 +1,14 @@
+spring:
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    database-platform: org.hibernate.dialect.MySQL5Dialect
+    hibernate:
+      ddl-auto: update # TODO: data.sql seed with admin admin, works for H2 w/create-drop...
+    defer-datasource-initialization: true
+  datasource:
+    platform: mySQL
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/jara3_db
+    username: jara3-dev
+    password: password
+    driverClassName: com.mysql.cj.jdbc.Driver
