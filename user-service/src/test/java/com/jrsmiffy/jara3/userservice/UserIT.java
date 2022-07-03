@@ -75,9 +75,9 @@ class UserIT {
         this.userRepository.save(user);
 
         // Then: try to authenticate this user
-        this.mockMvc.perform(
+        MvcResult result = this.mockMvc.perform(
                 MockMvcRequestBuilders
-                        .post("/api/login") // todo: remove spring profile urls, more hassle for testing?
+                        .post("/api/login")
                         .param("username", USERNAME)
                         .param("password", PASSWORD)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -85,14 +85,17 @@ class UserIT {
                         .servletPath("/api/login"))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.access_token").exists())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.refresh_token").exists());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.refresh_token").exists())
+                .andReturn();
 
-        /*
-            We want to decouple the test from the implementation to reduce test fragility,
-            whilst still having a meaningful test. Instead of testing the specific response,
-            we could just check that it contains the details that we want.
-            How they're ordered is up to the implementation, we can check this in the unit tests.
-         */
+        // Assert token validity here because there is no controller method to unit test
+        final Object accessTokenObj = JsonPath.read(result.getResponse().getContentAsString(), "$.access_token");
+        final String accessToken = objectMapper.convertValue(accessTokenObj, String.class);
+        assertThat(jwtUtils.retrieveSubject(accessToken)).isEqualTo(USERNAME);
+
+        final Object refreshTokenObj = JsonPath.read(result.getResponse().getContentAsString(), "$.refresh_token");
+        final String refreshToken = objectMapper.convertValue(refreshTokenObj, String.class);
+        assertThat(jwtUtils.retrieveSubject(refreshToken)).isEqualTo(USERNAME);
     }
 
     @Test
@@ -109,7 +112,6 @@ class UserIT {
                 .andExpect(status().isUnauthorized())
                 .andExpect(content().string("\"Bad credentials\""));
     }
-
 
     @Test
     @DisplayName("Should Register User")
@@ -136,7 +138,6 @@ class UserIT {
         final AppUser savedUser = userRepository.findByUsername(USERNAME).get();
         assertThat(returnedUser.getUsername()).isEqualTo(savedUser.getUsername());
         assertThat(returnedUser.getPassword()).isEqualTo(savedUser.getPassword());
-        // todo: duplicate test logic: save for controller unit only? refactor... slim...
     }
 
     @Test
@@ -159,6 +160,57 @@ class UserIT {
     }
 
     @Test
+    @DisplayName("Should Get New Access Token")
+    void shouldGetNewAccessToken() throws Exception {
+        // Setup: ensure "admin" user exists in system
+        if(userRepository.findByUsername("admin").isEmpty())
+            this.userRepository.save(new AppUser(UUID.randomUUID(), "admin", "admin", Role.ADMIN, true));
+
+        // Given: a valid refresh token for a user that exists in the system
+        final String refreshToken = jwtUtils.generateRefreshToken("admin");
+
+        // Then: try requesting a new access token
+        MvcResult result = this.mockMvc.perform(
+                MockMvcRequestBuilders
+                        .get("/api/token/refresh")
+                        .header("Authorization", "Bearer " + refreshToken)
+                        .servletPath("/api/token/refresh"))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.tokens").exists())
+                .andReturn();
+
+        // Assert that the access token exists and is valid // todo: this check belongs in the service unit test (slim this test)
+        final Object accessTokenObj = JsonPath.read(result.getResponse().getContentAsString(), "$.tokens.access_token");
+        final String accessToken = objectMapper.convertValue(accessTokenObj, String.class);
+        final String usernameAccessToken = jwtUtils.retrieveSubject(accessToken); // todo: JwtUtil/Controller unit test, could test exception thrown
+        assertThat(usernameAccessToken).isEqualTo("admin");
+
+        /**
+             We want to decouple the test from the implementation to reduce test fragility,
+             whilst still having a meaningful test. Instead of testing the specific response,
+             we could just check that it contains the details that we want.
+             How they're ordered is up to the implementation, we can check this in the unit tests.
+         */
+    }
+
+    @Test
+    @DisplayName("Should Not Get New Access Token Because Of Invalid Refresh Token")
+    void shouldNotGetNewAccessTokenBecauseOfInvalidRefreshToken() throws Exception {
+        // Given: an invalid refresh token
+        final String refreshToken = "insert_obviously_invalid_jwt";
+
+        // Then: try requesting a new access token
+        this.mockMvc.perform(
+                MockMvcRequestBuilders
+                        .get("/api/token/refresh")
+                        .header("Authorization", "Bearer " + refreshToken)
+                        .servletPath("/api/token/refresh"))
+                .andExpect(status().isForbidden())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.tokens").isEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.response").isNotEmpty());
+    }
+
+    @Test
     @DisplayName("Should Get All Users")
     void shouldGetAllUsers() throws Exception {
         // Given: a user request with the ADMIN role
@@ -167,7 +219,7 @@ class UserIT {
         // Then: try requesting all users
         this.mockMvc.perform(
                 MockMvcRequestBuilders
-                    .get("/api/admin/users")
+                        .get("/api/admin/users")
                         .header("Authorization", "Bearer " + accessToken)
                         .servletPath("/api/admin/users"))
                 .andExpect(status().isOk());
@@ -187,48 +239,4 @@ class UserIT {
                         .servletPath("/api/admin/users"))
                 .andExpect(status().isForbidden());
     }
-
-    @Test
-    @DisplayName("Should Get New Access Token")
-    void shouldGetNewAccessToken() throws Exception {
-        // Setup: ensure "admin" user exists in system
-        if(userRepository.findByUsername("admin").isEmpty())
-            this.userRepository.save(new AppUser(UUID.randomUUID(), "admin", "admin", Role.ADMIN, true));
-
-        // Given: a valid refresh token for a user that exists in the system
-        final String refreshToken = jwtUtils.generateRefreshToken("admin");
-
-        // Then: try requesting a new access token
-        MvcResult result = this.mockMvc.perform(
-                MockMvcRequestBuilders
-                        .get("/api/token/refresh")
-                        .header("Authorization", "Bearer " + refreshToken)
-                        .servletPath("/api/token/refresh"))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.access_token").exists())
-                .andReturn();
-
-        // Assert that the access token exists and is valid // todo: this check belongs in the controller (slim this test)
-        final Object accessTokenObj = JsonPath.read(result.getResponse().getContentAsString(), "$.access_token");
-        final String accessToken = objectMapper.convertValue(accessTokenObj, String.class);
-        final String usernameAccessToken = jwtUtils.retrieveSubject(accessToken); // todo: JwtUtil/Controller unit test, could test exception thrown
-        assertThat(usernameAccessToken).isEqualTo("admin");
-    }
-
-    @Test
-    @DisplayName("Should Not Get New Access Token Because Of Invalid Refresh Token")
-    void shouldNotGetNewAccessTokenBecauseOfInvalidRefreshToken() throws Exception {
-        // Given: an invalid refresh token
-        final String refreshToken = "insert_obviously_invalid_jwt";
-
-        // Then: try requesting a new access token
-        this.mockMvc.perform(
-                MockMvcRequestBuilders
-                        .get("/api/token/refresh")
-                        .header("Authorization", "Bearer " + refreshToken)
-                        .servletPath("/api/token/refresh"))
-                .andExpect(status().isForbidden())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.error_message").exists());
-    }
-
 }

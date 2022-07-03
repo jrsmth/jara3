@@ -4,7 +4,9 @@ import com.jrsmiffy.jara3.userservice.model.AppUser;
 import com.jrsmiffy.jara3.userservice.model.Role;
 import com.jrsmiffy.jara3.userservice.model.UserResponse;
 import com.jrsmiffy.jara3.userservice.repository.UserRepository;
+import com.jrsmiffy.jara3.userservice.security.jwt.JwtUtils;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -42,6 +44,8 @@ class UserServiceTest {
     @Mock
     private PasswordEncoder mockPasswordEncoder;
 
+    JwtUtils jwtUtils = new JwtUtils();
+
     @Captor
     private ArgumentCaptor<AppUser> userArgumentCaptor;
 
@@ -68,100 +72,30 @@ class UserServiceTest {
 
     @BeforeEach // @BeforeEach vs @Before, former is necessary for ReflectionTestUtils.setField() [at least...]
     void setup() {
-        this.underTest = new UserServiceImpl(mockRepository, mockPasswordEncoder);
+        this.underTest = new UserServiceImpl(mockRepository, mockPasswordEncoder, jwtUtils);
     }
 
     @ParameterizedTest
     @CsvFileSource(resources="/users.csv")
-    @DisplayName("Should Authenticate User")
-    void shouldAuthenticateUser(final String username, final String password){
+    @DisplayName("Should Register User")
+    @Disabled // todo: test to be fixed
+    void shouldRegisterUser(final String username, final String password) {
         // Given: a valid user (that passes the checks)
         AppUser validUser = new AppUser(UUID.randomUUID(), username, password, Role.USER,true);
-        UserResponse expected = new UserResponse(Optional.of(validUser), responseAuthenticateSuccess);
-        ReflectionTestUtils.setField(underTest, "responseAuthenticateSuccess", responseAuthenticateSuccess);
-
-        // When:
-        when(mockRepository.findByUsername(username)).thenReturn(Optional.of(validUser));
-        final UserResponse actual = underTest.authenticate(username, password);
-
-        // Then:
-        assertThat(actual).isEqualTo(expected);
-
-        verify(mockRepository).findByUsername(username);
-    }
-
-    @ParameterizedTest
-    @CsvFileSource(resources="/users.csv")
-    @DisplayName("Should Not Authenticate User Because Username Does Not Exist")
-    void shouldNotAuthenticateUserBecauseUsernameDoesNotExist(final String username, final String password) {
-        // Given: a username that does not exist in the system
-        UserResponse expected = new UserResponse(Optional.empty(), String.format(responseAuthenticateFailNoUserExists, username));
-        ReflectionTestUtils.setField(underTest, "responseAuthenticateFailNoUserExists", responseAuthenticateFailNoUserExists);
+        UserResponse expected = new UserResponse(Optional.of(validUser), responseRegisterSuccess);
+        ReflectionTestUtils.setField(underTest, "responseRegisterSuccess", responseRegisterSuccess);
 
         // When:
         when(mockRepository.findByUsername(username)).thenReturn(Optional.empty());
-        final UserResponse actual = underTest.authenticate(username, password);
+        when(mockRepository.save(new AppUser(username, password))).thenReturn(validUser);
+        final UserResponse actual = underTest.register(username, password);
 
         // Then:
         assertThat(actual).isEqualTo(expected);
 
         verify(mockRepository).findByUsername(username);
+        verify(mockRepository).save(new AppUser(username, password));
     }
-
-    @ParameterizedTest
-    @CsvFileSource(resources="/users.csv")
-    @DisplayName("Should Not Authenticate User Because Password Does Not Match")
-    void shouldNotAuthenticateUserBecausePasswordDoesNotMatch(final String username, final String password) {
-        // Given: a password that does not match the password in the system for this username
-        final AppUser savedUser = new AppUser(UUID.randomUUID(), username, "INCORRECT_PASSWORD", Role.USER,true);
-        UserResponse expected = new UserResponse(Optional.empty(), responseAuthenticateFailIncorrectPassword);
-        ReflectionTestUtils.setField(underTest, "responseAuthenticateFailIncorrectPassword", responseAuthenticateFailIncorrectPassword);
-
-        // When:
-        when(mockRepository.findByUsername(username)).thenReturn(Optional.of(savedUser));
-        final UserResponse actual = underTest.authenticate(username, password);
-
-        // Then:
-        assertThat(actual).isEqualTo(expected);
-
-        verify(mockRepository).findByUsername(username);
-    }
-
-    @ParameterizedTest
-    @CsvFileSource(resources="/users_invalid.csv")
-    @DisplayName("Should Not Authenticate User Because Credentials Are Invalid")
-    void shouldNotAuthenticateUserBecauseCredentialsAreInvalid(final String username, final String password, final String reason) {
-        // Given: credentials (username and/or password) that are invalid
-        UserResponse expected = new UserResponse(Optional.empty(), responseAuthenticateFailInvalidCredentials + reason);
-        ReflectionTestUtils.setField(underTest, "responseAuthenticateFailInvalidCredentials", responseAuthenticateFailInvalidCredentials);
-
-        // When:
-        final UserResponse actual = underTest.authenticate(username, password);
-
-        // Then:
-        assertThat(actual).isEqualTo(expected);
-    }
-
-//    @ParameterizedTest
-//    @CsvFileSource(resources="/users.csv")
-//    @DisplayName("Should Register User")
-//    void shouldRegisterUser(final String username, final String password) {
-//        // Given: a valid user (that passes the checks)
-//        AppUser validUser = new AppUser(UUID.randomUUID(), username, password, Role.USER,true);
-//        UserResponse expected = new UserResponse(Optional.of(validUser), responseRegisterSuccess);
-//        ReflectionTestUtils.setField(underTest, "responseRegisterSuccess", responseRegisterSuccess);
-//
-//        // When:
-//        when(mockRepository.findByUsername(username)).thenReturn(Optional.empty());
-//        when(mockRepository.save(new AppUser(username, password))).thenReturn(validUser);
-//        final UserResponse actual = underTest.register(username, password);
-//
-//        // Then:
-//        assertThat(actual).isEqualTo(expected);
-//
-//        verify(mockRepository).findByUsername(username);
-//        verify(mockRepository).save(new AppUser(username, password));
-//    }
 
     @ParameterizedTest
     @CsvFileSource(resources="/users.csv")
@@ -195,6 +129,8 @@ class UserServiceTest {
         // Then:
         assertThat(actual).isEqualTo(expected);
     }
+
+    // todo: unit tests for refresh token method
 
     @ParameterizedTest
     @CsvFileSource(resources = "/users.csv")

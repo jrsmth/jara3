@@ -37,7 +37,6 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        // TODO: log?
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
         return authenticationManager.authenticate(authenticationToken);
@@ -51,19 +50,20 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         Map<String, String> tokens =
                 Map.of(
-                "access_token", jwtUtils.generateAccessToken(username, role),
-                "refresh_token", jwtUtils.generateRefreshToken(username)
+                    "access_token", jwtUtils.generateAccessToken(username, role),
+                    "refresh_token", jwtUtils.generateRefreshToken(username)
                 );
 
+        log.info("Successful Authentication");
+
         response.setContentType(APPLICATION_JSON_VALUE);
-        new ObjectMapper().writeValue(response.getOutputStream(), tokens); // todo: wtf is this doing???
+        new ObjectMapper().writeValue(response.getOutputStream(), tokens);
     }
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
-        log.error("[CustomAuthenticationFilter] Error: " + failed.toString());
+        log.error("Error: " + failed.toString());
         // todo: in the future, perhaps we could have more detailed failure responses (no user exists, incorrect password)
-        // from initial RE, it is quite involved...
         response.setContentType(APPLICATION_JSON_VALUE);
         response.setStatus(UNAUTHORIZED.value());
         new ObjectMapper().writeValue(response.getOutputStream(), failed.getMessage());

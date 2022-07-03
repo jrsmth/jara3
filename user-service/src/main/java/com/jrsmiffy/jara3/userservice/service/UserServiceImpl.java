@@ -1,9 +1,11 @@
 package com.jrsmiffy.jara3.userservice.service;
 
 import com.jrsmiffy.jara3.userservice.model.AppUser;
+import com.jrsmiffy.jara3.userservice.model.TokenResponse;
 import com.jrsmiffy.jara3.userservice.model.UserResponse;
 import com.jrsmiffy.jara3.userservice.model.ValidationResponse;
 import com.jrsmiffy.jara3.userservice.repository.UserRepository;
+import com.jrsmiffy.jara3.userservice.security.jwt.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.apache.logging.log4j.util.Strings.isEmpty;
@@ -23,8 +26,8 @@ import static org.apache.logging.log4j.util.Strings.isEmpty;
 public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
-
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtils jwtUtils;
 
     @Value("${response.authenticate.success}")
     private String responseAuthenticateSuccess;
@@ -47,15 +50,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Value("${response.register.fail.user-exists}")
     private String responseRegisterFailUserExists;
 
-    UserServiceImpl(final UserRepository userRepository, final PasswordEncoder passwordEncoder){
+    UserServiceImpl(final UserRepository userRepository, final PasswordEncoder passwordEncoder, final JwtUtils jwtUtils){
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtUtils = jwtUtils;
         /** NOTE: Constructor injection is preferred over Field injection (@Autowired) */
         /** https://stackoverflow.com/questions/40620000/spring-autowire-on-properties-vs-constructor */
-    }
-
-    public Optional<AppUser> getUser(String username) { // todo: fix this sh!te...
-        return userRepository.findByUsername(username);
     }
 
     @Override
@@ -78,48 +78,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         return userDetails;
     }
-
-    // TODO: override from interface?
-    // TODO: make "AppUser appUser" consistent through the whole app? now we have inconsistent naming throughout the svc, think + refactor...
-    public AppUser saveUser(AppUser appUser) {
-        log.info("Saving new user to the databse: {}", appUser.getUsername());
-        appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
-        return userRepository.save(appUser);
-    }
-
-    /** Authenticate */
-    @Override
-    public UserResponse authenticate(final String username, final String password) {
-
-        // CHECK 0: Are these credentials invalid?
-        ValidationResponse validationResponse = validateCredentials(username, password);
-        if (validationResponse.isInvalid()) {
-            log.error(responseAuthenticateFailInvalidCredentials + validationResponse.getResponse());
-            return new UserResponse(Optional.empty(),
-                    responseAuthenticateFailInvalidCredentials + validationResponse.getResponse());
-        }
-
-        String response;
-        Optional<AppUser> potentialUser = userRepository.findByUsername(username);
-
-        // CHECK 1: Does this user not exist in the system?
-        if (potentialUser.isEmpty()) {
-            response = String.format(responseAuthenticateFailNoUserExists, username);
-        }
-        // CHECK 2: Does the password not match?
-        else if (!potentialUser.get().getPassword().equals(password)) {
-            response = responseAuthenticateFailIncorrectPassword;
-            potentialUser = Optional.empty();
-        }
-        // CHECKS PASSED: user is authenticated
-        else {
-            response = responseAuthenticateSuccess;
-        }
-
-        log.info(response);
-        return new UserResponse(potentialUser, response);
-    }
-
     /** Register */
     @Override
     public UserResponse register(final String username, final String password) {
@@ -141,13 +99,44 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
         // CHECKS PASSED: user is registered
         else {
-//            registeredUser = userRepository.save(new AppUser(username, password));
-            registeredUser = saveUser(new AppUser(username, password)); // TODO: REFACTOR, test...
+            registeredUser = userRepository.save(new AppUser(username, passwordEncoder.encode(password)));
             response = responseRegisterSuccess;
         }
 
         log.info(response);
         return new UserResponse(Optional.ofNullable(registeredUser), response);
+    }
+
+    /** Get Refreshed Tokens */
+    @Override
+    public TokenResponse getRefreshedTokens(final String refreshToken) {
+        String response = "";
+        Map<String, String> tokens = null;
+
+        try {
+            String username = jwtUtils.retrieveSubject(refreshToken);
+            AppUser user = getUser(username).get();
+
+            String accessToken = jwtUtils.generateAccessToken(username, user.getRole());
+
+            tokens = Map.of(
+                    "access_token", accessToken,
+                    "refresh_token", refreshToken
+            );
+
+            response = "Successfully refreshed tokens";
+        } catch (Exception e){
+            response = e.getMessage();
+        } finally {
+            log.info(response);
+            return new TokenResponse(Optional.ofNullable(tokens), response);
+        }
+    }
+
+    /** Get User */
+    @Override
+    public Optional<AppUser> getUser(final String username) {
+        return userRepository.findByUsername(username);
     }
 
     /** Get All Users */

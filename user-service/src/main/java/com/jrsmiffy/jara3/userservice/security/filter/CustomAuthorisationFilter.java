@@ -28,23 +28,17 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Slf4j
 public class CustomAuthorisationFilter extends OncePerRequestFilter {
 
-
-    @Override
+    @Override // todo: refactor this monstrosity
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.info(request.getServletPath());
-        log.info("/api/login");
-        log.info(request.getServletPath().equals("/api/login") + "");
         if (
                 request.getServletPath().equals("/api/login")
                 || request.getServletPath().equals("/api/token/refresh")
                 || request.getServletPath().equals("/api/register")
-        ) { // todo: refactor BS
+        ) {
             log.info("Servlet Path matches freely permitted route");
             filterChain.doFilter(request, response);
         } else {
-            log.info("JRS***");
             String authorizationHeader = request.getHeader(AUTHORIZATION);
-            log.info(authorizationHeader);
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
                 try {
                     String token = authorizationHeader.substring("Bearer ".length());
@@ -56,18 +50,15 @@ public class CustomAuthorisationFilter extends OncePerRequestFilter {
                     log.info("USERNAME: " + username);
                     String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
                     Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-                    log.info(roles[0]);
                     stream(roles).forEach(role -> {
                         log.info(role);
                         authorities.add((new SimpleGrantedAuthority(role)));
                     });
                     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, authorities);
-                    log.info(authenticationToken.toString());
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                     log.info("Servlet Path requires authorisation");
                     filterChain.doFilter(request, response);
-                } catch (Exception e) { // TODO: This is used for invalid token (1/3 of parts, etc..., not for lesser authority - enhance?)
-                    log.info("hit");
+                } catch (Exception e) {
                     log.error("Error logging in: {}", e.getMessage());
                     response.setHeader("error", e.getMessage());
                     response.setStatus(FORBIDDEN.value());

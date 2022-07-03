@@ -46,7 +46,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         CustomAuthenticationFilter customAuthenticationFilter =
-                new CustomAuthenticationFilter(authenticationManagerBean(), new JwtUtils()); // todo: hack JwtUtil injection...
+                new CustomAuthenticationFilter(authenticationManagerBean(), new JwtUtils()); // todo: use best practise for DI
 
         customAuthenticationFilter.setFilterProcessesUrl(loginUrl);
 
@@ -57,7 +57,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 loginUrl + "/**",
                 "/api/token/refresh/**",
                 "/api/register/**"
-        ).permitAll(); // todo: make pretty
+        ).permitAll();
         http.authorizeRequests().antMatchers(adminUrl + "/**").hasAnyAuthority(Role.ADMIN.name());
         http.authorizeRequests().anyRequest().authenticated();
 
