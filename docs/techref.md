@@ -49,10 +49,9 @@
         * `sdk use java 17.0.3-tem`
     * Manage Java version manually (old)
         * [source](https://stackoverflow.com/questions/21964709/how-to-set-or-change-the-default-java-jdk-version-on-macos)
-    * Change Java version for IntelliJ Project ([source](https://stackoverflow.com/questions/59180226/jdks-installed-with-sdkman-are-not-selectable-in-the-intellij-ide))
-        * File > Project Structure (`cmd-;`)
-        * See hidden items in Finder:
-            * `cmd-shift-period`
+    * Change Java version for IntelliJ Project 
+        * [source](https://stackoverflow.com/questions/59180226/jdks-installed-with-sdkman-are-not-selectable-in-the-intellij-ide)
+        * File > Project Structure (`cmd ;`)
 * Kill a service running on a particular $PORT
     * ``` lsof -nti:$PORT | xargs kill -9 ```
 * Remove files that are still tracked after adding them to .gitignore ([source](https://stackoverflow.com/questions/11451535/gitignore-is-ignored-by-git))
