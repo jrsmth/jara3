@@ -1,5 +1,5 @@
-# jara3
-*Jira-inspired to-do list*
+# Jara3
+*Jira-like Todo List*
 
 <br>
 <br>
